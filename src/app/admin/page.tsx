@@ -110,6 +110,245 @@ export default function AdminPage() {
     }
   }
 
+  // Seed 20 sample recipes
+  const sampleRecipes = [
+    {
+      name: "Classic Pancakes",
+      description: "Fluffy American-style pancakes perfect for weekend breakfast",
+      ingredients: JSON.stringify(["2 cups flour", "2 eggs", "1.5 cups milk", "2 tbsp sugar", "2 tsp baking powder", "1/2 tsp salt"]),
+      instructions: JSON.stringify(["Mix dry ingredients", "Whisk wet ingredients", "Combine and cook on griddle", "Serve with maple syrup"]),
+      category: "breakfast",
+      prep_time_minutes: 10,
+      cook_time_minutes: 15,
+      servings: 4,
+      image_url: ""
+    },
+    {
+      name: "Avocado Toast",
+      description: "Simple yet delicious avocado toast with a poached egg",
+      ingredients: JSON.stringify(["2 slices sourdough bread", "1 ripe avocado", "2 eggs", "Salt and pepper", "Red pepper flakes", "Lemon juice"]),
+      instructions: JSON.stringify(["Toast bread", "Mash avocado with lemon, salt, and pepper", "Poach eggs", "Spread avocado on toast", "Top with poached egg"]),
+      category: "breakfast",
+      prep_time_minutes: 5,
+      cook_time_minutes: 10,
+      servings: 2,
+      image_url: ""
+    },
+    {
+      name: "Greek Salad",
+      description: "Fresh Mediterranean salad with feta and olives",
+      ingredients: JSON.stringify(["3 tomatoes", "1 cucumber", "1/2 red onion", "100g feta cheese", "Kalamata olives", "Olive oil", "Oregano"]),
+      instructions: JSON.stringify(["Chop vegetables", "Add feta and olives", "Drizzle with olive oil", "Sprinkle oregano"]),
+      category: "lunch",
+      prep_time_minutes: 15,
+      cook_time_minutes: 0,
+      servings: 2,
+      image_url: ""
+    },
+    {
+      name: "Chicken Caesar Salad",
+      description: "Classic Caesar salad with grilled chicken breast",
+      ingredients: JSON.stringify(["2 chicken breasts", "1 head romaine lettuce", "Parmesan cheese", "Caesar dressing", "Croutons", "Black pepper"]),
+      instructions: JSON.stringify(["Grill chicken", "Chop lettuce", "Toss with dressing", "Top with chicken, croutons, and parmesan"]),
+      category: "lunch",
+      prep_time_minutes: 10,
+      cook_time_minutes: 15,
+      servings: 2,
+      image_url: ""
+    },
+    {
+      name: "Spaghetti Carbonara",
+      description: "Creamy Italian pasta with pancetta and parmesan",
+      ingredients: JSON.stringify(["400g spaghetti", "200g pancetta", "4 egg yolks", "100g parmesan", "Black pepper", "Salt"]),
+      instructions: JSON.stringify(["Cook pasta", "Fry pancetta until crispy", "Mix egg yolks with parmesan", "Combine pasta with pancetta", "Add egg mixture off heat", "Toss until creamy"]),
+      category: "dinner",
+      prep_time_minutes: 10,
+      cook_time_minutes: 20,
+      servings: 4,
+      image_url: ""
+    },
+    {
+      name: "Beef Tacos",
+      description: "Seasoned ground beef tacos with fresh toppings",
+      ingredients: JSON.stringify(["500g ground beef", "Taco shells", "Taco seasoning", "Lettuce", "Tomatoes", "Cheese", "Sour cream", "Salsa"]),
+      instructions: JSON.stringify(["Brown ground beef", "Add taco seasoning", "Warm taco shells", "Fill with beef", "Top with lettuce, tomato, cheese"]),
+      category: "dinner",
+      prep_time_minutes: 15,
+      cook_time_minutes: 15,
+      servings: 4,
+      image_url: ""
+    },
+    {
+      name: "Grilled Salmon",
+      description: "Perfectly grilled salmon with lemon and herbs",
+      ingredients: JSON.stringify(["4 salmon fillets", "Lemon", "Garlic", "Dill", "Olive oil", "Salt", "Black pepper"]),
+      instructions: JSON.stringify(["Marinate salmon", "Preheat grill", "Grill 4-5 minutes per side", "Serve with lemon wedges"]),
+      category: "dinner",
+      prep_time_minutes: 10,
+      cook_time_minutes: 10,
+      servings: 4,
+      image_url: ""
+    },
+    {
+      name: "Chicken Stir Fry",
+      description: "Quick and healthy Asian-style chicken stir fry",
+      ingredients: JSON.stringify(["500g chicken breast", "Broccoli", "Bell peppers", "Soy sauce", "Ginger", "Garlic", "Sesame oil", "Rice"]),
+      instructions: JSON.stringify(["Slice chicken and vegetables", "Stir fry chicken", "Add vegetables", "Add sauce", "Serve over rice"]),
+      category: "dinner",
+      prep_time_minutes: 15,
+      cook_time_minutes: 15,
+      servings: 4,
+      image_url: ""
+    },
+    {
+      name: "Mushroom Risotto",
+      description: "Creamy Italian rice dish with mixed mushrooms",
+      ingredients: JSON.stringify(["300g arborio rice", "200g mushrooms", "1 onion", "White wine", "Parmesan", "Butter", "Vegetable stock"]),
+      instructions: JSON.stringify(["Sauté mushrooms", "Cook onion", "Add rice and toast", "Add wine", "Add stock gradually", "Stir in parmesan and butter"]),
+      category: "dinner",
+      prep_time_minutes: 10,
+      cook_time_minutes: 30,
+      servings: 4,
+      image_url: ""
+    },
+    {
+      name: "Vegetable Curry",
+      description: "Flavorful Indian-style vegetable curry",
+      ingredients: JSON.stringify(["Potatoes", "Cauliflower", "Chickpeas", "Coconut milk", "Curry powder", "Onion", "Garlic", "Ginger", "Rice"]),
+      instructions: JSON.stringify(["Sauté onion, garlic, ginger", "Add curry powder", "Add vegetables and coconut milk", "Simmer until tender", "Serve with rice"]),
+      category: "dinner",
+      prep_time_minutes: 15,
+      cook_time_minutes: 25,
+      servings: 4,
+      image_url: ""
+    },
+    {
+      name: "Guacamole",
+      description: "Fresh Mexican avocado dip",
+      ingredients: JSON.stringify(["3 ripe avocados", "1 lime", "1/2 onion", "Cilantro", "Jalapeño", "Salt", "Tomato"]),
+      instructions: JSON.stringify(["Mash avocados", "Dice onion, tomato, jalapeño", "Mix everything together", "Add lime juice and salt"]),
+      category: "snack",
+      prep_time_minutes: 15,
+      cook_time_minutes: 0,
+      servings: 6,
+      image_url: ""
+    },
+    {
+      name: "Hummus",
+      description: "Smooth and creamy Middle Eastern chickpea dip",
+      ingredients: JSON.stringify(["400g chickpeas", "Tahini", "Lemon juice", "Garlic", "Olive oil", "Cumin", "Salt"]),
+      instructions: JSON.stringify(["Blend chickpeas", "Add tahini and lemon juice", "Add garlic and spices", "Drizzle with olive oil"]),
+      category: "snack",
+      prep_time_minutes: 10,
+      cook_time_minutes: 0,
+      servings: 8,
+      image_url: ""
+    },
+    {
+      name: "Fruit Smoothie",
+      description: "Refreshing blended fruit drink",
+      ingredients: JSON.stringify(["1 banana", "1 cup berries", "1 cup yogurt", "1/2 cup milk", "Honey", "Ice"]),
+      instructions: JSON.stringify(["Add all ingredients to blender", "Blend until smooth", "Pour and serve"]),
+      category: "snack",
+      prep_time_minutes: 5,
+      cook_time_minutes: 0,
+      servings: 2,
+      image_url: ""
+    },
+    {
+      name: "Bruschetta",
+      description: "Italian tomato and basil on toasted bread",
+      ingredients: JSON.stringify(["Baguette", "Tomatoes", "Basil", "Garlic", "Olive oil", "Balsamic vinegar", "Salt"]),
+      instructions: JSON.stringify(["Dice tomatoes", "Mix with chopped basil, garlic, oil", "Toast baguette", "Top with tomato mixture", "Drizzle with balsamic"]),
+      category: "snack",
+      prep_time_minutes: 15,
+      cook_time_minutes: 5,
+      servings: 6,
+      image_url: ""
+    },
+    {
+      name: "Chocolate Chip Cookies",
+      description: "Classic homemade chocolate chip cookies",
+      ingredients: JSON.stringify(["2.25 cups flour", "1 cup butter", "3/4 cup sugar", "3/4 cup brown sugar", "2 eggs", "1 tsp vanilla", "1 tsp baking soda", "2 cups chocolate chips"]),
+      instructions: JSON.stringify(["Cream butter and sugars", "Beat in eggs and vanilla", "Mix dry ingredients", "Combine and add chocolate chips", "Bake at 375°F for 9-11 minutes"]),
+      category: "dessert",
+      prep_time_minutes: 15,
+      cook_time_minutes: 11,
+      servings: 48,
+      image_url: ""
+    },
+    {
+      name: "Brownies",
+      description: "Rich and fudgy chocolate brownies",
+      ingredients: JSON.stringify(["1/2 cup butter", "1 cup sugar", "2 eggs", "1/3 cup cocoa powder", "1/2 cup flour", "1/4 tsp salt", "1 tsp vanilla"]),
+      instructions: JSON.stringify(["Melt butter", "Mix in sugar, eggs, vanilla", "Add dry ingredients", "Pour into greased pan", "Bake at 350°F for 25-30 minutes"]),
+      category: "dessert",
+      prep_time_minutes: 10,
+      cook_time_minutes: 30,
+      servings: 16,
+      image_url: ""
+    },
+    {
+      name: "Banana Bread",
+      description: "Moist and delicious banana bread",
+      ingredients: JSON.stringify(["3 ripe bananas", "1/3 cup melted butter", "3/4 cup sugar", "1 egg", "1 tsp vanilla", "1 tsp baking soda", "1.5 cups flour"]),
+      instructions: JSON.stringify(["Mash bananas", "Mix in butter", "Add sugar, egg, vanilla", "Add baking soda and flour", "Bake at 350°F for 55-60 minutes"]),
+      category: "dessert",
+      prep_time_minutes: 15,
+      cook_time_minutes: 60,
+      servings: 10,
+      image_url: ""
+    },
+    {
+      name: "Cheesecake",
+      description: "Creamy New York style cheesecake",
+      ingredients: JSON.stringify(["2 lbs cream cheese", "1 cup sugar", "5 eggs", "2 tsp vanilla", "1/4 cup flour", "1 cup sour cream", "Graham cracker crust"]),
+      instructions: JSON.stringify(["Beat cream cheese and sugar", "Add eggs one at a time", "Mix in vanilla, flour, sour cream", "Pour over crust", "Bake at 325°F for 1 hour", "Cool slowly"]),
+      category: "dessert",
+      prep_time_minutes: 30,
+      cook_time_minutes: 60,
+      servings: 12,
+      image_url: ""
+    },
+    {
+      name: "Apple Pie",
+      description: "Classic American apple pie with cinnamon",
+      ingredients: JSON.stringify(["6 apples", "1 pie crust", "3/4 cup sugar", "1 tsp cinnamon", "1/4 tsp nutmeg", "2 tbsp flour", "2 tbsp butter"]),
+      instructions: JSON.stringify(["Slice apples", "Mix with sugar and spices", "Place in crust", "Dot with butter", "Cover with top crust", "Bake at 425°F for 40-50 minutes"]),
+      category: "dessert",
+      prep_time_minutes: 45,
+      cook_time_minutes: 50,
+      servings: 8,
+      image_url: ""
+    },
+    {
+      name: "Tiramisu",
+      description: "Italian coffee-flavored layered dessert",
+      ingredients: JSON.stringify(["500g mascarpone", "4 eggs", "1/2 cup sugar", "2 cups espresso", "Ladyfingers", "Cocoa powder", "Kahlua"]),
+      instructions: JSON.stringify(["Whisk egg yolks with sugar", "Mix in mascarpone", "Whip egg whites and fold in", "Dip ladyfingers in coffee", "Layer with cream", "Dust with cocoa", "Chill overnight"]),
+      category: "dessert",
+      prep_time_minutes: 45,
+      cook_time_minutes: 0,
+      servings: 8,
+      image_url: ""
+    }
+  ]
+
+  async function seedRecipes() {
+    if (!confirm("This will add 20 sample recipes. Continue?")) return
+    
+    setLoading(true)
+    const { error } = await supabase.from("recipes").insert(sampleRecipes)
+    
+    if (error) {
+      alert("Error seeding recipes: " + error.message)
+    } else {
+      alert("Successfully seeded 20 recipes!")
+      loadRecipes()
+    }
+    setLoading(false)
+  }
+
   async function handleDeleteRecipe(id: string) {
     if (!confirm("Are you sure you want to delete this recipe?")) return
     
@@ -139,9 +378,12 @@ export default function AdminPage() {
             <h1 className="text-2xl font-bold gradient-text">MealMash Admin</h1>
             <Badge variant="destructive">Admin Only</Badge>
           </div>
-          <nav className="flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-6">
             <a href="/dashboard" className="text-sm hover:text-primary transition-colors">Dashboard</a>
             <a href="/recipes" className="text-sm hover:text-primary transition-colors">Recipes</a>
+            <a href="/pantry" className="text-sm hover:text-primary transition-colors">Pantry</a>
+            <a href="/shopping-list" className="text-sm hover:text-primary transition-colors">Shopping List</a>
+            <a href="/admin" className="text-sm text-primary font-medium">Admin</a>
           </nav>
         </div>
       </header>
@@ -152,9 +394,14 @@ export default function AdminPage() {
             <h2 className="text-3xl font-bold">Recipe Management</h2>
             <p className="text-muted-foreground">Add, edit, or remove recipes from the database</p>
           </div>
-          <Button onClick={() => setShowAddForm(!showAddForm)}>
-            {showAddForm ? "Cancel" : "➕ Add Recipe"}
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={seedRecipes}>
+              🌱 Seed 20 Recipes
+            </Button>
+            <Button onClick={() => setShowAddForm(!showAddForm)}>
+              {showAddForm ? "Cancel" : "➕ Add Recipe"}
+            </Button>
+          </div>
         </div>
 
         {/* Add Recipe Form */}

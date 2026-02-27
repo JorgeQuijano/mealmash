@@ -52,7 +52,10 @@ export default function DashboardPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold gradient-text">MealMash</h1>
           <nav className="hidden md:flex items-center gap-6">
+            <a href="/dashboard" className="text-sm text-primary font-medium">Dashboard</a>
             <a href="/recipes" className="text-sm hover:text-primary transition-colors">Recipes</a>
+            <a href="/pantry" className="text-sm hover:text-primary transition-colors">Pantry</a>
+            <a href="/shopping-list" className="text-sm hover:text-primary transition-colors">Shopping List</a>
             {profile?.is_admin && (
               <a href="/admin" className="text-sm hover:text-primary transition-colors">Admin</a>
             )}
@@ -107,16 +110,30 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => router.push("/pantry")}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                📋 My Shopping List
+                🥕 My Pantry
               </CardTitle>
-              <CardDescription>Auto-generated from meal plans</CardDescription>
+              <CardDescription>What do you have on hand?</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Your shopping list is empty. Plan some meals to get started!
+                Track your ingredients and always know what&apos;s available.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => router.push("/shopping-list")}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                📋 Shopping List
+              </CardTitle>
+              <CardDescription>What you need to buy</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Keep track of what to pick up at the store.
               </p>
             </CardContent>
           </Card>

@@ -91,6 +91,9 @@ export default function RecipesPage() {
           <h1 className="text-2xl font-bold gradient-text">MealMash</h1>
           <nav className="hidden md:flex items-center gap-6">
             <a href="/dashboard" className="text-sm hover:text-primary transition-colors">Dashboard</a>
+            <a href="/recipes" className="text-sm text-primary font-medium">Recipes</a>
+            <a href="/pantry" className="text-sm hover:text-primary transition-colors">Pantry</a>
+            <a href="/shopping-list" className="text-sm hover:text-primary transition-colors">Shopping List</a>
             <a href="/admin" className="text-sm hover:text-primary transition-colors">Admin</a>
           </nav>
         </div>
