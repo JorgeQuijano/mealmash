@@ -67,9 +67,11 @@ function Header() {
                 {link.label}
               </Link>
             ))}
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6">
-              {siteConfig.nav.cta.label}
-            </Button>
+            <Link href="/login">
+              <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6">
+                {siteConfig.nav.cta.label}
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -99,9 +101,11 @@ function Header() {
                   {link.label}
                 </Link>
               ))}
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full">
-                {siteConfig.nav.cta.label}
-              </Button>
+              <Link href="/login">
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full">
+                  {siteConfig.nav.cta.label}
+                </Button>
+              </Link>
             </div>
           </motion.div>
         )}
@@ -140,13 +144,17 @@ function Hero() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-8 py-6 text-lg animate-pulse-glow">
-                {siteConfig.hero.cta.text}
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <Button size="lg" variant="outline" className="border-orange-300 text-stone-700 hover:bg-orange-50 rounded-full px-8 py-6 text-lg">
-                {siteConfig.hero.secondaryCta.text}
-              </Button>
+              <Link href="/login">
+                <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-8 py-6 text-lg animate-pulse-glow">
+                  {siteConfig.hero.cta.text}
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+              <Link href="/login">
+                <Button size="lg" variant="outline" className="border-orange-300 text-stone-700 hover:bg-orange-50 rounded-full px-8 py-6 text-lg">
+                  {siteConfig.hero.secondaryCta.text}
+                </Button>
+              </Link>
             </div>
 
             {/* Trust badges */}
