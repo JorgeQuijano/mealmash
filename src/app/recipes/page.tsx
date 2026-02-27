@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -23,6 +24,7 @@ type Recipe = {
 const categories = ["all", "breakfast", "lunch", "dinner", "snack", "dessert"]
 
 export default function RecipesPage() {
+  const router = useRouter()
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState("all")
@@ -110,13 +112,22 @@ export default function RecipesPage() {
 
         {/* Search & Filters */}
         <div className="mb-8 space-y-4">
-          <Input
-            type="search"
-            placeholder="Search recipes..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="max-w-md mx-auto"
-          />
+          <div className="flex gap-2 max-w-md mx-auto">
+            <Input
+              type="search"
+              placeholder="Search recipes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1"
+            />
+            <Button 
+              variant="outline" 
+              onClick={() => router.push("/random")}
+              className="shrink-0"
+            >
+              🎲 Random
+            </Button>
+          </div>
           
           <div className="flex flex-wrap justify-center gap-2">
             {categories.map((cat) => (

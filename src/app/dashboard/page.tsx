@@ -53,6 +53,7 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold gradient-text">MealMash</h1>
           <nav className="hidden md:flex items-center gap-6">
             <a href="/dashboard" className="text-sm text-primary font-medium">Dashboard</a>
+            <a href="/random" className="text-sm hover:text-primary transition-colors">🎲 Random Pick</a>
             <a href="/recipes" className="text-sm hover:text-primary transition-colors">Recipes</a>
             <a href="/pantry" className="text-sm hover:text-primary transition-colors">Pantry</a>
             <a href="/shopping-list" className="text-sm hover:text-primary transition-colors">Shopping List</a>
@@ -82,7 +83,7 @@ export default function DashboardPage() {
 
         {/* Quick Actions */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => router.push("/recipes")}>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => router.push("/random")}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 🎲 Spin the Wheel
