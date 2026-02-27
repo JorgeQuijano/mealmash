@@ -53,6 +53,7 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold gradient-text">MealMash</h1>
           <nav className="hidden md:flex items-center gap-6">
             <a href="/dashboard" className="text-sm text-primary font-medium">Dashboard</a>
+            <a href="/suggestions" className="text-sm hover:text-primary transition-colors">🍳 What Can I Make?</a>
             <a href="/random" className="text-sm hover:text-primary transition-colors">🎲 Random Pick</a>
             <a href="/recipes" className="text-sm hover:text-primary transition-colors">Recipes</a>
             <a href="/pantry" className="text-sm hover:text-primary transition-colors">Pantry</a>
@@ -107,6 +108,20 @@ export default function DashboardPage() {
             <CardContent>
               <p className="text-sm text-muted-foreground">
                 Enter what you have and we&apos;ll find delicious recipes.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => router.push("/suggestions")}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                🍳 What Can I Make?
+              </CardTitle>
+              <CardDescription>See what you can cook now</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Based on your pantry items, see matching recipes you can make right now!
               </p>
             </CardContent>
           </Card>
