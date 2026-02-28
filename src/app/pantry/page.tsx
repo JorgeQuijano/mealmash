@@ -207,9 +207,14 @@ export default function PantryPage() {
             : item
         ))
         setEditingItem(null)
+      } else {
+        const data = await response.json()
+        alert(data.error || 'Failed to update quantity')
+        setEditingItem(null)
       }
     } catch (err) {
       console.error('Error saving quantity:', err)
+      setEditingItem(null)
     }
     setSaving(false)
   }

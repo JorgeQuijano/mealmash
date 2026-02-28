@@ -18,18 +18,30 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const { data, error } = await supabase
-      .from('pantry_items')
-      .update({ quantity })
-      .eq('id', id)
-      .select()
-      .single()
-
-    if (error) {
-      throw error
+    // Get the current user
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    return NextResponse.json(data)
+    // Verify ownership and update
+    const { data, error } = await supabase
+      .from('pantry_items')
+      .update({ quantity: String(quantity) }) // Store as string
+      .eq('id', id)
+      .eq('user_id', user.id) // Only update if user owns it
+      .select()
+
+    if (error) {
+      console.error('Supabase error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    if (!data || data.length === 0) {
+      return NextResponse.json({ error: 'Item not found' }, { status: 404 })
+    }
+
+    return NextResponse.json(data[0])
   } catch (error) {
     console.error('Error updating pantry item:', error)
     return NextResponse.json(
