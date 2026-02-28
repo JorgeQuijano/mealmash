@@ -9,21 +9,16 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, quantity, user_id } = body
+    const { id, quantity } = body
 
-    if (!id || quantity === undefined || !user_id) {
-      return NextResponse.json(
-        { error: 'ID, quantity, and user_id required' },
-        { status: 400 }
-      )
+    if (!id || quantity === undefined) {
+      return NextResponse.json({ error: 'ID and quantity required' }, { status: 400 })
     }
 
-    // Use user_id from body instead of server-side auth
     const { data, error } = await supabase
       .from('pantry_items')
       .update({ quantity: String(quantity) })
       .eq('id', id)
-      .eq('user_id', user_id)
       .select()
 
     if (error) {
@@ -38,14 +33,6 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(data[0])
   } catch (error) {
     console.error('Error updating pantry item:', error)
-    return NextResponse.json(
-      { error: 'Failed to update pantry item' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to update pantry item' }, { status: 500 })
   }
-}
-
-// PATCH /api/pantry - Update pantry item (alternative method)
-export async function PATCH(request: NextRequest) {
-  return PUT(request)
 }
