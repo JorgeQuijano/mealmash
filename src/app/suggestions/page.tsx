@@ -23,78 +23,37 @@ type Recipe = {
   image_url: string
 }
 
+type Ingredient = {
+  id: string
+  name: string
+  category: string
+}
+
 type PantryItem = {
   id: string
   name: string
   category: string
   quantity: string
+  ingredient_id: string | null
+}
+
+type RecipeIngredient = {
+  id: string
+  recipe_id: string
+  ingredient_id: string
+  quantity: string | null
+  ingredient?: Ingredient
 }
 
 type SuggestedRecipe = {
   recipe: Recipe
-  matchedIngredients: string[]
-  missingIngredients: string[]
-  matchPercentage: number
-  totalIngredients: number
+  matchedIngredients: Ingredient[]
+  missingIngredients: Ingredient[]
+  matchedCount: number
+  totalCount: number
 }
 
 const categories = ["all", "breakfast", "lunch", "dinner", "snack", "dessert"]
-
-// Normalize ingredient for matching
-function normalizeIngredient(ingredient: string): string {
-  return ingredient
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, "")
-    .trim()
-}
-
-// Check if pantry item matches recipe ingredient
-function isMatch(pantryItem: string, recipeIngredient: string): boolean {
-  const normalizedPantry = normalizeIngredient(pantryItem)
-  const normalizedRecipe = normalizeIngredient(recipeIngredient)
-  
-  // Exact match
-  if (normalizedPantry === normalizedRecipe) return true
-  
-  // Partial match - pantry item is contained in recipe ingredient or vice versa
-  if (normalizedPantry.includes(normalizedRecipe) || normalizedRecipe.includes(normalizedPantry)) {
-    return true
-  }
-  
-  // Check individual words
-  const pantryWords = normalizedPantry.split(/\s+/)
-  const recipeWords = normalizedRecipe.split(/\s+/)
-  
-  // If any word from pantry matches any word from recipe (length > 2 to avoid matches like "a", "in")
-  const meaningfulPantryWords = pantryWords.filter(w => w.length > 2)
-  const meaningfulRecipeWords = recipeWords.filter(w => w.length > 2)
-  
-  for (const pw of meaningfulPantryWords) {
-    for (const rw of meaningfulRecipeWords) {
-      if (pw === rw || pw.includes(rw) || rw.includes(pw)) {
-        return true
-      }
-    }
-  }
-  
-  return false
-}
-
-// Extract ingredient names from recipe (handles both string and object formats)
-function getRecipeIngredientNames(ingredients: any): string[] {
-  if (!ingredients) return []
-  if (typeof ingredients === "string") {
-    return ingredients.split(",").map((i: string) => i.trim())
-  }
-  if (Array.isArray(ingredients)) {
-    return ingredients.map((ing: any) => {
-      if (typeof ing === "string") return ing
-      if (typeof ing === "object" && ing?.item) return ing.item
-      return ""
-    }).filter(Boolean)
-  }
-  return []
-}
 
 export default function SuggestionsPage() {
   const router = useRouter()
@@ -102,9 +61,13 @@ export default function SuggestionsPage() {
   const [profile, setProfile] = useState<any>(null)
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([])
   const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [recipeIngredients, setRecipeIngredients] = useState<RecipeIngredient[]>([])
+  const [allIngredients, setAllIngredients] = useState<Ingredient[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedRecipe, setSelectedRecipe] = useState<SuggestedRecipe | null>(null)
+  const [addingToList, setAddingToList] = useState(false)
+  const [addedToList, setAddedToList] = useState(false)
 
   useEffect(() => {
     async function loadData() {
@@ -122,7 +85,9 @@ export default function SuggestionsPage() {
       
       await Promise.all([
         loadPantryItems(currentUser.id),
-        loadRecipes()
+        loadRecipes(),
+        loadRecipeIngredients(),
+        loadIngredients()
       ])
       
       setLoading(false)
@@ -152,51 +117,96 @@ export default function SuggestionsPage() {
     }
   }
 
+  async function loadRecipeIngredients() {
+    const { data, error } = await supabase
+      .from("recipe_ingredients")
+      .select("id, recipe_id, ingredient_id, quantity")
+    
+    if (data) {
+      setRecipeIngredients(data)
+    }
+  }
+
+  async function loadIngredients() {
+    const { data, error } = await supabase
+      .from("ingredients")
+      .select("id, name, category")
+      .eq("is_enabled", true)
+    
+    if (data) {
+      setAllIngredients(data)
+    }
+  }
+
+  // Build ingredient lookup map
+  const ingredientMap = useMemo(() => {
+    const map = new Map<string, Ingredient>()
+    for (const ing of allIngredients) {
+      map.set(ing.id, ing)
+    }
+    return map
+  }, [allIngredients])
+
+  // Build pantry ingredient IDs set
+  const pantryIngredientIds = useMemo(() => {
+    const set = new Set<string>()
+    for (const item of pantryItems) {
+      if (item.ingredient_id) {
+        set.add(item.ingredient_id)
+      }
+    }
+    return set
+  }, [pantryItems])
+
   // Calculate suggested recipes based on pantry items
   const suggestedRecipes = useMemo((): SuggestedRecipe[] => {
-    if (pantryItems.length === 0 || recipes.length === 0) return []
+    if (pantryItems.length === 0 || recipes.length === 0 || recipeIngredients.length === 0) return []
     
-    const pantryNames = pantryItems.map(p => p.name)
+    // Group recipe ingredients by recipe_id
+    const recipeIngMap = new Map<string, RecipeIngredient[]>()
+    for (const ri of recipeIngredients) {
+      if (!recipeIngMap.has(ri.recipe_id)) {
+        recipeIngMap.set(ri.recipe_id, [])
+      }
+      recipeIngMap.get(ri.recipe_id)!.push(ri)
+    }
     
     const suggestions: SuggestedRecipe[] = []
     
     for (const recipe of recipes) {
-      const recipeIngredients = getRecipeIngredientNames(recipe.ingredients)
+      const rIngList = recipeIngMap.get(recipe.id) || []
       
-      if (recipeIngredients.length === 0) continue
+      if (rIngList.length === 0) continue
       
-      const matched: string[] = []
-      const missing: string[] = []
+      const matched: Ingredient[] = []
+      const missing: Ingredient[] = []
       
-      for (const recipeIng of recipeIngredients) {
-        const found = pantryNames.some(pantryItem => 
-          isMatch(pantryItem, recipeIng)
-        )
+      for (const ri of rIngList) {
+        const ingredient = ingredientMap.get(ri.ingredient_id)
+        if (!ingredient) continue
         
-        if (found) {
-          matched.push(recipeIng)
+        if (pantryIngredientIds.has(ri.ingredient_id)) {
+          matched.push(ingredient)
         } else {
-          missing.push(recipeIng)
+          missing.push(ingredient)
         }
       }
       
-      const matchPercentage = Math.round((matched.length / recipeIngredients.length) * 100)
-      
-      // Only include recipes with 50%+ match
-      if (matchPercentage >= 50) {
+      // Only include recipes with 3+ matched ingredients
+      if (matched.length >= 3) {
         suggestions.push({
           recipe,
           matchedIngredients: matched,
           missingIngredients: missing,
-          matchPercentage,
-          totalIngredients: recipeIngredients.length
+          matchedCount: matched.length,
+          totalCount: rIngList.length
         })
       }
     }
     
-    // Sort by match percentage (highest first)
-    return suggestions.sort((a, b) => b.matchPercentage - a.matchPercentage)
-  }, [pantryItems, recipes])
+    // Sort by matched count (highest first)
+    return suggestions.sort((a, b) => b.matchedCount - a.matchedCount)
+  }, [pantryItems, recipes, recipeIngredients, ingredientMap, pantryIngredientIds])
 
   // Filter by category
   const filteredSuggestions = selectedCategory === "all" 
@@ -214,10 +224,36 @@ export default function SuggestionsPage() {
     return colors[category] || "bg-gray-100 text-gray-800"
   }
 
-  const getMatchColor = (percentage: number) => {
+  const getMatchColor = (matched: number, total: number) => {
+    const percentage = total > 0 ? (matched / total) * 100 : 0
     if (percentage >= 80) return "bg-green-500"
     if (percentage >= 60) return "bg-yellow-500"
     return "bg-orange-500"
+  }
+
+  async function addMissingToShoppingList(missingIngredients: Ingredient[]) {
+    if (!user || addingToList) return
+    
+    setAddingToList(true)
+    
+    try {
+      for (const ing of missingIngredients) {
+        await supabase.from("shopping_list").insert({
+          user_id: user.id,
+          item_name: ing.name,
+          quantity: "1",
+          is_checked: false,
+          ingredient_id: ing.id
+        })
+      }
+      
+      setAddedToList(true)
+      setTimeout(() => setAddedToList(false), 2000)
+    } catch (err) {
+      console.error("Error adding to shopping list:", err)
+    } finally {
+      setAddingToList(false)
+    }
   }
 
   if (loading) {
@@ -283,7 +319,7 @@ export default function SuggestionsPage() {
             <CardHeader>
               <CardTitle className="text-center">No matches yet 😔</CardTitle>
               <CardDescription className="text-center">
-                Try adding more items to your pantry or browse all recipes.
+                Add at least 3 matching ingredients to your pantry to see suggestions.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center gap-4">
@@ -318,18 +354,18 @@ export default function SuggestionsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Match Percentage */}
+                  {/* Match Count */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Ingredients Match</span>
                       <span className="font-semibold">
-                        {suggestion.matchedIngredients.length}/{suggestion.totalIngredients} ({suggestion.matchPercentage}%)
+                        {suggestion.matchedCount}/{suggestion.totalCount}
                       </span>
                     </div>
                     <Progress 
-                      value={suggestion.matchPercentage} 
+                      value={(suggestion.matchedCount / suggestion.totalCount) * 100} 
                       className="h-2"
-                      indicatorClassName={getMatchColor(suggestion.matchPercentage)}
+                      indicatorClassName={getMatchColor(suggestion.matchedCount, suggestion.totalCount)}
                     />
                   </div>
 
@@ -338,7 +374,7 @@ export default function SuggestionsPage() {
                     <div className="text-sm">
                       <span className="text-muted-foreground">Missing: </span>
                       <span className="text-orange-600">
-                        {suggestion.missingIngredients.slice(0, 3).join(", ")}
+                        {suggestion.missingIngredients.slice(0, 3).map(i => i.name).join(", ")}
                         {suggestion.missingIngredients.length > 3 && ` +${suggestion.missingIngredients.length - 3} more`}
                       </span>
                     </div>
@@ -381,13 +417,13 @@ export default function SuggestionsPage() {
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-semibold">Ingredient Match</span>
                     <span className="text-lg font-bold">
-                      {selectedRecipe.matchedIngredients.length}/{selectedRecipe.totalIngredients} ({selectedRecipe.matchPercentage}%)
+                      {selectedRecipe.matchedCount}/{selectedRecipe.totalCount}
                     </span>
                   </div>
                   <Progress 
-                    value={selectedRecipe.matchPercentage} 
+                    value={(selectedRecipe.matchedCount / selectedRecipe.totalCount) * 100} 
                     className="h-3"
-                    indicatorClassName={getMatchColor(selectedRecipe.matchPercentage)}
+                    indicatorClassName={getMatchColor(selectedRecipe.matchedCount, selectedRecipe.totalCount)}
                   />
                 </div>
 
@@ -404,26 +440,24 @@ export default function SuggestionsPage() {
                 <div>
                   <h3 className="font-semibold mb-3">Ingredients</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {selectedRecipe.recipe.ingredients && Array.isArray(selectedRecipe.recipe.ingredients) 
-                      ? selectedRecipe.recipe.ingredients.map((ing: any, i: number) => {
-                          const ingName = typeof ing === 'string' ? ing : `${ing.amount} ${ing.item}`
-                          const isMatched = selectedRecipe.matchedIngredients.some(m => 
-                            normalizeIngredient(m).includes(normalizeIngredient(ingName))
-                          )
-                          return (
-                            <div 
-                              key={i} 
-                              className={`flex items-center gap-2 p-2 rounded ${
-                                isMatched ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
-                              }`}
-                            >
-                              <span>{isMatched ? '✅' : '❌'}</span>
-                              <span className="text-sm">{ingName}</span>
-                            </div>
-                          )
-                        })
-                      : <p className="text-muted-foreground">{selectedRecipe.recipe.ingredients}</p>
-                    }
+                    {selectedRecipe.matchedIngredients.map((ing, i) => (
+                      <div 
+                        key={`matched-${i}`}
+                        className="flex items-center gap-2 p-2 rounded bg-green-50 text-green-700"
+                      >
+                        <span>✅</span>
+                        <span className="text-sm">{ing.name}</span>
+                      </div>
+                    ))}
+                    {selectedRecipe.missingIngredients.map((ing, i) => (
+                      <div 
+                        key={`missing-${i}`}
+                        className="flex items-center gap-2 p-2 rounded bg-orange-50 text-orange-700"
+                      >
+                        <span>❌</span>
+                        <span className="text-sm">{ing.name}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -437,7 +471,7 @@ export default function SuggestionsPage() {
                     <div className="flex flex-wrap gap-2">
                       {selectedRecipe.missingIngredients.map((ing, i) => (
                         <Badge key={i} variant="outline" className="bg-white">
-                          {ing}
+                          {ing.name}
                         </Badge>
                       ))}
                     </div>
@@ -454,14 +488,29 @@ export default function SuggestionsPage() {
                   </ol>
                 </div>
 
-                <div className="flex gap-4">
-                  <Button className="flex-1">❤️ Add to Favorites</Button>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button 
+                    className="flex-1"
+                    onClick={() => {
+                      if (selectedRecipe.missingIngredients.length > 0) {
+                        addMissingToShoppingList(selectedRecipe.missingIngredients)
+                      }
+                    }}
+                    disabled={addingToList || selectedRecipe.missingIngredients.length === 0}
+                  >
+                    {addingToList 
+                      ? "Adding..." 
+                      : addedToList 
+                        ? "✓ Added to Shopping List!" 
+                        : `🛒 Add Missing (${selectedRecipe.missingIngredients.length}) to List`
+                    }
+                  </Button>
                   <Button 
                     variant="outline" 
                     className="flex-1"
                     onClick={() => router.push("/shopping-list")}
                   >
-                    🛒 Add Missing to List
+                    View Shopping List
                   </Button>
                 </div>
               </CardContent>
