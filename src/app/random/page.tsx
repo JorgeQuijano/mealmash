@@ -44,6 +44,8 @@ const wheelColors = [
   "#fbbf24", // yellow
 ]
 
+const categories = ["all", "breakfast", "lunch", "dinner", "snack", "dessert"]
+
 export default function RandomPage() {
   const router = useRouter()
   const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -51,22 +53,31 @@ export default function RandomPage() {
   const [isSpinning, setIsSpinning] = useState(false)
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [rotation, setRotation] = useState(0)
+  const [selectedCategory, setSelectedCategory] = useState("all")
   const wheelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     loadRecipes()
-  }, [])
+  }, [selectedCategory])
 
   async function loadRecipes() {
     setLoading(true)
     
-    const { data, error } = await supabase.from("recipes").select("*")
+    let query = supabase.from("recipes").select("*")
+    if (selectedCategory !== "all") {
+      query = query.eq("category", selectedCategory)
+    }
+    
+    const { data, error } = await query
     
     if (data && data.length > 0) {
       setRecipes(data)
     } else {
       // Use sample recipes if database is empty
-      setRecipes(sampleRecipes)
+      const filtered = selectedCategory === "all" 
+        ? sampleRecipes 
+        : sampleRecipes.filter(r => r.category === selectedCategory)
+      setRecipes(filtered)
     }
     setLoading(false)
   }
@@ -143,6 +154,23 @@ export default function RandomPage() {
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Spin the wheel and let the universe pick your next meal. Adventure awaits!
           </p>
+        </div>
+
+        {/* Category Filters */}
+        <div className="mb-6">
+          <div className="flex flex-wrap justify-center gap-2">
+            {categories.map((cat) => (
+              <Button
+                key={cat}
+                variant={selectedCategory === cat ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory(cat)}
+                className="capitalize"
+              >
+                {cat}
+              </Button>
+            ))}
+          </div>
         </div>
 
         <div className="flex flex-col lg:flex-row items-center justify-center gap-12">
