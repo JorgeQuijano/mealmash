@@ -34,6 +34,18 @@ export async function GET(request: NextRequest) {
 // PUT /api/pantry - Update pantry item quantity
 export async function PUT(request: NextRequest) {
   try {
+    const authHeader = request.headers.get('Authorization')
+    const token = authHeader?.replace('Bearer ', '')
+
+    if (!token) {
+      return NextResponse.json({ error: 'No token provided' }, { status: 401 })
+    }
+
+    const supabaseWithAuth = createClient(supabaseUrl, supabaseKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    })
+
     const body = await request.json()
     const { id, quantity } = body
 
@@ -41,23 +53,20 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'ID and quantity required' }, { status: 400 })
     }
 
-    // Use select to get the updated row back and verify it worked
-    const { data, error } = await supabase
+    const { data, error } = await supabaseWithAuth
       .from('pantry_items')
       .update({ quantity: String(quantity) })
       .eq('id', id)
       .select()
 
     if (error) {
-      console.error('Supabase update error:', error)
-      return NextResponse.json({ error: error.message, details: error }, { status: 500 })
+      console.error('Supabase error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    console.log('Update result:', { id, quantity, data })
-    
     return NextResponse.json({ success: true, updated: data })
   } catch (error) {
     console.error('Error:', error)
-    return NextResponse.json({ error: 'Failed to update', details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to update' }, { status: 500 })
   }
 }

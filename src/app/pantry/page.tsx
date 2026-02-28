@@ -191,13 +191,17 @@ export default function PantryPage() {
 
     setSaving(true)
     try {
+      const { data: { session } } = await supabase.auth.getSession()
+      
       const response = await fetch('/api/pantry', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
         body: JSON.stringify({
           id: editingItem.id,
-          quantity: editQuantity,
-          user_id: user.id
+          quantity: editQuantity
         })
       })
 
