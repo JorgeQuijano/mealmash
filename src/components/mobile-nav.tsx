@@ -21,7 +21,7 @@ export default function MobileNav() {
 
   useEffect(() => {
     async function loadProfile() {
-      const { dataUser: { user } } = await import("@/lib/supabase").then(m => m.supabase.auth.getUser())
+      const { data: { user } } = await import("@/lib/supabase").then(m => m.supabase.auth.getUser())
       if (user) {
         const { data } = await getUserProfile(user.id)
         setProfile(data)
