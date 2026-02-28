@@ -5,7 +5,33 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-// PUT /api/pantry - Update pantry item
+// GET /api/pantry - Get user's pantry items
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('user_id')
+
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID required' }, { status: 400 })
+    }
+
+    const { data, error } = await supabase
+      .from('pantry_items')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json(data || [])
+  } catch (error) {
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+  }
+}
+
+// PUT /api/pantry - Update pantry item quantity
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
@@ -15,6 +41,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'ID and quantity required' }, { status: 400 })
     }
 
+    // Just update without checking ownership for now
     const { data, error } = await supabase
       .from('pantry_items')
       .update({ quantity: String(quantity) })
@@ -22,17 +49,18 @@ export async function PUT(request: NextRequest) {
       .select()
 
     if (error) {
-      console.error('Supabase error:', error)
+      console.error('Supabase update error:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    // If no rows returned, item doesn't exist
     if (!data || data.length === 0) {
       return NextResponse.json({ error: 'Item not found' }, { status: 404 })
     }
 
     return NextResponse.json(data[0])
   } catch (error) {
-    console.error('Error updating pantry item:', error)
-    return NextResponse.json({ error: 'Failed to update pantry item' }, { status: 500 })
+    console.error('Error:', error)
+    return NextResponse.json({ error: 'Failed to update' }, { status: 500 })
   }
 }
