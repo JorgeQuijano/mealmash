@@ -115,6 +115,7 @@ export default function PantryPage() {
         const { data, error } = await supabase
           .from("ingredients")
           .select("id, name, category, aliases")
+          .eq("is_enabled", true)
           .or(`name.ilike.%${ingredientQuery}%,aliases.cs.{${ingredientQuery}}`)
           .order("name")
           .limit(10)
