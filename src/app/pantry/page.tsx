@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { getUser, getUserProfile, supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
@@ -10,12 +10,20 @@ import { Badge } from "@/components/ui/badge"
 import DesktopNav from "@/components/desktop-nav"
 import MobileNav from "@/components/mobile-nav"
 
+interface Ingredient {
+  id: string
+  name: string
+  category: string
+  aliases?: string[]
+}
+
 interface PantryItem {
   id: string
   name: string
   category: string
   quantity: string
   created_at: string
+  ingredient_id?: string
 }
 
 const CATEGORIES = [
@@ -37,8 +45,21 @@ export default function PantryPage() {
   const [profile, setProfile] = useState<any>(null)
   const [items, setItems] = useState<PantryItem[]>([])
   const [loading, setLoading] = useState(true)
-  const [newItem, setNewItem] = useState({ name: "", category: "Other", quantity: "" })
+  const [newItem, setNewItem] = useState({ 
+    name: "", 
+    category: "Other", 
+    quantity: "",
+    ingredientId: "" as string | undefined
+  })
   const [adding, setAdding] = useState(false)
+  
+  // Autocomplete state
+  const [ingredientQuery, setIngredientQuery] = useState("")
+  const [ingredientSuggestions, setIngredientSuggestions] = useState<Ingredient[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const suggestionsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     async function loadUser() {
@@ -59,6 +80,54 @@ export default function PantryPage() {
     
     loadUser()
   }, [router])
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        inputRef.current && 
+        !inputRef.current.contains(event.target as Node) &&
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false)
+      }
+    }
+    
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  // Search ingredients when query changes
+  useEffect(() => {
+    async function searchIngredients() {
+      if (ingredientQuery.length < 2) {
+        setIngredientSuggestions([])
+        return
+      }
+
+      setLoadingSuggestions(true)
+      try {
+        const { data, error } = await supabase
+          .from("ingredients")
+          .select("id, name, category, aliases")
+          .or(`name.ilike.%${ingredientQuery}%,aliases.cs.{${ingredientQuery}}`)
+          .order("name")
+          .limit(10)
+
+        if (!error && data) {
+          setIngredientSuggestions(data)
+        }
+      } catch (err) {
+        console.error("Error searching ingredients:", err)
+      } finally {
+        setLoadingSuggestions(false)
+      }
+    }
+
+    const debounce = setTimeout(searchIngredients, 200)
+    return () => clearTimeout(debounce)
+  }, [ingredientQuery])
 
   async function loadPantryItems(userId: string) {
     const { data, error } = await supabase
@@ -82,13 +151,17 @@ export default function PantryPage() {
         user_id: user.id,
         name: newItem.name.trim(),
         category: newItem.category,
-        quantity: newItem.quantity.trim() || "1"
+        quantity: newItem.quantity.trim() || "1",
+        ingredient_id: newItem.ingredientId || null
       })
       .select()
 
     if (!error && data) {
       setItems([...data, ...items])
-      setNewItem({ name: "", category: "Other", quantity: "" })
+      setNewItem({ name: "", category: "Other", quantity: "", ingredientId: undefined })
+      setIngredientQuery("")
+      setIngredientSuggestions([])
+      setShowSuggestions(false)
     }
     setAdding(false)
   }
@@ -101,6 +174,31 @@ export default function PantryPage() {
 
     if (!error) {
       setItems(items.filter(item => item.id !== id))
+    }
+  }
+
+  const selectSuggestion = (ingredient: Ingredient) => {
+    setNewItem({
+      ...newItem,
+      name: ingredient.name,
+      category: ingredient.category,
+      ingredientId: ingredient.id
+    })
+    setIngredientQuery(ingredient.name)
+    setShowSuggestions(false)
+    setIngredientSuggestions([])
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setNewItem({ ...newItem, name: value, ingredientId: undefined })
+    setIngredientQuery(value)
+    setShowSuggestions(true)
+  }
+
+  const handleInputFocus = () => {
+    if (ingredientQuery.length >= 2) {
+      setShowSuggestions(true)
     }
   }
 
@@ -143,34 +241,81 @@ export default function PantryPage() {
             <CardTitle>Add Item</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Input
-                placeholder="Item name (e.g., Tomatoes)"
-                value={newItem.name}
-                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-                className="flex-1"
-                onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
-              />
-              <select
-                value={newItem.category}
-                onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
-                className="px-3 py-2 rounded-md border bg-background text-sm"
-              >
-                {CATEGORIES.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-              <Input
-                placeholder="Qty"
-                value={newItem.quantity}
-                onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
-                className="w-24"
-                onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
-              />
-              <Button onClick={handleAddItem} disabled={adding || !newItem.name.trim()}>
-                {adding ? "Adding..." : "Add"}
-              </Button>
+            <div className="relative">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1 relative">
+                  <Input
+                    ref={inputRef}
+                    placeholder="Search ingredient (e.g., Tomatoes)"
+                    value={ingredientQuery}
+                    onChange={handleInputChange}
+                    onFocus={handleInputFocus}
+                    className="flex-1"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault()
+                        if (ingredientSuggestions.length > 0) {
+                          selectSuggestion(ingredientSuggestions[0])
+                        } else {
+                          handleAddItem()
+                        }
+                      }
+                      if (e.key === "Escape") {
+                        setShowSuggestions(false)
+                      }
+                    }}
+                  />
+                  {/* Autocomplete suggestions */}
+                  {showSuggestions && (ingredientSuggestions.length > 0 || loadingSuggestions) && (
+                    <div 
+                      ref={suggestionsRef}
+                      className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg max-h-60 overflow-auto"
+                    >
+                      {loadingSuggestions ? (
+                        <div className="p-3 text-sm text-muted-foreground">Searching...</div>
+                      ) : (
+                        ingredientSuggestions.map((ingredient) => (
+                          <button
+                            key={ingredient.id}
+                            className="w-full text-left px-3 py-2 hover:bg-accent flex items-center justify-between"
+                            onClick={() => selectSuggestion(ingredient)}
+                          >
+                            <span>{ingredient.name}</span>
+                            <Badge variant="secondary" className="text-xs">
+                              {ingredient.category}
+                            </Badge>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+                <select
+                  value={newItem.category}
+                  onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
+                  className="px-3 py-2 rounded-md border bg-background text-sm"
+                >
+                  {CATEGORIES.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+                <Input
+                  placeholder="Qty"
+                  value={newItem.quantity}
+                  onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+                  className="w-24"
+                  onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
+                />
+                <Button onClick={handleAddItem} disabled={adding || !newItem.name.trim()}>
+                  {adding ? "Adding..." : "Add"}
+                </Button>
+              </div>
             </div>
+            {newItem.ingredientId && (
+              <p className="text-xs text-muted-foreground mt-2">
+                ✓ Linked to ingredient database
+              </p>
+            )}
           </CardContent>
         </Card>
 

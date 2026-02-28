@@ -111,3 +111,33 @@ INSERT INTO recipes (name, description, ingredients, instructions, category, pre
   11,
   24
 );
+
+-- Ingredients library (global, standardized)
+CREATE TABLE IF NOT EXISTS ingredients (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT UNIQUE NOT NULL,
+  category TEXT NOT NULL,
+  aliases TEXT[],
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Update pantry_items to reference ingredient
+ALTER TABLE pantry_items ADD COLUMN IF NOT EXISTS ingredient_id UUID REFERENCES ingredients(id);
+
+-- Enable RLS for ingredients
+ALTER TABLE ingredients ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Ingredients are public read" ON ingredients FOR SELECT USING (true);
+
+-- Function to search ingredients
+CREATE OR REPLACE FUNCTION search_ingredients(query_text TEXT)
+RETURNS TABLE(id UUID, name TEXT, category TEXT) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT i.id, i.name, i.category
+  FROM ingredients i
+  WHERE i.name ILIKE '%' || query_text || '%'
+     OR EXISTS (SELECT 1 FROM unnest(i.aliases) a WHERE a ILIKE '%' || query_text || '%')
+  ORDER BY i.name
+  LIMIT 20;
+END;
+$$ LANGUAGE plpgsql;
