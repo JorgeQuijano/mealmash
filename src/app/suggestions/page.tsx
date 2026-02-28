@@ -245,6 +245,7 @@ export default function SuggestionsPage() {
               <a href="/pantry" className="text-sm hover:text-primary transition-colors">Pantry</a>
               <a href="/shopping-list" className="text-sm hover:text-primary transition-colors">Shopping List</a>
             <a href="/meal-plan" className="text-sm hover:text-primary transition-colors">📅 Meal Plan</a>
+            <a href="/settings" className="text-sm hover:text-primary transition-colors">⚙️ Settings</a>
               {profile?.is_admin && (
                 <a href="/admin" className="text-sm hover:text-primary transition-colors">Admin</a>
               )}

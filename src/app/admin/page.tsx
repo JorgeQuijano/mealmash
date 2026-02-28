@@ -385,6 +385,7 @@ export default function AdminPage() {
             <a href="/pantry" className="text-sm hover:text-primary transition-colors">Pantry</a>
             <a href="/shopping-list" className="text-sm hover:text-primary transition-colors">Shopping List</a>
             <a href="/meal-plan" className="text-sm hover:text-primary transition-colors">📅 Meal Plan</a>
+            <a href="/settings" className="text-sm hover:text-primary transition-colors">⚙️ Settings</a>
             <a href="/admin" className="text-sm text-primary font-medium">Admin</a>
           </nav>
         </div>
