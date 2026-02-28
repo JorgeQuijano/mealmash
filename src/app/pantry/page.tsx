@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import DesktopNav from "@/components/desktop-nav"
 import MobileNav from "@/components/mobile-nav"
 
@@ -52,6 +53,9 @@ export default function PantryPage() {
     ingredientId: "" as string | undefined
   })
   const [adding, setAdding] = useState(false)
+  const [editingItem, setEditingItem] = useState<PantryItem | null>(null)
+  const [editQuantity, setEditQuantity] = useState("")
+  const [saving, setSaving] = useState(false)
   
   // Autocomplete state
   const [ingredientQuery, setIngredientQuery] = useState("")
@@ -174,6 +178,51 @@ export default function PantryPage() {
 
     if (!error) {
       setItems(items.filter(item => item.id !== id))
+    }
+  }
+
+  const openEditModal = (item: PantryItem) => {
+    setEditingItem(item)
+    setEditQuantity(item.quantity)
+  }
+
+  const handleSaveQuantity = async () => {
+    if (!editingItem) return
+
+    setSaving(true)
+    try {
+      const response = await fetch('/api/pantry', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingItem.id,
+          quantity: editQuantity
+        })
+      })
+
+      if (response.ok) {
+        setItems(items.map(item => 
+          item.id === editingItem.id 
+            ? { ...item, quantity: editQuantity }
+            : item
+        ))
+        setEditingItem(null)
+      }
+    } catch (err) {
+      console.error('Error saving quantity:', err)
+    }
+    setSaving(false)
+  }
+
+  const incrementQuantity = () => {
+    const current = parseFloat(editQuantity) || 0
+    setEditQuantity(String(current + 1))
+  }
+
+  const decrementQuantity = () => {
+    const current = parseFloat(editQuantity) || 0
+    if (current > 0) {
+      setEditQuantity(String(current - 1))
     }
   }
 
@@ -319,6 +368,48 @@ export default function PantryPage() {
           </CardContent>
         </Card>
 
+        {/* Edit Item Modal */}
+        <Dialog open={!!editingItem} onOpenChange={() => setEditingItem(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit {editingItem?.name}</DialogTitle>
+            </DialogHeader>
+            <div className="flex items-center justify-center gap-4 py-4">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={decrementQuantity}
+                className="h-12 w-12 sm:h-11 sm:w-11 text-xl"
+              >
+                −
+              </Button>
+              <Input
+                value={editQuantity}
+                onChange={(e) => setEditQuantity(e.target.value)}
+                className="w-24 text-center text-2xl font-bold h-12"
+                type="number"
+                min="0"
+              />
+              <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={incrementQuantity}
+                className="h-12 w-12 sm:h-11 sm:w-11 text-xl"
+              >
+                +
+              </Button>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setEditingItem(null)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSaveQuantity} disabled={saving}>
+                {saving ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Pantry Items */}
         {items.length === 0 ? (
           <Card>
@@ -339,18 +430,29 @@ export default function PantryPage() {
                   {categoryItems.map((item) => (
                     <Card key={item.id} className="hover:shadow-md transition-shadow">
                       <CardContent className="p-4 flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">{item.name}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">{item.name}</p>
                           <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteItem(item.id)}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                        >
-                          ✕
-                        </Button>
+                        <div className="flex items-center gap-1 ml-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openEditModal(item)}
+                            className="h-9 w-9 sm:h-8 sm:w-8 text-amber-500 hover:text-amber-600 hover:bg-amber-50"
+                            title="Edit quantity"
+                          >
+                            ✏️
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteItem(item.id)}
+                            className="h-9 w-9 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                          >
+                            ✕
+                          </Button>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
