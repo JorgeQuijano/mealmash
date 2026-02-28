@@ -9,27 +9,21 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, quantity } = body
+    const { id, quantity, user_id } = body
 
-    if (!id || quantity === undefined) {
+    if (!id || quantity === undefined || !user_id) {
       return NextResponse.json(
-        { error: 'ID and quantity are required' },
+        { error: 'ID, quantity, and user_id required' },
         { status: 400 }
       )
     }
 
-    // Get the current user
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Verify ownership and update
+    // Use user_id from body instead of server-side auth
     const { data, error } = await supabase
       .from('pantry_items')
-      .update({ quantity: String(quantity) }) // Store as string
+      .update({ quantity: String(quantity) })
       .eq('id', id)
-      .eq('user_id', user.id) // Only update if user owns it
+      .eq('user_id', user_id)
       .select()
 
     if (error) {

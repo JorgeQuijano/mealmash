@@ -196,7 +196,8 @@ export default function PantryPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: editingItem.id,
-          quantity: editQuantity
+          quantity: editQuantity,
+          user_id: user.id
         })
       })
 
