@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(data || [])
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
@@ -41,28 +41,23 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'ID and quantity required' }, { status: 400 })
     }
 
-    // Just update without checking ownership for now
+    // Use select to get the updated row back and verify it worked
     const { data, error } = await supabase
       .from('pantry_items')
       .update({ quantity: String(quantity) })
       .eq('id', id)
       .select()
 
-    // Try update - don't check for returned rows
-    const { data, error } = await supabase
-      .from('pantry_items')
-      .update({ quantity: String(quantity) })
-      .eq('id', id)
-
     if (error) {
       console.error('Supabase update error:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json({ error: error.message, details: error }, { status: 500 })
     }
 
-    // Just return success - don't check if rows were affected
-    return NextResponse.json({ success: true, id, quantity: String(quantity) })
+    console.log('Update result:', { id, quantity, data })
+    
+    return NextResponse.json({ success: true, updated: data })
   } catch (error) {
     console.error('Error:', error)
-    return NextResponse.json({ error: 'Failed to update' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to update', details: String(error) }, { status: 500 })
   }
 }

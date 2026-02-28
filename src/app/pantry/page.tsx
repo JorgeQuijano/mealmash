@@ -210,7 +210,8 @@ export default function PantryPage() {
         setEditingItem(null)
       } else {
         const data = await response.json()
-        alert(data.error || 'Failed to update quantity')
+        alert('Error: ' + (data.error || 'Failed to update. Check console for details.'))
+        console.error('Update failed:', response.status, data)
         setEditingItem(null)
       }
     } catch (err) {

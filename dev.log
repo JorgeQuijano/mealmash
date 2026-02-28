@@ -1,0 +1,45 @@
+nohup: ignoring input
+
+> mealmash@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.0.0.28:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1106ms
+○ Compiling / ...
+ GET / 200 in 4.0s (compile: 3.7s, render: 300ms)
+⚠ Cross origin request detected from 100.127.45.81 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ GET /login 200 in 812ms (compile: 779ms, render: 33ms)
+ GET /dashboard 200 in 532ms (compile: 407ms, proxy.ts: 82ms, render: 43ms)
+ GET /pantry 200 in 614ms (compile: 590ms, render: 24ms)
+ PUT /api/pantry 200 in 838ms (compile: 532ms, render: 306ms)
+ GET /dashboard 200 in 32ms (compile: 4ms, proxy.ts: 7ms, render: 22ms)
+ GET /pantry 200 in 25ms (compile: 4ms, render: 21ms)
+ GET /pantry 200 in 319ms (compile: 100ms, render: 219ms)
+ PUT /api/pantry 200 in 288ms (compile: 4ms, render: 283ms)
+ GET /dashboard 200 in 38ms (compile: 4ms, proxy.ts: 14ms, render: 20ms)
+ GET /pantry 200 in 27ms (compile: 7ms, render: 20ms)
+ GET /settings 200 in 396ms (compile: 373ms, render: 23ms)
+ GET /pantry 200 in 21ms (compile: 3ms, render: 17ms)
+ GET /pantry 200 in 42ms (compile: 2ms, render: 40ms)
+Update result: { id: 'd64d1d4b-f96b-4382-8dd3-a826cee2b9a8', quantity: '9', data: [] }
+ PUT /api/pantry 200 in 311ms (compile: 99ms, render: 212ms)
+ GET /random 200 in 406ms (compile: 383ms, render: 23ms)
+ GET /pantry 200 in 26ms (compile: 7ms, render: 19ms)
+✓ Compiled in 212ms
+ GET /pantry 200 in 331ms (compile: 145ms, render: 186ms)
+Update result: { id: 'd64d1d4b-f96b-4382-8dd3-a826cee2b9a8', quantity: '9', data: [] }
+ PUT /api/pantry 200 in 227ms (compile: 4ms, render: 223ms)
+ GET /random 200 in 120ms (compile: 88ms, render: 32ms)
+ GET /pantry 200 in 21ms (compile: 4ms, render: 17ms)
+ GET /pantry 200 in 46ms (compile: 3ms, render: 43ms)
+Update result: { id: 'd64d1d4b-f96b-4382-8dd3-a826cee2b9a8', quantity: '9', data: [] }
+ PUT /api/pantry 200 in 271ms (compile: 3ms, render: 268ms)
+ GET /random 200 in 23ms (compile: 5ms, render: 18ms)
+ GET /pantry 200 in 20ms (compile: 3ms, render: 17ms)
