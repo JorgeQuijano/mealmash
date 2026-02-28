@@ -2,11 +2,13 @@
 
 import { useEffect, useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { getUser, getUserProfile, signOut, supabase } from "@/lib/supabase"
+import { getUser, getUserProfile, supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import DesktopNav from "@/components/desktop-nav"
+import MobileNav from "@/components/mobile-nav"
 
 type Recipe = {
   id: string
@@ -150,11 +152,6 @@ export default function SuggestionsPage() {
     }
   }
 
-  const handleSignOut = async () => {
-    await signOut()
-    router.push("/")
-  }
-
   // Calculate suggested recipes based on pantry items
   const suggestedRecipes = useMemo((): SuggestedRecipe[] => {
     if (pantryItems.length === 0 || recipes.length === 0) return []
@@ -232,43 +229,11 @@ export default function SuggestionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold gradient-text">MealMash</h1>
-            <nav className="hidden md:flex items-center gap-6">
-              <a href="/dashboard" className="text-sm hover:text-primary transition-colors">Dashboard</a>
-              <a href="/suggestions" className="text-sm text-primary font-medium">What Can I Make?</a>
-              <a href="/recipes" className="text-sm hover:text-primary transition-colors">Recipes</a>
-              <a href="/pantry" className="text-sm hover:text-primary transition-colors">Pantry</a>
-              <a href="/shopping-list" className="text-sm hover:text-primary transition-colors">Shopping List</a>
-            <a href="/meal-plan" className="text-sm hover:text-primary transition-colors">📅 Meal Plan</a>
-            <a href="/settings" className="text-sm hover:text-primary transition-colors">⚙️ Settings</a>
-              {profile?.is_admin && (
-                <a href="/admin" className="text-sm hover:text-primary transition-colors">Admin</a>
-              )}
-            </nav>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground hidden sm:inline">{user?.email}</span>
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background pb-safe">
+      <DesktopNav />
+      <MobileNav />
 
       <main className="container mx-auto px-4 py-8">
-        {/* Hero */}
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold mb-4">🍳 What Can I Make?</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Based on your pantry items, here are recipes you can make right now!
-          </p>
-        </div>
-
         {/* Pantry Summary */}
         {pantryItems.length > 0 && (
           <div className="mb-6 p-4 bg-muted rounded-lg">

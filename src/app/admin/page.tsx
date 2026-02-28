@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { getUser, getUserProfile, isUserAdmin, supabase } from "@/lib/supabase"
+import { getUser, isUserAdmin, supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import DesktopNav from "@/components/desktop-nav"
+import MobileNav from "@/components/mobile-nav"
 
 type Recipe = {
   id: string
@@ -370,26 +372,9 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold gradient-text">MealMash Admin</h1>
-            <Badge variant="destructive">Admin Only</Badge>
-          </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <a href="/dashboard" className="text-sm hover:text-primary transition-colors">Dashboard</a>
-            <a href="/suggestions" className="text-sm hover:text-primary transition-colors">🍳 What Can I Make?</a>
-            <a href="/recipes" className="text-sm hover:text-primary transition-colors">Recipes</a>
-            <a href="/pantry" className="text-sm hover:text-primary transition-colors">Pantry</a>
-            <a href="/shopping-list" className="text-sm hover:text-primary transition-colors">Shopping List</a>
-            <a href="/meal-plan" className="text-sm hover:text-primary transition-colors">📅 Meal Plan</a>
-            <a href="/settings" className="text-sm hover:text-primary transition-colors">⚙️ Settings</a>
-            <a href="/admin" className="text-sm text-primary font-medium">Admin</a>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background pb-safe">
+      <DesktopNav />
+      <MobileNav />
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">

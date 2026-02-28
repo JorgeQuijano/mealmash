@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { getUser, getUserProfile, signOut, supabase } from "@/lib/supabase"
+import { getUser, getUserProfile, supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import DesktopNav from "@/components/desktop-nav"
+import MobileNav from "@/components/mobile-nav"
 
 interface PantryItem {
   id: string
@@ -70,11 +72,6 @@ export default function PantryPage() {
     }
   }
 
-  const handleSignOut = async () => {
-    await signOut()
-    router.push("/")
-  }
-
   const handleAddItem = async () => {
     if (!newItem.name.trim() || !user) return
 
@@ -123,33 +120,9 @@ export default function PantryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold gradient-text">MealMash</h1>
-            <nav className="hidden md:flex items-center gap-6">
-              <a href="/dashboard" className="text-sm hover:text-primary transition-colors">Dashboard</a>
-              <a href="/suggestions" className="text-sm hover:text-primary transition-colors">🍳 What Can I Make?</a>
-              <a href="/recipes" className="text-sm hover:text-primary transition-colors">Recipes</a>
-              <a href="/pantry" className="text-sm text-primary font-medium">Pantry</a>
-              <a href="/shopping-list" className="text-sm hover:text-primary transition-colors">Shopping List</a>
-            <a href="/meal-plan" className="text-sm hover:text-primary transition-colors">📅 Meal Plan</a>
-            <a href="/settings" className="text-sm hover:text-primary transition-colors">⚙️ Settings</a>
-              {profile?.is_admin && (
-                <a href="/admin" className="text-sm hover:text-primary transition-colors">Admin</a>
-              )}
-            </nav>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground hidden sm:inline">{user?.email}</span>
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background pb-safe">
+      <DesktopNav />
+      <MobileNav />
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">

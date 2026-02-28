@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { getUser, getUserProfile, signOut } from "@/lib/supabase"
+import { getUser, getUserProfile } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import DesktopNav from "@/components/desktop-nav"
+import MobileNav from "@/components/mobile-nav"
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -32,11 +34,6 @@ export default function DashboardPage() {
     loadUser()
   }, [router])
 
-  const handleSignOut = async () => {
-    await signOut()
-    router.push("/")
-  }
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -46,32 +43,9 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold gradient-text">MealMash</h1>
-          <nav className="hidden md:flex items-center gap-6">
-            <a href="/dashboard" className="text-sm text-primary font-medium">Dashboard</a>
-            <a href="/suggestions" className="text-sm hover:text-primary transition-colors">🍳 What Can I Make?</a>
-            <a href="/random" className="text-sm hover:text-primary transition-colors">🎲 Random Pick</a>
-            <a href="/recipes" className="text-sm hover:text-primary transition-colors">Recipes</a>
-            <a href="/pantry" className="text-sm hover:text-primary transition-colors">Pantry</a>
-            <a href="/shopping-list" className="text-sm hover:text-primary transition-colors">Shopping List</a>
-            <a href="/meal-plan" className="text-sm hover:text-primary transition-colors">📅 Meal Plan</a>
-            <a href="/settings" className="text-sm text-primary font-medium">⚙️ Settings</a>
-            {profile?.is_admin && (
-              <a href="/admin" className="text-sm hover:text-primary transition-colors">Admin</a>
-            )}
-          </nav>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">{user?.email}</span>
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background pb-safe">
+      <DesktopNav />
+      <MobileNav />
 
       <main className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
