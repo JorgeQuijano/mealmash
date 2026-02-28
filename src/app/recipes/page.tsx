@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
@@ -156,36 +157,37 @@ export default function RecipesPage() {
         {!loading && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredRecipes.map((recipe) => (
-              <Card 
-                key={recipe.id} 
-                className="hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => setSelectedRecipe(recipe)}
-              >
-                {recipe.image_url && (
-                  <div className="aspect-video bg-muted relative overflow-hidden rounded-t-lg">
-                    <img 
-                      src={recipe.image_url} 
-                      alt={recipe.name}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                )}
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="text-lg">{recipe.name}</CardTitle>
-                    <Badge className={getCategoryColor(recipe.category)}>
-                      {recipe.category}
-                    </Badge>
-                  </div>
-                  <CardDescription>{recipe.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span>⏱️ {recipe.prep_time_minutes + recipe.cook_time_minutes} min</span>
-                    <span>👥 {recipe.servings} servings</span>
-                  </div>
-                </CardContent>
-              </Card>
+              <Link key={recipe.id} href={`/recipes/${recipe.id}`}>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                  {recipe.image_url && (
+                    <div className="aspect-video bg-muted relative overflow-hidden rounded-t-lg">
+                      <img 
+                        src={recipe.image_url} 
+                        alt={recipe.name}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  )}
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="text-lg">{recipe.name}</CardTitle>
+                      <Badge className={getCategoryColor(recipe.category)}>
+                        {recipe.category}
+                      </Badge>
+                    </div>
+                    <CardDescription>{recipe.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-3">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span>⏱️ {recipe.prep_time_minutes + recipe.cook_time_minutes} min</span>
+                      <span>👥 {recipe.servings} servings</span>
+                    </div>
+                    <Button variant="outline" size="sm" className="w-full mt-auto" onClick={(e) => e.preventDefault()}>
+                      👁️ View Recipe
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         )}
