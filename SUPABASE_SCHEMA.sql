@@ -66,6 +66,19 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 
+-- Meal plans table
+CREATE TABLE meal_plans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
+  planned_date DATE NOT NULL,
+  meal_type TEXT CHECK (meal_type IN ('breakfast', 'lunch', 'dinner', 'snack')),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE meal_plans ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own meal plans" ON meal_plans FOR ALL USING (auth.uid() = user_id);
+
 -- Sample Recipes (optional - for testing)
 INSERT INTO recipes (name, description, ingredients, instructions, category, prep_time_minutes, cook_time_minutes, servings) VALUES
 (

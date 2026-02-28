@@ -129,6 +129,7 @@ export default function RandomPage() {
             <a href="/recipes" className="text-sm hover:text-primary transition-colors">Recipes</a>
             <a href="/pantry" className="text-sm hover:text-primary transition-colors">Pantry</a>
             <a href="/shopping-list" className="text-sm hover:text-primary transition-colors">Shopping List</a>
+            <a href="/meal-plan" className="text-sm hover:text-primary transition-colors">📅 Meal Plan</a>
             <a href="/admin" className="text-sm hover:text-primary transition-colors">Admin</a>
           </nav>
         </div>
