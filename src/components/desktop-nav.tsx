@@ -24,7 +24,7 @@ export default function DesktopNav({ currentPath = "" }: DesktopNavProps) {
 
   useEffect(() => {
     async function loadUser() {
-      const { dataUser: { user } } = await import("@/lib/supabase").then(m => m.supabase.auth.getUser())
+      const { data: { user } } = await import("@/lib/supabase").then(m => m.supabase.auth.getUser())
       setUser(user)
       if (user) {
         const { data } = await getUserProfile(user.id)
