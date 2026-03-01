@@ -12,6 +12,8 @@ import MobileNav from "@/components/mobile-nav"
 type RecipeIngredient = {
   ingredient_id: string
   quantity: string
+  quantity_num?: number
+  unit?: string
   ingredients: {
     name: string
     category: string

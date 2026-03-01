@@ -12,6 +12,8 @@ import { Separator } from "@/components/ui/separator"
 type RecipeIngredient = {
   ingredient_id: string
   quantity: string
+  quantity_num?: number
+  unit?: string
   ingredients: {
     name: string
     category: string
@@ -221,7 +223,7 @@ export default function RecipeDetailPage() {
                             </svg>
                           )}
                         </div>
-                        <span>{ing.quantity} {ing.ingredients?.name}</span>
+                        <span>{ing.quantity_num || ing.quantity}{ing.unit ? ` ${ing.unit}` : ''} {ing.ingredients?.name}</span>
                       </li>
                     )
                   })}

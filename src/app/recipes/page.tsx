@@ -14,6 +14,8 @@ import MobileNav from "@/components/mobile-nav"
 type RecipeIngredient = {
   ingredient_id: string
   quantity: string
+  quantity_num?: number
+  unit?: string
   ingredients: {
     name: string
     category: string
@@ -218,7 +220,7 @@ export default function RecipesPage() {
                   <ul className="list-disc list-inside space-y-1">
                     {selectedRecipe.recipe_ingredients?.map((ing: RecipeIngredient, i: number) => (
                       <li key={i} className="text-muted-foreground">
-                        {ing.quantity} {ing.ingredients?.name}
+                        {ing.quantity_num || ing.quantity}{ing.unit ? ` ${ing.unit}` : ''} {ing.ingredients?.name}
                       </li>
                     ))}
                   </ul>
