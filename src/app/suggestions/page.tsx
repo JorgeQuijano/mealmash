@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import DesktopNav from "@/components/desktop-nav"
 import MobileNav from "@/components/mobile-nav"
+import RecipeModal from "@/components/recipe-modal"
 
 type Recipe = {
   id: string
@@ -394,128 +395,13 @@ export default function SuggestionsPage() {
 
         {/* Recipe Detail Modal */}
         {selectedRecipe && (
-          <div 
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto"
-            onClick={() => setSelectedRecipe(null)}
-          >
-            <Card 
-              className="max-w-2xl w-full max-h-[90vh] overflow-y-auto my-8"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-2xl">{selectedRecipe.recipe.name}</CardTitle>
-                    <CardDescription className="mt-2">{selectedRecipe.recipe.description}</CardDescription>
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => setSelectedRecipe(null)}>✕</Button>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Match Info */}
-                <div className="p-4 bg-muted rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-semibold">Ingredient Match</span>
-                    <span className="text-lg font-bold">
-                      {selectedRecipe.matchedCount}/{selectedRecipe.totalCount}
-                    </span>
-                  </div>
-                  <Progress 
-                    value={(selectedRecipe.matchedCount / selectedRecipe.totalCount) * 100} 
-                    className="h-3"
-                    indicatorClassName={getMatchColor(selectedRecipe.matchedCount, selectedRecipe.totalCount)}
-                  />
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <Badge className={getCategoryColor(selectedRecipe.recipe.category)}>
-                    {selectedRecipe.recipe.category}
-                  </Badge>
-                  <span className="text-sm">⏱️ Prep: {selectedRecipe.recipe.prep_time_minutes} min</span>
-                  <span className="text-sm">🍳 Cook: {selectedRecipe.recipe.cook_time_minutes} min</span>
-                  <span className="text-sm">👥 {selectedRecipe.recipe.servings} servings</span>
-                </div>
-
-                {/* Ingredients with Match Status */}
-                <div>
-                  <h3 className="font-semibold mb-3">Ingredients</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {selectedRecipe.matchedIngredients.map((ing, i) => (
-                      <div 
-                        key={`matched-${i}`}
-                        className="flex items-center gap-2 p-2 rounded bg-green-50 text-green-700"
-                      >
-                        <span>✅</span>
-                        <span className="text-sm">{ing.name}</span>
-                      </div>
-                    ))}
-                    {selectedRecipe.missingIngredients.map((ing, i) => (
-                      <div 
-                        key={`missing-${i}`}
-                        className="flex items-center gap-2 p-2 rounded bg-orange-50 text-orange-700"
-                      >
-                        <span>❌</span>
-                        <span className="text-sm">{ing.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Missing Ingredients to Buy */}
-                {selectedRecipe.missingIngredients.length > 0 && (
-                  <div className="p-4 bg-orange-50 rounded-lg">
-                    <h3 className="font-semibold mb-2">🛒 Missing Ingredients</h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Add these to your shopping list:
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedRecipe.missingIngredients.map((ing, i) => (
-                        <Badge key={i} variant="outline" className="bg-white">
-                          {ing.name}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Instructions */}
-                <div>
-                  <h3 className="font-semibold mb-2">Instructions</h3>
-                  <ol className="list-decimal list-inside space-y-2">
-                    {selectedRecipe.recipe.instructions?.map((step, i) => (
-                      <li key={i} className="text-muted-foreground">{step}</li>
-                    ))}
-                  </ol>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button 
-                    className="flex-1"
-                    onClick={() => {
-                      if (selectedRecipe.missingIngredients.length > 0) {
-                        addMissingToShoppingList(selectedRecipe.missingIngredients)
-                      }
-                    }}
-                    disabled={addingToList || selectedRecipe.missingIngredients.length === 0}
-                  >
-                    {addingToList 
-                      ? "Adding..." 
-                      : addedToList 
-                        ? "✓ Added to Shopping List!" 
-                        : `🛒 Add Missing (${selectedRecipe.missingIngredients.length}) to List`
-                    }
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="flex-1"
-                    onClick={() => router.push("/shopping-list")}
-                  >
-                    View Shopping List
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <RecipeModal
+            recipe={selectedRecipe}
+            user={user}
+            pantryItems={pantryItems as any}
+            onClose={() => setSelectedRecipe(null)}
+            isSuggested={true}
+          />
         )}
       </main>
     </div>

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import DesktopNav from "@/components/desktop-nav"
 import MobileNav from "@/components/mobile-nav"
+import RecipeModal from "@/components/recipe-modal"
 
 type RecipeIngredient = {
   ingredient_id: string
@@ -54,11 +55,6 @@ export default function RecipesPage() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [user, setUser] = useState<any>(null)
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([])
-  const [matchedIndices, setMatchedIndices] = useState<number[]>([])
-  const [missingIndices, setMissingIndices] = useState<number[]>([])
-  const [showAddToListModal, setShowAddToListModal] = useState(false)
-  const [addingToList, setAddingToList] = useState(false)
-  const [addedToList, setAddedToList] = useState(false)
 
   useEffect(() => {
     loadRecipes()
@@ -84,33 +80,6 @@ export default function RecipesPage() {
     }
   }
 
-  // Recalculate matches when pantryItems or selectedRecipe changes
-  useEffect(() => {
-    if (!selectedRecipe?.recipe_ingredients || pantryItems.length === 0) {
-      setMatchedIndices([])
-      setMissingIndices([])
-      return
-    }
-    
-    const matched: number[] = []
-    const missing: number[] = []
-    
-    const pantryIngredientIds = new Set(
-      pantryItems.filter(p => p.ingredient_id).map(p => p.ingredient_id)
-    )
-    
-    selectedRecipe.recipe_ingredients.forEach((ri, index) => {
-      if (pantryIngredientIds.has(ri.ingredient_id)) {
-        matched.push(index)
-      } else {
-        missing.push(index)
-      }
-    })
-    
-    setMatchedIndices(matched)
-    setMissingIndices(missing)
-  }, [pantryItems, selectedRecipe?.recipe_ingredients])
-
   async function loadRecipes() {
     setLoading(true)
     
@@ -135,53 +104,6 @@ export default function RecipesPage() {
       console.error("Error loading recipes:", error)
     }
     setLoading(false)
-  }
-
-  const handleAddMissingToShoppingList = async () => {
-    if (!user || missingIndices.length === 0 || !selectedRecipe) return
-    
-    setAddingToList(true)
-    
-    const ingredientList = selectedRecipe.recipe_ingredients || []
-    
-    for (const index of missingIndices) {
-      const ing = ingredientList[index]
-      const itemName = ing.ingredients?.name || ''
-      const quantity = `${ing.quantity_num || ing.quantity || ''} ${ing.unit || ''}`.trim()
-      
-      // Check if already in shopping list
-      const { data: existing } = await supabase
-        .from("shopping_list")
-        .select("id, quantity")
-        .eq("user_id", user.id)
-        .ilike("item_name", itemName)
-        .single()
-      
-      if (existing) {
-        // Update quantity (append)
-        const newQty = `${existing.quantity} + ${quantity}`
-        await supabase
-          .from("shopping_list")
-          .update({ quantity: newQty })
-          .eq("id", existing.id)
-      } else {
-        // Insert new
-        await supabase.from("shopping_list").insert({
-          user_id: user.id,
-          item_name: itemName,
-          quantity: quantity || "1",
-          ingredient_id: ing.ingredient_id,
-          is_checked: false
-        })
-      }
-    }
-    
-    setAddingToList(false)
-    setShowAddToListModal(false)
-    setAddedToList(true)
-    
-    // Reset success message after 3 seconds
-    setTimeout(() => setAddedToList(false), 3000)
   }
 
   const filteredRecipes = recipes.filter(recipe =>
@@ -305,126 +227,12 @@ export default function RecipesPage() {
 
         {/* Recipe Detail Modal */}
         {selectedRecipe && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setSelectedRecipe(null)}>
-            <Card className="max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-2xl">{selectedRecipe.name}</CardTitle>
-                    <CardDescription className="mt-2">{selectedRecipe.description}</CardDescription>
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => setSelectedRecipe(null)}>✕</Button>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <Badge className={getCategoryColor(selectedRecipe.category)}>
-                    {selectedRecipe.category}
-                  </Badge>
-                  <span className="text-sm">⏱️ Prep: {selectedRecipe.prep_time_minutes} min</span>
-                  <span className="text-sm">🍳 Cook: {selectedRecipe.cook_time_minutes} min</span>
-                  <span className="text-sm">👥 {selectedRecipe.servings} servings</span>
-                </div>
-
-                {/* Pantry Status */}
-                {user && selectedRecipe.recipe_ingredients && selectedRecipe.recipe_ingredients.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline" className="bg-green-50 text-green-700">
-                      ✅ {matchedIndices.length} in pantry
-                    </Badge>
-                    <Badge variant="outline" className="bg-red-50 text-red-700">
-                      ❌ {missingIndices.length} missing
-                    </Badge>
-                  </div>
-                )}
-
-                {/* Add Missing to Shopping List Button */}
-                {user && missingIndices.length > 0 && (
-                  <Button 
-                    onClick={() => setShowAddToListModal(true)}
-                    className="w-full bg-orange-500 hover:bg-orange-600"
-                  >
-                    🛒 Add {missingIndices.length} Missing to Shopping List
-                  </Button>
-                )}
-                
-                {/* Success Message */}
-                {addedToList && (
-                  <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-                    ✅ Added to shopping list!
-                  </div>
-                )}
-
-                <div>
-                  <h3 className="font-semibold mb-2">Ingredients</h3>
-                  <ul className="list-disc list-inside space-y-1">
-                    {selectedRecipe.recipe_ingredients?.map((ing: RecipeIngredient, i: number) => {
-                      const isMatched = matchedIndices.includes(i)
-                      const isMissing = missingIndices.includes(i)
-                      return (
-                        <li key={i} className={isMatched ? 'text-green-600' : isMissing ? 'text-red-500' : 'text-muted-foreground'}>
-                          {isMatched && '✅ '}
-                          {isMissing && '❌ '}
-                          {ing.quantity_num || ing.quantity}{ing.unit ? ` ${ing.unit}` : ''} {ing.ingredients?.name}
-                        </li>
-                      )
-                    })}
-                  </ul>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold mb-2">Instructions</h3>
-                  <ol className="list-decimal list-inside space-y-2">
-                    {selectedRecipe.instructions?.map((step, i) => (
-                      <li key={i} className="text-muted-foreground">{step}</li>
-                    ))}
-                  </ol>
-                </div>
-
-                <Button className="w-full">❤️ Add to Favorites</Button>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* Add Missing to Shopping List Modal */}
-        {showAddToListModal && selectedRecipe && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4" onClick={() => setShowAddToListModal(false)}>
-            <div className="bg-background rounded-lg p-6 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-xl font-bold mb-2">Add Missing Ingredients</h3>
-              <p className="text-muted-foreground mb-4">
-                Add the following {missingIndices.length} items to your shopping list?
-              </p>
-              
-              <ul className="mb-4 max-h-60 overflow-auto border rounded p-2">
-                {missingIndices.map(index => {
-                  const ing = selectedRecipe.recipe_ingredients?.[index]
-                  return (
-                    <li key={index} className="py-1 text-red-500">
-                      ❌ {ing?.quantity_num || ing?.quantity}{ing?.unit ? ` ${ing.unit}` : ''} {ing?.ingredients?.name}
-                    </li>
-                  )
-                })}
-              </ul>
-              
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowAddToListModal(false)}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleAddMissingToShoppingList}
-                  className="flex-1 bg-orange-500 hover:bg-orange-600"
-                  disabled={addingToList}
-                >
-                  {addingToList ? "Adding..." : "Add to Shopping List"}
-                </Button>
-              </div>
-            </div>
-          </div>
+          <RecipeModal
+            recipe={selectedRecipe}
+            user={user}
+            pantryItems={pantryItems}
+            onClose={() => setSelectedRecipe(null)}
+          />
         )}
       </main>
     </div>
