@@ -587,16 +587,13 @@ export default function ShoppingListPage() {
                           className="flex items-center gap-3 flex-1 cursor-pointer"
                           onClick={() => shoppingMode ? toggleItemSelection(item.id) : handleToggleCheck(item)}
                         >
-                          {shoppingMode ? (
+                          {shoppingMode && (
                             <div className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-colors ${
                               selectedItems.has(item.id) 
                                 ? 'bg-green-500 border-green-500 text-white' 
                                 : 'border-gray-300'
                             }`}>
                               {selectedItems.has(item.id) && '✓'}
-                            </div>
-                          ) : (
-                            <div className="w-5 h-5 border-2 border-gray-300 rounded hover:border-green-500 transition-colors flex items-center justify-center">
                             </div>
                           )}
                           <div>
@@ -678,18 +675,14 @@ export default function ShoppingListPage() {
                 </div>
               )}
 
-              <div className="flex items-center gap-2 mb-4">
-                <input
-                  type="checkbox"
-                  id="showItemsList"
-                  checked={showItemsList}
-                  onChange={(e) => setShowItemsList(e.target.checked)}
-                  className="w-4 h-4"
-                />
-                <label htmlFor="showItemsList" className="text-sm cursor-pointer">
-                  Show items list
-                </label>
-              </div>
+              <Button 
+                variant={showItemsList ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowItemsList(!showItemsList)}
+                className="mb-4"
+              >
+                {showItemsList ? "Hide items" : "Show items"}
+              </Button>
 
               <div className="flex gap-3">
                 <Button
