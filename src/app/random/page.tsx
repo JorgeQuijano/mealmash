@@ -253,14 +253,11 @@ export default function RandomPage() {
                   <div className="bg-muted rounded-lg p-4">
                     <h3 className="font-semibold mb-2">🥕 Ingredients</h3>
                     <ul className="text-sm text-muted-foreground space-y-1">
-                      {Array.isArray(selectedRecipe.ingredients) 
-                        ? selectedRecipe.ingredients.slice(0, 5).map((ing: any, i: number) => (
-                            <li key={i}>• {typeof ing === 'string' ? ing : `${ing.amount} ${ing.item}`}</li>
-                          ))
-                        : <li>{selectedRecipe.ingredients}</li>
-                      }
-                      {Array.isArray(selectedRecipe.ingredients) && selectedRecipe.ingredients.length > 5 && (
-                        <li className="text-primary">+ {selectedRecipe.ingredients.length - 5} more...</li>
+                      {selectedRecipe.recipe_ingredients?.slice(0, 5).map((ing: any, i: number) => (
+                        <li key={i}>• {ing.quantity_num || ing.quantity} {ing.unit} {ing.ingredients?.name}</li>
+                      ))}
+                      {selectedRecipe.recipe_ingredients && selectedRecipe.recipe_ingredients.length > 5 && (
+                        <li className="text-primary">+ {selectedRecipe.recipe_ingredients.length - 5} more...</li>
                       )}
                     </ul>
                   </div>
