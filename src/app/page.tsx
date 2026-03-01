@@ -90,19 +90,19 @@ function Header() {
             animate={{ opacity: 1, y: 0 }}
             className="md:hidden py-4 border-t border-stone-200 mt-4 bg-white shadow-lg rounded-lg relative z-50"
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col items-center gap-4">
               {siteConfig.nav.links.map((link) => (
                 <Link 
                   key={link.href} 
                   href={link.href}
-                  className="text-stone-600 hover:text-orange-600 font-medium py-2"
+                  className="text-stone-600 hover:text-orange-600 font-medium py-3 w-full text-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
               ))}
-              <Link href="/login">
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full">
+              <Link href="/login" className="w-full px-4">
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full w-full">
                   {siteConfig.nav.cta.label}
                 </Button>
               </Link>
