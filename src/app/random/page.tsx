@@ -9,30 +9,27 @@ import { Badge } from "@/components/ui/badge"
 import DesktopNav from "@/components/desktop-nav"
 import MobileNav from "@/components/mobile-nav"
 
+type RecipeIngredient = {
+  ingredient_id: string
+  quantity: string
+  ingredients: {
+    name: string
+    category: string
+  }
+}
+
 type Recipe = {
   id: string
   name: string
   description: string
-  ingredients: any
   instructions: string[]
   category: string
   prep_time_minutes: number
   cook_time_minutes: number
   servings: number
   image_url: string
+  recipe_ingredients?: RecipeIngredient[]
 }
-
-// Sample recipes for when database is empty
-const sampleRecipes: Recipe[] = [
-  { id: "1", name: "Classic Spaghetti Carbonara", description: "Creamy Italian pasta with crispy pancetta", ingredients: ["spaghetti", "eggs", "pancetta", "parmesan", "black pepper"], instructions: ["Cook pasta", "Fry pancetta", "Mix eggs and cheese", "Combine all"], category: "dinner", prep_time_minutes: 10, cook_time_minutes: 20, servings: 4, image_url: "" },
-  { id: "2", name: "Grilled Chicken Salad", description: "Fresh and healthy salad with grilled chicken", ingredients: ["chicken breast", "lettuce", "tomatoes", "cucumber", "olive oil"], instructions: ["Grill chicken", "Chop vegetables", "Mix dressing", "Combine"], category: "lunch", prep_time_minutes: 15, cook_time_minutes: 15, servings: 2, image_url: "" },
-  { id: "3", name: "Fluffy Pancakes", description: "Light and fluffy breakfast pancakes", ingredients: ["flour", "eggs", "milk", "butter", "maple syrup"], instructions: ["Mix dry ingredients", "Add wet ingredients", "Cook on griddle", "Serve with syrup"], category: "breakfast", prep_time_minutes: 10, cook_time_minutes: 15, servings: 4, image_url: "" },
-  { id: "4", name: "Beef Tacos", description: "Seasoned beef tacos with fresh toppings", ingredients: ["ground beef", "taco shells", "lettuce", "tomatoes", "cheese", "sour cream"], instructions: ["Cook beef with spices", "Warm taco shells", "Assemble tacos", "Add toppings"], category: "dinner", prep_time_minutes: 10, cook_time_minutes: 15, servings: 4, image_url: "" },
-  { id: "5", name: "Vegetable Stir Fry", description: "Quick and healthy vegetable stir fry", ingredients: ["broccoli", "bell peppers", "carrots", "soy sauce", "garlic", "ginger"], instructions: ["Chop vegetables", "Heat wok", "Stir fry vegetables", "Add sauce"], category: "dinner", prep_time_minutes: 15, cook_time_minutes: 10, servings: 3, image_url: "" },
-  { id: "6", name: "Chocolate Chip Cookies", description: "Classic homemade chocolate chip cookies", ingredients: ["flour", "butter", "sugar", "eggs", "chocolate chips"], instructions: ["Cream butter and sugar", "Mix in eggs", "Add flour and chips", "Bake"], category: "dessert", prep_time_minutes: 15, cook_time_minutes: 12, servings: 24, image_url: "" },
-  { id: "7", name: "Caesar Salad", description: "Classic Caesar salad with homemade dressing", ingredients: ["romaine lettuce", "parmesan", "croutons", "caesar dressing", "lemon"], instructions: ["Chop lettuce", "Make dressing", "Toss everything", "Top with parmesan"], category: "lunch", prep_time_minutes: 10, cook_time_minutes: 0, servings: 2, image_url: "" },
-  { id: "8", name: "Mushroom Risotto", description: "Creamy Italian risotto with mushrooms", ingredients: ["arborio rice", "mushrooms", "onion", "white wine", "parmesan", "butter"], instructions: ["Sauté mushrooms", "Cook onion", "Add rice and wine", "Slowly add broth"], category: "dinner", prep_time_minutes: 10, cook_time_minutes: 30, servings: 4, image_url: "" },
-]
 
 // Wheel colors matching MealMash theme
 const wheelColors = [
@@ -65,7 +62,14 @@ export default function RandomPage() {
   async function loadRecipes() {
     setLoading(true)
     
-    let query = supabase.from("recipes").select("*")
+    let query = supabase.from("recipes").select(`
+      *,
+      recipe_ingredients (
+        ingredient_id,
+        quantity,
+        ingredients (name, category)
+      )
+    `)
     if (selectedCategory !== "all") {
       query = query.eq("category", selectedCategory)
     }
@@ -74,12 +78,6 @@ export default function RandomPage() {
     
     if (data && data.length > 0) {
       setRecipes(data)
-    } else {
-      // Use sample recipes if database is empty
-      const filtered = selectedCategory === "all" 
-        ? sampleRecipes 
-        : sampleRecipes.filter(r => r.category === selectedCategory)
-      setRecipes(filtered)
     }
     setLoading(false)
   }

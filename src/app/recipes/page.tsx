@@ -11,17 +11,26 @@ import { Input } from "@/components/ui/input"
 import DesktopNav from "@/components/desktop-nav"
 import MobileNav from "@/components/mobile-nav"
 
+type RecipeIngredient = {
+  ingredient_id: string
+  quantity: string
+  ingredients: {
+    name: string
+    category: string
+  }
+}
+
 type Recipe = {
   id: string
   name: string
   description: string
-  ingredients: any
   instructions: string[]
   category: string
   prep_time_minutes: number
   cook_time_minutes: number
   servings: number
   image_url: string
+  recipe_ingredients?: RecipeIngredient[]
 }
 
 const categories = ["all", "breakfast", "lunch", "dinner", "snack", "dessert"]
@@ -41,7 +50,14 @@ export default function RecipesPage() {
   async function loadRecipes() {
     setLoading(true)
     
-    let query = supabase.from("recipes").select("*")
+    let query = supabase.from("recipes").select(`
+      *,
+      recipe_ingredients (
+        ingredient_id,
+        quantity,
+        ingredients (name, category)
+      )
+    `)
     
     if (selectedCategory !== "all") {
       query = query.eq("category", selectedCategory)
@@ -53,21 +69,6 @@ export default function RecipesPage() {
       setRecipes(data)
     } else {
       console.error("Error loading recipes:", error)
-      // Sample data for demo when no recipes exist
-      setRecipes([
-        {
-          id: "1",
-          name: "Classic Spaghetti Carbonara",
-          description: "Creamy Italian pasta with crispy pancetta",
-          ingredients: ["spaghetti", "eggs", "pancetta", "parmesan", "black pepper"],
-          instructions: ["Cook pasta", "Fry pancetta", "Mix eggs and cheese", "Combine all"],
-          category: "dinner",
-          prep_time_minutes: 10,
-          cook_time_minutes:20,
-          servings: 4,
-          image_url: ""
-        }
-      ])
     }
     setLoading(false)
   }
@@ -215,14 +216,11 @@ export default function RecipesPage() {
                 <div>
                   <h3 className="font-semibold mb-2">Ingredients</h3>
                   <ul className="list-disc list-inside space-y-1">
-                    {Array.isArray(selectedRecipe.ingredients) 
-                      ? selectedRecipe.ingredients.map((ing: any, i: number) => (
-                          <li key={i} className="text-muted-foreground">
-                            {typeof ing === 'string' ? ing : `${ing.amount} ${ing.item}`}
-                          </li>
-                        ))
-                      : <li className="text-muted-foreground">{selectedRecipe.ingredients}</li>
-                    }
+                    {selectedRecipe.recipe_ingredients?.map((ing: RecipeIngredient, i: number) => (
+                      <li key={i} className="text-muted-foreground">
+                        {ing.quantity} {ing.ingredients?.name}
+                      </li>
+                    ))}
                   </ul>
                 </div>
 

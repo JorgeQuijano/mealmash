@@ -9,17 +9,26 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 
+type RecipeIngredient = {
+  ingredient_id: string
+  quantity: string
+  ingredients: {
+    name: string
+    category: string
+  }
+}
+
 type Recipe = {
   id: string
   name: string
   description: string
-  ingredients: any
   instructions: string[]
   category: string
   prep_time_minutes: number
   cook_time_minutes: number
   servings: number
   image_url: string
+  recipe_ingredients?: RecipeIngredient[]
 }
 
 export default function RecipeDetailPage() {
@@ -40,7 +49,14 @@ export default function RecipeDetailPage() {
 
     const { data, error: fetchError } = await supabase
       .from("recipes")
-      .select("*")
+      .select(`
+        *,
+        recipe_ingredients (
+          ingredient_id,
+          quantity,
+          ingredients (name, category)
+        )
+      `)
       .eq("id", params.id)
       .single()
 
@@ -104,11 +120,7 @@ export default function RecipeDetailPage() {
     )
   }
 
-  const ingredientList = Array.isArray(recipe.ingredients) 
-    ? recipe.ingredients 
-    : typeof recipe.ingredients === 'string' 
-      ? JSON.parse(recipe.ingredients) 
-      : []
+  const ingredientList = recipe.recipe_ingredients || []
 
   return (
     <div className="min-h-screen bg-background">
@@ -194,7 +206,7 @@ export default function RecipeDetailPage() {
             <Card>
               <CardContent className="p-4">
                 <ul className="space-y-3">
-                  {ingredientList.map((ing: any, index: number) => {
+                  {ingredientList.map((ing: RecipeIngredient, index: number) => {
                     const isChecked = checkedIngredients.has(index)
                     return (
                       <li 
@@ -209,7 +221,7 @@ export default function RecipeDetailPage() {
                             </svg>
                           )}
                         </div>
-                        <span>{formatIngredient(ing, index)}</span>
+                        <span>{ing.quantity} {ing.ingredients?.name}</span>
                       </li>
                     )
                   })}
