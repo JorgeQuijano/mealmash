@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase"
+import { getUser, getUserProfile, supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -18,6 +18,14 @@ type RecipeIngredient = {
     name: string
     category: string
   }
+}
+
+type PantryItem = {
+  id: string
+  name: string
+  quantity: string
+  ingredient_id: string | null
+  user_id: string
 }
 
 type Recipe = {
@@ -36,14 +44,63 @@ type Recipe = {
 export default function RecipeDetailPage() {
   const params = useParams()
   const router = useRouter()
+  const [user, setUser] = useState<any>(null)
   const [recipe, setRecipe] = useState<Recipe | null>(null)
+  const [pantryItems, setPantryItems] = useState<PantryItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set())
+  const [matchedIndices, setMatchedIndices] = useState<number[]>([])
+  const [missingIndices, setMissingIndices] = useState<number[]>([])
+  const [showAddToListModal, setShowAddToListModal] = useState(false)
+  const [addingToList, setAddingToList] = useState(false)
+  const [addedToList, setAddedToList] = useState(false)
 
   useEffect(() => {
-    loadRecipe()
+    async function init() {
+      const currentUser = await getUser()
+      if (currentUser) {
+        setUser(currentUser)
+        await loadPantryItems(currentUser.id)
+      }
+      await loadRecipe()
+    }
+    init()
   }, [params.id])
+
+  // Recalculate matches when pantryItems or recipe changes
+  useEffect(() => {
+    if (!recipe?.recipe_ingredients || pantryItems.length === 0) return
+    
+    const matched: number[] = []
+    const missing: number[] = []
+    
+    const pantryIngredientIds = new Set(
+      pantryItems.filter(p => p.ingredient_id).map(p => p.ingredient_id)
+    )
+    
+    recipe.recipe_ingredients.forEach((ri, index) => {
+      if (pantryIngredientIds.has(ri.ingredient_id)) {
+        matched.push(index)
+      } else {
+        missing.push(index)
+      }
+    })
+    
+    setMatchedIndices(matched)
+    setMissingIndices(missing)
+  }, [pantryItems, recipe?.recipe_ingredients])
+
+  async function loadPantryItems(userId: string) {
+    const { data, error } = await supabase
+      .from("pantry_items")
+      .select("id, name, quantity, ingredient_id, user_id")
+      .eq("user_id", userId)
+    
+    if (!error && data) {
+      setPantryItems(data)
+    }
+  }
 
   async function loadRecipe() {
     setLoading(true)
@@ -64,6 +121,27 @@ export default function RecipeDetailPage() {
 
     if (data) {
       setRecipe(data)
+      
+      // Match ingredients with pantry
+      if (data.recipe_ingredients && pantryItems.length > 0) {
+        const matched: number[] = []
+        const missing: number[] = []
+        
+        const pantryIngredientIds = new Set(
+          pantryItems.filter(p => p.ingredient_id).map(p => p.ingredient_id)
+        )
+        
+        data.recipe_ingredients.forEach((ri: RecipeIngredient, index: number) => {
+          if (pantryIngredientIds.has(ri.ingredient_id)) {
+            matched.push(index)
+          } else {
+            missing.push(index)
+          }
+        })
+        
+        setMatchedIndices(matched)
+        setMissingIndices(missing)
+      }
     } else if (fetchError) {
       console.error("Error loading recipe:", fetchError)
       setError("Recipe not found")
@@ -79,6 +157,53 @@ export default function RecipeDetailPage() {
       newChecked.add(index)
     }
     setCheckedIngredients(newChecked)
+  }
+
+  const handleAddMissingToShoppingList = async () => {
+    if (!user || missingIndices.length === 0) return
+    
+    setAddingToList(true)
+    
+    const ingredientList = recipe?.recipe_ingredients || []
+    
+    for (const index of missingIndices) {
+      const ing = ingredientList[index]
+      const itemName = ing.ingredients?.name || ''
+      const quantity = `${ing.quantity_num || ing.quantity || ''} ${ing.unit || ''}`.trim()
+      
+      // Check if already in shopping list
+      const { data: existing } = await supabase
+        .from("shopping_list")
+        .select("id, quantity")
+        .eq("user_id", user.id)
+        .ilike("item_name", itemName)
+        .single()
+      
+      if (existing) {
+        // Update quantity (append)
+        const newQty = `${existing.quantity} + ${quantity}`
+        await supabase
+          .from("shopping_list")
+          .update({ quantity: newQty })
+          .eq("id", existing.id)
+      } else {
+        // Insert new
+        await supabase.from("shopping_list").insert({
+          user_id: user.id,
+          item_name: itemName,
+          quantity: quantity || "1",
+          ingredient_id: ing.ingredient_id,
+          is_checked: false
+        })
+      }
+    }
+    
+    setAddingToList(false)
+    setShowAddToListModal(false)
+    setAddedToList(true)
+    
+    // Reset success message after 3 seconds
+    setTimeout(() => setAddedToList(false), 3000)
   }
 
   const getCategoryColor = (category: string) => {
@@ -205,11 +330,44 @@ export default function RecipeDetailPage() {
             <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
               🛒 Ingredients
             </h2>
+            
+            {/* Pantry Status Summary */}
+            {user && ingredientList.length > 0 && (
+              <div className="mb-4 flex flex-wrap gap-2">
+                <Badge variant="outline" className="bg-green-50 text-green-700">
+                  ✅ {matchedIndices.length} in pantry
+                </Badge>
+                <Badge variant="outline" className="bg-red-50 text-red-700">
+                  ❌ {missingIndices.length} missing
+                </Badge>
+              </div>
+            )}
+            
+            {/* Add Missing to Shopping List Button */}
+            {user && missingIndices.length > 0 && (
+              <Button 
+                onClick={() => setShowAddToListModal(true)}
+                className="mb-4 bg-orange-500 hover:bg-orange-600"
+              >
+                🛒 Add {missingIndices.length} Missing to Shopping List
+              </Button>
+            )}
+            
+            {/* Success Message */}
+            {addedToList && (
+              <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                ✅ Added to shopping list!
+              </div>
+            )}
+            
             <Card>
               <CardContent className="p-4">
                 <ul className="space-y-3">
                   {ingredientList.map((ing: RecipeIngredient, index: number) => {
                     const isChecked = checkedIngredients.has(index)
+                    const isMatched = matchedIndices.includes(index)
+                    const isMissing = missingIndices.includes(index)
+                    
                     return (
                       <li 
                         key={index} 
@@ -223,7 +381,11 @@ export default function RecipeDetailPage() {
                             </svg>
                           )}
                         </div>
-                        <span>{ing.quantity_num || ing.quantity}{ing.unit ? ` ${ing.unit}` : ''} {ing.ingredients?.name}</span>
+                        <span className={isMatched ? 'text-green-600' : isMissing ? 'text-red-500' : ''}>
+                          {isMatched && '✅ '}
+                          {isMissing && '❌ '}
+                          {ing.quantity_num || ing.quantity}{ing.unit ? ` ${ing.unit}` : ''} {ing.ingredients?.name}
+                        </span>
                       </li>
                     )
                   })}
@@ -262,6 +424,46 @@ export default function RecipeDetailPage() {
             </Button>
           </Link>
         </div>
+
+        {/* Add Missing to Shopping List Modal */}
+        {showAddToListModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-background rounded-lg p-6 max-w-md w-full shadow-xl">
+              <h3 className="text-xl font-bold mb-2">Add Missing Ingredients</h3>
+              <p className="text-muted-foreground mb-4">
+                Add the following {missingIndices.length} items to your shopping list?
+              </p>
+              
+              <ul className="mb-4 max-h-60 overflow-auto border rounded p-2">
+                {missingIndices.map(index => {
+                  const ing = ingredientList[index]
+                  return (
+                    <li key={index} className="py-1 text-red-500">
+                      ❌ {ing.quantity_num || ing.quantity}{ing.unit ? ` ${ing.unit}` : ''} {ing.ingredients?.name}
+                    </li>
+                  )
+                })}
+              </ul>
+              
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAddToListModal(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleAddMissingToShoppingList}
+                  className="flex-1 bg-orange-500 hover:bg-orange-600"
+                  disabled={addingToList}
+                >
+                  {addingToList ? "Adding..." : "Add to Shopping List"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Print Styles */}
