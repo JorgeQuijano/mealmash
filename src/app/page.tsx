@@ -88,7 +88,7 @@ function Header() {
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="md:hidden py-4 border-t border-stone-200 mt-4"
+            className="md:hidden py-4 border-t border-stone-200 mt-4 bg-white shadow-lg rounded-lg relative z-50"
           >
             <div className="flex flex-col gap-4">
               {siteConfig.nav.links.map((link) => (
