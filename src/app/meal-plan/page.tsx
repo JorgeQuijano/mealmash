@@ -69,6 +69,7 @@ export default function MealPlanPage() {
   const [profile, setProfile] = useState<any>(null)
   const [selectedSlot, setSelectedSlot] = useState<{date: string, mealType: string} | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedDay, setSelectedDay] = useState<string | null>(null)
 
   const weekDates = getWeekDates(currentWeekStart)
   const today = formatDate(new Date())
@@ -251,7 +252,87 @@ export default function MealPlanPage() {
         </div>
 
         {/* Calendar Grid */}
-        <div className="grid grid-cols-7 gap-2 md:gap-4">
+        
+        {/* Mobile: Day-by-Day View */}
+        <div className="md:hidden mb-6">
+          {/* Day Tabs */}
+          <div className="flex overflow-x-auto gap-2 mb-4 pb-2">
+            {weekDates.map((date) => {
+              const dateStr = formatDate(date)
+              const isToday = dateStr === today
+              const isSelected = selectedDay === dateStr
+              const dayName = date.toLocaleDateString('en-US', { weekday: 'short' })
+              
+              return (
+                <button
+                  key={dateStr}
+                  onClick={() => setSelectedDay(dateStr)}
+                  className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isSelected 
+                      ? 'bg-primary text-white' 
+                      : isToday 
+                        ? 'bg-primary/10 border border-primary text-primary'
+                        : 'bg-muted text-muted-foreground'
+                  }`}
+                >
+                  <div>{dayName}</div>
+                  <div className="text-lg font-bold">{date.getDate()}</div>
+                </button>
+              )
+            })}
+          </div>
+          
+          {/* Selected Day Meals */}
+          {selectedDay ? (
+            <div className="space-y-3">
+              <div className="text-center font-medium text-lg mb-4">
+                {new Date(selectedDay + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+              </div>
+              {MEAL_TYPES.map((mealType) => {
+                const meal = getMealForSlot(selectedDay, mealType)
+                const isFilled = !!meal
+                
+                return (
+                  <Card 
+                    key={`${selectedDay}-${mealType}`}
+                    className={`cursor-pointer transition-all hover:shadow-md ${
+                      isFilled 
+                        ? 'bg-primary/5 border-primary' 
+                        : 'bg-muted/30 hover:bg-muted/50'
+                    }`}
+                    onClick={() => handleSlotClick(selectedDay, mealType)}
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-base font-medium">
+                          {MEAL_ICONS[mealType]} {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
+                        </span>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      {isFilled ? (
+                        <div className="text-base font-medium">
+                          {meal.recipe?.name || 'Unknown Recipe'}
+                        </div>
+                      ) : (
+                        <div className="text-sm text-muted-foreground italic">
+                          Tap to add a recipe
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              Select a day above to view your meal plan
+            </div>
+          )}
+        </div>
+
+        {/* Desktop: Full Week Grid */}
+        <div className="hidden md:grid grid-cols-7 gap-2 md:gap-4">
           {/* Day Headers */}
           {weekDates.map((date) => {
             const dateStr = formatDate(date)
