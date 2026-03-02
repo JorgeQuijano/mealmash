@@ -59,11 +59,12 @@ export default function RandomPage() {
   const [showModal, setShowModal] = useState(false)
   const [rotation, setRotation] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState("all")
+  const [showOnlyMatch, setShowOnlyMatch] = useState(false)
   const wheelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     loadRecipes()
-  }, [selectedCategory])
+  }, [selectedCategory, showOnlyMatch])
 
   useEffect(() => {
     loadUser()
@@ -99,7 +100,21 @@ export default function RandomPage() {
     const { data, error } = await query
     
     if (data && data.length > 0) {
-      setRecipes(data)
+      let filtered = data
+      
+      // Filter for 100% match if toggle is on and user has pantry items
+      if (showOnlyMatch && pantryItems.length > 0) {
+        const pantryIds = new Set(pantryItems.map(p => p.ingredient_id).filter(Boolean))
+        filtered = data.filter(recipe => {
+          const recipeIngIds = recipe.recipe_ingredients?.map((ri: RecipeIngredient) => ri.ingredient_id) || []
+          // If recipe has no ingredients defined, include it
+          if (recipeIngIds.length === 0) return true
+          // Check if user has ALL ingredients
+          return recipeIngIds.every((id: string) => pantryIds.has(id))
+        })
+      }
+      
+      setRecipes(filtered)
     }
     setLoading(false)
   }
@@ -165,8 +180,8 @@ export default function RandomPage() {
         </div>
 
         {/* Category Filters */}
-        <div className="mb-6">
-          <div className="flex flex-wrap justify-center gap-2">
+        <div className="mb-4">
+          <div className="flex flex-wrap justify-center gap-2 mb-3">
             {categories.map((cat) => (
               <Button
                 key={cat}
@@ -179,7 +194,37 @@ export default function RandomPage() {
               </Button>
             ))}
           </div>
+          
+          {/* Can Cook Now Filter - only show for logged in users with pantry items */}
+          {user && pantryItems.length > 0 && (
+            <div className="flex justify-center">
+              <Button
+                variant={showOnlyMatch ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowOnlyMatch(!showOnlyMatch)}
+                className={showOnlyMatch ? "bg-green-600 hover:bg-green-700" : "border-green-500 text-green-600"}
+              >
+                ✅ Can Cook Now
+              </Button>
+            </div>
+          )}
         </div>
+
+        {/* No matches message */}
+        {showOnlyMatch && recipes.length === 0 && !loading && (
+          <div className="text-center mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <p className="text-amber-800">
+              😔 No recipes with all ingredients found. 
+              <button 
+                onClick={() => setShowOnlyMatch(false)}
+                className="underline ml-1"
+              >
+                Show all recipes
+              </button>
+              {' '}or add more to your pantry!
+            </p>
+          </div>
+        )}
 
         <div className="flex flex-col lg:flex-row items-center justify-center gap-12">
           {/* Wheel Section */}
