@@ -78,28 +78,43 @@ export default function MobileNav() {
             <span className="text-lg">☰</span>
             <span className="text-xs mt-0.5">More</span>
           </button>
+        </div>
+      </div>
+
+      {/* Bottom Sheet Overlay */}
+      {showMore && (
+        <div className="fixed inset-0 z-50" onClick={() => setShowMore(false)}>
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50" />
           
-          {showMore && (
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-background border rounded-lg shadow-xl py-2 min-w-[160px]">
+          {/* Sheet - slides up from bottom */}
+          <div 
+            className="absolute bottom-0 left-0 right-0 bg-background rounded-t-2xl p-4 pb-8 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Drag handle */}
+            <div className="w-12 h-1 bg-muted-foreground/30 rounded-full mx-auto mb-4" />
+            
+            <div className="space-y-2">
               {isLoggedIn ? (
                 <>
                   <Link
                     href="/settings"
-                    className="block px-4 py-2 text-sm hover:bg-muted transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
                     onClick={() => setShowMore(false)}
                   >
                     ⚙️ Settings
                   </Link>
                   <Link
                     href="/shopping-list"
-                    className="block px-4 py-2 text-sm hover:bg-muted transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
                     onClick={() => setShowMore(false)}
                   >
                     🛒 Shopping List
                   </Link>
                   <Link
                     href="/meal-plan"
-                    className="block px-4 py-2 text-sm hover:bg-muted transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
                     onClick={() => setShowMore(false)}
                   >
                     📅 Meal Plan
@@ -107,7 +122,7 @@ export default function MobileNav() {
                   {profile?.is_admin && (
                     <Link
                       href="/admin"
-                      className="block px-4 py-2 text-sm hover:bg-muted transition-colors"
+                      className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
                       onClick={() => setShowMore(false)}
                     >
                       🛠️ Admin
@@ -118,7 +133,7 @@ export default function MobileNav() {
                       setShowMore(false)
                       handleSignOut()
                     }}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-muted transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-muted rounded-lg transition-colors w-full"
                   >
                     🚪 Sign Out
                   </button>
@@ -126,16 +141,16 @@ export default function MobileNav() {
               ) : (
                 <Link
                   href="/login"
-                  className="block px-4 py-2 text-sm hover:bg-muted transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
                   onClick={() => setShowMore(false)}
                 >
                   🔑 Login
                 </Link>
               )}
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </nav>
   )
 }
