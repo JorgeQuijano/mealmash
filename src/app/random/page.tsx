@@ -2,12 +2,13 @@
 
 import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase"
+import { supabase, getUser } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
 import MobileNav from "@/components/mobile-nav"
+import RecipeModal from "@/components/recipe-modal"
 
 type RecipeIngredient = {
   ingredient_id: string
@@ -53,6 +54,9 @@ export default function RandomPage() {
   const [loading, setLoading] = useState(true)
   const [isSpinning, setIsSpinning] = useState(false)
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
+  const [user, setUser] = useState<any>(null)
+  const [pantryItems, setPantryItems] = useState<any[]>([])
+  const [showModal, setShowModal] = useState(false)
   const [rotation, setRotation] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState("all")
   const wheelRef = useRef<HTMLDivElement>(null)
@@ -60,6 +64,22 @@ export default function RandomPage() {
   useEffect(() => {
     loadRecipes()
   }, [selectedCategory])
+
+  useEffect(() => {
+    loadUser()
+  }, [])
+
+  async function loadUser() {
+    const currentUser = await getUser()
+    if (currentUser) {
+      setUser(currentUser)
+      const { data } = await supabase
+        .from("pantry_items")
+        .select("id, name, quantity, ingredient_id, user_id")
+        .eq("user_id", currentUser.id)
+      if (data) setPantryItems(data)
+    }
+  }
 
   async function loadRecipes() {
     setLoading(true)
@@ -265,7 +285,7 @@ export default function RandomPage() {
                   <div className="flex gap-2">
                     <Button 
                       className="flex-1 bg-gradient-to-r from-orange-500 to-amber-500"
-                      onClick={() => router.push(`/recipes?id=${selectedRecipe.id}`)}
+                      onClick={() => setShowModal(true)}
                     >
                       👨‍🍳 Start Cooking
                     </Button>
@@ -299,6 +319,16 @@ export default function RandomPage() {
             )}
           </div>
         </div>
+
+        {/* Recipe Modal */}
+        {showModal && selectedRecipe && (
+          <RecipeModal
+            recipe={selectedRecipe}
+            user={user}
+            pantryItems={pantryItems}
+            onClose={() => setShowModal(false)}
+          />
+        )}
       </main>
     </div>
   )
