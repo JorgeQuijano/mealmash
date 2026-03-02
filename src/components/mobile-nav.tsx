@@ -80,7 +80,7 @@ export default function MobileNav() {
           </button>
           
           {showMore && (
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-background border rounded-lg shadow-xl py-2 min-w-[160px]">
+            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-2 bg-background border rounded-lg shadow-xl py-2 min-w-[180px] z-50">
               {isLoggedIn ? (
                 <>
                   <Link
