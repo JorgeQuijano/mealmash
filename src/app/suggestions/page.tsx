@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import DesktopNav from "@/components/desktop-nav"
+
 import MobileNav from "@/components/mobile-nav"
 import RecipeModal from "@/components/recipe-modal"
 
@@ -267,7 +267,7 @@ export default function SuggestionsPage() {
 
   return (
     <div className="min-h-screen bg-background pb-safe">
-      <DesktopNav />
+      
       <MobileNav />
 
       <main className="container mx-auto px-4 py-8">

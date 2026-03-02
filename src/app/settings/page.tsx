@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useTheme } from "next-themes"
-import DesktopNav from "@/components/desktop-nav"
+
 import MobileNav from "@/components/mobile-nav"
 
 export default function SettingsPage() {
@@ -119,7 +119,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-background pb-safe">
-      <DesktopNav />
+      
       <MobileNav />
 
       <main className="container mx-auto px-4 py-8 max-w-xl">

@@ -45,6 +45,8 @@ export default function MobileNav() {
     router.push("/")
   }
 
+  const isLoggedIn = !!profile
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50 safe-area-pb">
       <div className="flex items-center justify-around h-14">
@@ -79,31 +81,43 @@ export default function MobileNav() {
           
           {showMore && (
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-background border rounded-lg shadow-xl py-2 min-w-[160px]">
-              <Link
-                href="/settings"
-                className="block px-4 py-2 text-sm hover:bg-muted transition-colors"
-                onClick={() => setShowMore(false)}
-              >
-                ⚙️ Settings
-              </Link>
-              {profile?.is_admin && (
+              {isLoggedIn ? (
+                <>
+                  <Link
+                    href="/settings"
+                    className="block px-4 py-2 text-sm hover:bg-muted transition-colors"
+                    onClick={() => setShowMore(false)}
+                  >
+                    ⚙️ Settings
+                  </Link>
+                  {profile?.is_admin && (
+                    <Link
+                      href="/admin"
+                      className="block px-4 py-2 text-sm hover:bg-muted transition-colors"
+                      onClick={() => setShowMore(false)}
+                    >
+                      🛠️ Admin
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      setShowMore(false)
+                      handleSignOut()
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-muted transition-colors"
+                  >
+                    🚪 Sign Out
+                  </button>
+                </>
+              ) : (
                 <Link
-                  href="/admin"
+                  href="/login"
                   className="block px-4 py-2 text-sm hover:bg-muted transition-colors"
                   onClick={() => setShowMore(false)}
                 >
-                  🛠️ Admin
+                  🔑 Login
                 </Link>
               )}
-              <button
-                onClick={() => {
-                  setShowMore(false)
-                  handleSignOut()
-                }}
-                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-muted transition-colors"
-              >
-                🚪 Sign Out
-              </button>
             </div>
           )}
         </div>
