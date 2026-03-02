@@ -259,18 +259,18 @@ export default function MealPlanPage() {
         {/* Mobile: Day-by-Day View */}
         <div className="md:hidden mb-6">
           {/* Day Tabs */}
-          <div className="flex overflow-x-auto gap-2 mb-4 pb-2">
+          <div className="flex overflow-x-auto gap-1 mb-4 pb-2 justify-between">
             {weekDates.map((date) => {
               const dateStr = formatDate(date)
               const isToday = dateStr === today
               const isSelected = selectedDay === dateStr
-              const dayName = date.toLocaleDateString('en-US', { weekday: 'short' })
+              const dayLetter = date.toLocaleDateString('en-US', { weekday: 'narrow' })
               
               return (
                 <button
                   key={dateStr}
                   onClick={() => setSelectedDay(dateStr)}
-                  className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex-shrink-0 px-2 py-2 rounded-lg text-xs font-medium transition-colors min-w-[40px] ${
                     isSelected 
                       ? 'bg-primary text-white' 
                       : isToday 
@@ -278,8 +278,8 @@ export default function MealPlanPage() {
                         : 'bg-muted text-muted-foreground'
                   }`}
                 >
-                  <div>{dayName}</div>
-                  <div className="text-lg font-bold">{date.getDate()}</div>
+                  <div>{dayLetter}</div>
+                  <div className="text-base font-bold">{date.getDate()}</div>
                 </button>
               )
             })}
