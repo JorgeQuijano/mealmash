@@ -90,6 +90,20 @@ export default function MobileNav() {
                   >
                     ⚙️ Settings
                   </Link>
+                  <Link
+                    href="/shopping-list"
+                    className="block px-4 py-2 text-sm hover:bg-muted transition-colors"
+                    onClick={() => setShowMore(false)}
+                  >
+                    🛒 Shopping List
+                  </Link>
+                  <Link
+                    href="/meal-plan"
+                    className="block px-4 py-2 text-sm hover:bg-muted transition-colors"
+                    onClick={() => setShowMore(false)}
+                  >
+                    📅 Meal Plan
+                  </Link>
                   {profile?.is_admin && (
                     <Link
                       href="/admin"
