@@ -100,21 +100,21 @@ export default function MobileNav() {
                 <>
                   <Link
                     href="/settings"
-                    className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
+                    className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
                     onClick={() => setShowMore(false)}
                   >
                     ⚙️ Settings
                   </Link>
                   <Link
                     href="/shopping-list"
-                    className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
+                    className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
                     onClick={() => setShowMore(false)}
                   >
                     🛒 Shopping List
                   </Link>
                   <Link
                     href="/meal-plan"
-                    className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
+                    className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
                     onClick={() => setShowMore(false)}
                   >
                     📅 Meal Plan
@@ -122,7 +122,7 @@ export default function MobileNav() {
                   {profile?.is_admin && (
                     <Link
                       href="/admin"
-                      className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
+                      className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
                       onClick={() => setShowMore(false)}
                     >
                       🛠️ Admin
@@ -133,7 +133,7 @@ export default function MobileNav() {
                       setShowMore(false)
                       handleSignOut()
                     }}
-                    className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-muted rounded-lg transition-colors w-full"
+                    className="flex items-center justify-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-muted rounded-lg transition-colors w-full"
                   >
                     🚪 Sign Out
                   </button>
@@ -141,7 +141,7 @@ export default function MobileNav() {
               ) : (
                 <Link
                   href="/login"
-                  className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
+                  className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
                   onClick={() => setShowMore(false)}
                 >
                   🔑 Login
