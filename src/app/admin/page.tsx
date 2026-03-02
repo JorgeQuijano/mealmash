@@ -9,6 +9,15 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 
 import MobileNav from "@/components/mobile-nav"
+import IngredientSearch from "@/components/ingredient-search"
+
+type SelectedIngredient = {
+  ingredient_id: string
+  name: string
+  quantity: string
+  unit: string
+  category: string
+}
 
 type Recipe = {
   id: string
@@ -35,7 +44,6 @@ export default function AdminPage() {
   const [newRecipe, setNewRecipe] = useState({
     name: "",
     description: "",
-    ingredients: "",
     instructions: "",
     category: "dinner",
     prep_time_minutes: 10,
@@ -43,6 +51,9 @@ export default function AdminPage() {
     servings: 2,
     image_url: ""
   })
+  
+  // Normalized ingredients
+  const [selectedIngredients, setSelectedIngredients] = useState<SelectedIngredient[]>([])
 
   useEffect(() => {
     async function checkAdmin() {
@@ -78,10 +89,11 @@ export default function AdminPage() {
   async function handleAddRecipe(e: React.FormEvent) {
     e.preventDefault()
     
+    // Create the recipe first
     const recipeData = {
       name: newRecipe.name,
       description: newRecipe.description,
-      ingredients: JSON.stringify(newRecipe.ingredients.split("\n").filter(Boolean)),
+      ingredients: JSON.stringify(selectedIngredients.map(i => `${i.quantity} ${i.unit} ${i.name}`.trim()).filter(Boolean)),
       instructions: newRecipe.instructions.split("\n").filter(Boolean),
       category: newRecipe.category,
       prep_time_minutes: newRecipe.prep_time_minutes,
@@ -90,26 +102,47 @@ export default function AdminPage() {
       image_url: newRecipe.image_url
     }
 
-    const { error } = await supabase.from("recipes").insert(recipeData)
+    const { data: recipe, error } = await supabase.from("recipes").insert(recipeData).select().single()
     
     if (error) {
       alert("Error adding recipe: " + error.message)
-    } else {
-      alert("Recipe added successfully!")
-      setShowAddForm(false)
-      setNewRecipe({
-        name: "",
-        description: "",
-        ingredients: "",
-        instructions: "",
-        category: "dinner",
-        prep_time_minutes: 10,
-        cook_time_minutes: 20,
-        servings: 2,
-        image_url: ""
-      })
-      loadRecipes()
+      return
     }
+
+    // Add recipe_ingredients if we have any
+    if (selectedIngredients.length > 0) {
+      const recipeIngredientsData = selectedIngredients
+        .filter(i => i.ingredient_id) // Only save if ingredient was actually created/selected
+        .map(i => ({
+          recipe_id: recipe.id,
+          ingredient_id: i.ingredient_id,
+          quantity: i.quantity || null,
+          quantity_num: i.quantity ? parseFloat(i.quantity) : null,
+          unit: i.unit || null
+        }))
+
+      if (recipeIngredientsData.length > 0) {
+        const { error: riError } = await supabase.from("recipe_ingredients").insert(recipeIngredientsData)
+        if (riError) {
+          alert("Recipe saved but error adding ingredients: " + riError.message)
+        }
+      }
+    }
+    
+    alert("Recipe added successfully!")
+    setShowAddForm(false)
+    setNewRecipe({
+      name: "",
+      description: "",
+      instructions: "",
+      category: "dinner",
+      prep_time_minutes: 10,
+      cook_time_minutes: 20,
+      servings: 2,
+      image_url: ""
+    })
+    setSelectedIngredients([])
+    loadRecipes()
   }
 
   // Seed 20 sample recipes
@@ -386,7 +419,7 @@ export default function AdminPage() {
             <Button variant="outline" onClick={seedRecipes}>
               🌱 Seed 20 Recipes
             </Button>
-            <Button onClick={() => setShowAddForm(!showAddForm)}>
+            <Button onClick={() => { setShowAddForm(!showAddForm); setSelectedIngredients([]); }}>
               {showAddForm ? "Cancel" : "➕ Add Recipe"}
             </Button>
           </div>
@@ -435,12 +468,10 @@ export default function AdminPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Ingredients (one per line)</label>
-                  <textarea
-                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    value={newRecipe.ingredients}
-                    onChange={(e) => setNewRecipe({ ...newRecipe, ingredients: e.target.value })}
-                    placeholder="200g spaghetti&#10;3 eggs&#10;100g pancetta"
+                  <label className="text-sm font-medium">Ingredients</label>
+                  <IngredientSearch
+                    selectedIngredients={selectedIngredients}
+                    onChange={setSelectedIngredients}
                   />
                 </div>
 
