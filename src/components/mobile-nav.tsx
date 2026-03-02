@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
+import { useEffect, useState, useRef } from "react"
 import { getUserProfile } from "@/lib/supabase"
 
 const navItems = [
@@ -47,6 +48,10 @@ export default function MobileNav() {
 
   const isLoggedIn = !!profile
 
+  const handleLinkClick = () => {
+    setShowMore(false)
+  }
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50 safe-area-pb">
       <div className="flex items-center justify-around h-14">
@@ -83,11 +88,11 @@ export default function MobileNav() {
 
       {/* Bottom Sheet Overlay */}
       {showMore && (
-        <div className="fixed inset-0 z-40" onClick={() => { setShowMore(false); router.push("/settings"); }}>
+        <div className="fixed inset-0 z-40" onClick={() => setShowMore(false)}>
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/50" />
           
-          {/* Sheet - slides up from bottom */}
+          {/* Sheet */}
           <div 
             className="absolute bottom-0 left-0 right-0 bg-background rounded-t-2xl p-4 pb-8 shadow-xl z-50"
             onClick={(e) => e.stopPropagation()}
@@ -101,21 +106,21 @@ export default function MobileNav() {
                   <Link
                     href="/settings"
                     className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                    onClick={() => { setShowMore(false); router.push("/settings"); }}
+                    onClick={handleLinkClick}
                   >
                     ⚙️ Settings
                   </Link>
                   <Link
                     href="/shopping-list"
                     className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                    onClick={() => { setShowMore(false); router.push("/settings"); }}
+                    onClick={handleLinkClick}
                   >
                     🛒 Shopping List
                   </Link>
                   <Link
                     href="/meal-plan"
                     className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                    onClick={() => { setShowMore(false); router.push("/settings"); }}
+                    onClick={handleLinkClick}
                   >
                     📅 Meal Plan
                   </Link>
@@ -123,7 +128,7 @@ export default function MobileNav() {
                     <Link
                       href="/admin"
                       className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                      onClick={() => { setShowMore(false); router.push("/settings"); }}
+                      onClick={handleLinkClick}
                     >
                       🛠️ Admin
                     </Link>
@@ -142,7 +147,7 @@ export default function MobileNav() {
                 <Link
                   href="/login"
                   className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                  onClick={() => { setShowMore(false); router.push("/settings"); }}
+                  onClick={handleLinkClick}
                 >
                   🔑 Login
                 </Link>
