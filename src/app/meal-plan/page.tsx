@@ -69,7 +69,10 @@ export default function MealPlanPage() {
   const [profile, setProfile] = useState<any>(null)
   const [selectedSlot, setSelectedSlot] = useState<{date: string, mealType: string} | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedDay, setSelectedDay] = useState<string | null>(null)
+  const [selectedDay, setSelectedDay] = useState<string>(() => {
+    const today = new Date()
+    return formatDate(today)
+  })
 
   const weekDates = getWeekDates(currentWeekStart)
   const today = formatDate(new Date())
