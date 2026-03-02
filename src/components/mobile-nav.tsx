@@ -83,13 +83,13 @@ export default function MobileNav() {
 
       {/* Bottom Sheet Overlay */}
       {showMore && (
-        <div className="fixed inset-0 z-50" onClick={() => setShowMore(false)}>
+        <div className="fixed inset-0 z-40" onClick={() => setShowMore(false)}>
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/50" />
           
           {/* Sheet - slides up from bottom */}
           <div 
-            className="absolute bottom-0 left-0 right-0 bg-background rounded-t-2xl p-4 pb-8 shadow-xl"
+            className="absolute bottom-0 left-0 right-0 bg-background rounded-t-2xl p-4 pb-8 shadow-xl z-50"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Drag handle */}
