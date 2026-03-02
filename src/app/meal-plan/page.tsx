@@ -228,13 +228,13 @@ export default function MealPlanPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
+          <div className="text-center md:text-left">
             <h2 className="text-3xl font-bold">📅 Weekly Meal Plan</h2>
             <p className="text-muted-foreground">Plan your meals for the week ahead</p>
           </div>
           
           {/* Week Navigation */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 justify-center">
             <Button variant="outline" size="sm" onClick={handlePrevWeek}>
               ← Prev
             </Button>
