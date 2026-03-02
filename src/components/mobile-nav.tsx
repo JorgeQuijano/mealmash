@@ -83,7 +83,7 @@ export default function MobileNav() {
 
       {/* Bottom Sheet Overlay */}
       {showMore && (
-        <div className="fixed inset-0 z-40" onClick={() => setShowMore(false)}>
+        <div className="fixed inset-0 z-40" onClick={() => { setShowMore(false); router.push("/settings"); }}>
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/50" />
           
@@ -101,21 +101,21 @@ export default function MobileNav() {
                   <Link
                     href="/settings"
                     className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                    onClick={() => setShowMore(false)}
+                    onClick={() => { setShowMore(false); router.push("/settings"); }}
                   >
                     ⚙️ Settings
                   </Link>
                   <Link
                     href="/shopping-list"
                     className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                    onClick={() => setShowMore(false)}
+                    onClick={() => { setShowMore(false); router.push("/settings"); }}
                   >
                     🛒 Shopping List
                   </Link>
                   <Link
                     href="/meal-plan"
                     className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                    onClick={() => setShowMore(false)}
+                    onClick={() => { setShowMore(false); router.push("/settings"); }}
                   >
                     📅 Meal Plan
                   </Link>
@@ -123,7 +123,7 @@ export default function MobileNav() {
                     <Link
                       href="/admin"
                       className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                      onClick={() => setShowMore(false)}
+                      onClick={() => { setShowMore(false); router.push("/settings"); }}
                     >
                       🛠️ Admin
                     </Link>
@@ -142,7 +142,7 @@ export default function MobileNav() {
                 <Link
                   href="/login"
                   className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                  onClick={() => setShowMore(false)}
+                  onClick={() => { setShowMore(false); router.push("/settings"); }}
                 >
                   🔑 Login
                 </Link>
