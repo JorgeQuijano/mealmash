@@ -1,8 +1,6 @@
 "use client"
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState, useRef } from "react"
 import { getUserProfile } from "@/lib/supabase"
 
@@ -48,8 +46,9 @@ export default function MobileNav() {
 
   const isLoggedIn = !!profile
 
-  const handleLinkClick = () => {
+  const navigateTo = (href: string) => {
     setShowMore(false)
+    router.push(href)
   }
 
   return (
@@ -60,16 +59,16 @@ export default function MobileNav() {
             (item.href === "/dashboard" && pathname === "/") ||
             (item.href === "/recipes" && pathname.startsWith("/recipes"))
           return (
-            <Link
+            <button
               key={item.href}
-              href={item.href}
+              onClick={() => router.push(item.href)}
               className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
                 isActive ? "text-primary" : "text-muted-foreground"
               }`}
             >
               <span className="text-lg">{item.icon}</span>
               <span className="text-xs mt-0.5">{item.label}</span>
-            </Link>
+            </button>
           )
         })}
         
@@ -103,35 +102,31 @@ export default function MobileNav() {
             <div className="space-y-2">
               {isLoggedIn ? (
                 <>
-                  <Link
-                    href="/settings"
-                    className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                    onClick={handleLinkClick}
+                  <button
+                    onClick={() => navigateTo('/settings')}
+                    className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors w-full"
                   >
                     ⚙️ Settings
-                  </Link>
-                  <Link
-                    href="/shopping-list"
-                    className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                    onClick={handleLinkClick}
+                  </button>
+                  <button
+                    onClick={() => navigateTo('/shopping-list')}
+                    className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors w-full"
                   >
                     🛒 Shopping List
-                  </Link>
-                  <Link
-                    href="/meal-plan"
-                    className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                    onClick={handleLinkClick}
+                  </button>
+                  <button
+                    onClick={() => navigateTo('/meal-plan')}
+                    className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors w-full"
                   >
                     📅 Meal Plan
-                  </Link>
+                  </button>
                   {profile?.is_admin && (
-                    <Link
-                      href="/admin"
-                      className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                      onClick={handleLinkClick}
+                    <button
+                      onClick={() => navigateTo('/admin')}
+                      className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors w-full"
                     >
                       🛠️ Admin
-                    </Link>
+                    </button>
                   )}
                   <button
                     onClick={() => {
@@ -144,13 +139,12 @@ export default function MobileNav() {
                   </button>
                 </>
               ) : (
-                <Link
-                  href="/login"
-                  className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors"
-                  onClick={handleLinkClick}
+                <button
+                  onClick={() => navigateTo('/login')}
+                  className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors w-full"
                 >
                   🔑 Login
-                </Link>
+                </button>
               )}
             </div>
           </div>
