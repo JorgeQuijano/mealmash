@@ -35,7 +35,7 @@ type Recipe = {
   name: string
   description: string
   instructions: string[]
-  category: string
+  category: string[]  // Now supports multiple categories
   prep_time_minutes: number
   cook_time_minutes: number
   servings: number
@@ -115,7 +115,8 @@ export default function FavoritesPage() {
     setLoading(false)
   }
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = (category: string | string[]) => {
+    const cat = Array.isArray(category) ? category[0] : category
     const colors: Record<string, string> = {
       breakfast: "bg-yellow-100 text-yellow-800",
       lunch: "bg-green-100 text-green-800",
@@ -194,7 +195,7 @@ export default function FavoritesPage() {
                   <div className="flex justify-between items-start">
                     <CardTitle className="text-lg line-clamp-1">{recipe.name}</CardTitle>
                     <Badge className={getCategoryColor(recipe.category)}>
-                      {recipe.category}
+                      {Array.isArray(recipe.category) ? recipe.category.join(', ') : recipe.category}
                     </Badge>
                   </div>
                   <CardDescription className="line-clamp-2">
