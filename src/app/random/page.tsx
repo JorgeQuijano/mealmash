@@ -26,7 +26,7 @@ type Recipe = {
   name: string
   description: string
   instructions: string[]
-  category: string
+  category: string[]  // Now supports multiple categories
   prep_time_minutes: number
   cook_time_minutes: number
   servings: number
@@ -93,14 +93,18 @@ export default function RandomPage() {
         ingredients (name, category)
       )
     `)
-    if (selectedCategory !== "all") {
-      query = query.eq("category", selectedCategory)
-    }
-    
+    // Fetch all and filter in JS for array category support
     const { data, error } = await query
     
     if (data && data.length > 0) {
       let filtered = data
+      
+      // Filter by category if selected
+      if (selectedCategory !== "all") {
+        filtered = filtered.filter((r: Recipe) => 
+          r.category && r.category.includes(selectedCategory)
+        )
+      }
       
       // Filter for 100% match if toggle is on and user has pantry items
       if (showOnlyMatch && pantryItems.length > 0) {
@@ -146,7 +150,8 @@ export default function RandomPage() {
     }, 4000) // Match with CSS animation duration
   }
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = (category: string | string[]) => {
+    const cat = Array.isArray(category) ? category[0] : category
     const colors: Record<string, string> = {
       breakfast: "bg-yellow-100 text-yellow-800",
       lunch: "bg-green-100 text-green-800",
@@ -154,7 +159,7 @@ export default function RandomPage() {
       snack: "bg-purple-100 text-purple-800",
       dessert: "bg-pink-100 text-pink-800"
     }
-    return colors[category] || "bg-gray-100 text-gray-800"
+    return colors[cat] || "bg-gray-100 text-gray-800"
   }
 
   if (loading) {
@@ -309,7 +314,7 @@ export default function RandomPage() {
                 <CardContent className="space-y-4">
                   <div className="flex justify-center gap-2 flex-wrap">
                     <Badge className={getCategoryColor(selectedRecipe.category)}>
-                      {selectedRecipe.category}
+                      {Array.isArray(selectedRecipe.category) ? selectedRecipe.category.join(', ') : selectedRecipe.category}
                     </Badge>
                     <Badge variant="outline">⏱️ {selectedRecipe.prep_time_minutes + selectedRecipe.cook_time_minutes} min</Badge>
                     <Badge variant="outline">👥 {selectedRecipe.servings} servings</Badge>
