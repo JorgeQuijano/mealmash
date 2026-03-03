@@ -69,10 +69,13 @@ export default function RecipesPage() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [user, setUser] = useState<any>(null)
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
+  const recipesPerPage = 20
 
   useEffect(() => {
     loadAllData()
-  }, [selectedCategory])
+  }, [selectedCategory, currentPage])
 
   async function loadUser() {
     const currentUser = await getUser()
@@ -95,7 +98,22 @@ export default function RecipesPage() {
   async function loadRecipes() {
     setLoading(true)
     
-    // Fetch all recipes with nested ingredients (single query)
+    // First get total count for pagination
+    let countQuery = supabase
+      .from("recipes")
+      .select("*", { count: 'exact', head: true })
+    
+    if (selectedCategory !== "all") {
+      // For category filtering, we'll count after fetching
+    }
+    
+    const { count } = await countQuery
+    setTotalCount(count || 0)
+    
+    // Calculate offset
+    const offset = (currentPage - 1) * recipesPerPage
+    
+    // Fetch paginated recipes with nested ingredients
     const { data, error } = await supabase
       .from("recipes")
       .select(`
@@ -106,9 +124,10 @@ export default function RecipesPage() {
           ingredients (name, category)
         )
       `)
+      .range(offset, offset + recipesPerPage - 1)
     
     if (data) {
-      // Filter by category if selected
+      // Filter by category if selected (client-side for now)
       let filtered = data
       if (selectedCategory !== "all") {
         filtered = data.filter((r: Recipe) => {
@@ -198,7 +217,7 @@ export default function RecipesPage() {
                 key={cat}
                 variant={selectedCategory === cat ? "default" : "outline"}
                 size="sm"
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => { setSelectedCategory(cat); setCurrentPage(1); }}
                 className="capitalize"
               >
                 {cat}
@@ -263,6 +282,31 @@ export default function RecipesPage() {
         {!loading && filteredRecipes.length === 0 && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">No recipes found. Try a different search or category.</p>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalCount > recipesPerPage && (
+          <div className="flex justify-center items-center gap-2 mt-8">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {currentPage} of {Math.ceil(totalCount / recipesPerPage)}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => p + 1)}
+              disabled={currentPage >= Math.ceil(totalCount / recipesPerPage)}
+            >
+              Next
+            </Button>
           </div>
         )}
 
