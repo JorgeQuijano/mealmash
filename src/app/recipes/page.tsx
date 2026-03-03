@@ -241,7 +241,7 @@ export default function RecipesPage() {
                 onClick={() => setSelectedRecipe(recipe)}
               >
                 {getImageUrl(recipe.image_url) && (
-                  <div className="aspect-square relative overflow-hidden rounded-t-lg -mt-2">
+                  <div className="aspect-square relative overflow-hidden rounded-t-lg">
                     <Image 
                       src={getImageUrl(recipe.image_url)!} 
                       alt={recipe.name}
@@ -251,7 +251,7 @@ export default function RecipesPage() {
                     />
                   </div>
                 )}
-                <CardHeader>
+                <CardHeader className="p-4">
                   <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-lg">{recipe.name}</CardTitle>
                     <div className="flex gap-1 flex-wrap justify-end">
