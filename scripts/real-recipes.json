@@ -1,0 +1,733 @@
+[
+  {
+    "name": "Classic Scrambled Eggs",
+    "category": "breakfast",
+    "description": "Fluffy, creamy scrambled eggs made the classic way",
+    "prep_time_minutes": 5,
+    "cook_time_minutes": 5,
+    "servings": 2,
+    "ingredients": [
+      { "name": "Egg", "quantity": "4" },
+      { "name": "Butter", "quantity": "2 tbsp" },
+      { "name": "Milk", "quantity": "2 tbsp" },
+      { "name": "Salt", "quantity": "to taste" },
+      { "name": "Black Pepper", "quantity": "to taste" }
+    ],
+    "instructions": [
+      "Crack eggs into a bowl and whisk with milk, salt, and pepper",
+      "Heat butter in a non-stick pan over medium-low heat",
+      "Pour in egg mixture and let sit for 20 seconds",
+      "Gently push eggs from edges to center, folding gently",
+      "Remove from heat when still slightly wet - they will continue cooking"
+    ]
+  },
+  {
+    "name": "Classic Pancakes",
+    "category": "breakfast",
+    "description": "Fluffy American-style pancakes perfect for weekend breakfasts",
+    "prep_time_minutes": 10,
+    "cook_time_minutes": 15,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Flour", "quantity": "1.5 cups" },
+      { "name": "Baking Powder", "quantity": "1.5 tsp" },
+      { "name": "Salt", "quantity": "1/2 tsp" },
+      { "name": "Sugar", "quantity": "1 tbsp" },
+      { "name": "Milk", "quantity": "1.25 cups" },
+      { "name": "Egg", "quantity": "1" },
+      { "name": "Butter", "quantity": "3 tbsp" },
+      { "name": "Maple Syrup", "quantity": "for serving" }
+    ],
+    "instructions": [
+      "Mix flour, baking powder, salt, and sugar in a large bowl",
+      "Whisk milk, egg, and melted butter in another bowl",
+      "Pour wet ingredients into dry and stir until just combined (lumps are okay)",
+      "Heat a griddle or pan over medium heat and lightly grease",
+      "Pour 1/4 cup batter per pancake",
+      "Flip when bubbles form on surface and cook until golden",
+      "Serve with butter and maple syrup"
+    ]
+  },
+  {
+    "name": "Avocado Toast",
+    "category": "breakfast",
+    "description": "Simple yet delicious avocado on toasted bread",
+    "prep_time_minutes": 5,
+    "cook_time_minutes": 3,
+    "servings": 1,
+    "ingredients": [
+      { "name": "Bread", "quantity": "2 slices" },
+      { "name": "Avocado", "quantity": "1 ripe" },
+      { "name": "Lemon", "quantity": "1/2" },
+      { "name": "Salt", "quantity": "to taste" },
+      { "name": "Red Pepper Flake", "quantity": "pinch" },
+      { "name": "Olive Oil", "quantity": "1 tsp" }
+    ],
+    "instructions": [
+      "Toast bread until golden and crispy",
+      "Cut avocado in half, remove pit, and scoop flesh into a bowl",
+      "Mash with fork, add lemon juice, salt, and pepper",
+      "Spread mashed avocado on toast",
+      "Drizzle with olive oil and sprinkle red pepper flakes",
+      "Serve immediately"
+    ]
+  },
+  {
+    "name": "French Toast",
+    "category": "breakfast",
+    "description": "Crispy on the outside, soft on the inside French toast",
+    "prep_time_minutes": 10,
+    "cook_time_minutes": 10,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Bread", "quantity": "8 slices" },
+      { "name": "Egg", "quantity": "4" },
+      { "name": "Milk", "quantity": "1/2 cup" },
+      { "name": "Vanilla Extract", "quantity": "1 tsp" },
+      { "name": "Cinnamon", "quantity": "1/2 tsp" },
+      { "name": "Butter", "quantity": "2 tbsp" },
+      { "name": "Maple Syrup", "quantity": "for serving" }
+    ],
+    "instructions": [
+      "Whisk eggs, milk, vanilla, and cinnamon in a shallow dish",
+      "Heat butter in a large skillet over medium heat",
+      "Dip bread slices in egg mixture, coating both sides well",
+      "Cook until golden brown, about 2-3 minutes per side",
+      "Serve hot with maple syrup and fresh berries"
+    ]
+  },
+  {
+    "name": "Blueberry Muffins",
+    "category": "breakfast",
+    "description": "Moist blueberry muffins perfect for breakfast or snacking",
+    "prep_time_minutes": 15,
+    "cook_time_minutes": 25,
+    "servings": 12,
+    "ingredients": [
+      { "name": "Flour", "quantity": "2 cups" },
+      { "name": "Sugar", "quantity": "3/4 cup" },
+      { "name": "Baking Powder", "quantity": "1 tbsp" },
+      { "name": "Salt", "quantity": "1/2 tsp" },
+      { "name": "Milk", "quantity": "1 cup" },
+      { "name": "Egg", "quantity": "1" },
+      { "name": "Butter", "quantity": "1/3 cup" },
+      { "name": "Blueberry", "quantity": "1 cup" }
+    ],
+    "instructions": [
+      "Preheat oven to 375°F and line muffin tin with papers",
+      "Mix flour, sugar, baking powder, and salt in a bowl",
+      "Combine milk, egg, and melted butter in another bowl",
+      "Pour wet into dry and stir until just combined",
+      "Gently fold in blueberries",
+      "Divide batter among muffin cups",
+      "Bake for 25 minutes until golden"
+    ]
+  },
+  {
+    "name": "Chicken Caesar Salad",
+    "category": "lunch",
+    "description": "Classic Caesar salad with grilled chicken breast",
+    "prep_time_minutes": 15,
+    "cook_time_minutes": 15,
+    "servings": 2,
+    "ingredients": [
+      { "name": "Chicken Breast", "quantity": "2" },
+      { "name": "Romaine", "quantity": "1 head" },
+      { "name": "Parmesan", "quantity": "1/2 cup" },
+      { "name": "Bread Crumb", "quantity": "1/2 cup" },
+      { "name": "Olive Oil", "quantity": "3 tbsp" },
+      { "name": "Lemon", "quantity": "1" },
+      { "name": "Garlic", "quantity": "2 cloves" },
+      { "name": "Salt", "quantity": "to taste" },
+      { "name": "Black Pepper", "quantity": "to taste" }
+    ],
+    "instructions": [
+      "Season chicken breasts with salt and pepper",
+      "Grill or pan-fry chicken for 6-7 minutes per side until cooked through",
+      "Let chicken rest for 5 minutes, then slice",
+      "Chop romaine lettuce and place in a large bowl",
+      "Make dressing: whisk olive oil, lemon juice, minced garlic, and parmesan",
+      "Toss lettuce with dressing",
+      "Top with sliced chicken and croutons",
+      "Serve immediately"
+    ]
+  },
+  {
+    "name": "BLT Sandwich",
+    "category": "lunch",
+    "description": "The classic bacon, lettuce, and tomato sandwich",
+    "prep_time_minutes": 10,
+    "cook_time_minutes": 10,
+    "servings": 1,
+    "ingredients": [
+      { "name": "Bread", "quantity": "2 slices" },
+      { "name": "Bacon", "quantity": "4 strips" },
+      { "name": "Lettuce", "quantity": "2 leaves" },
+      { "name": "Tomato", "quantity": "1" },
+      { "name": "Mayonnaise", "quantity": "2 tbsp" }
+    ],
+    "instructions": [
+      "Cook bacon in a skillet until crispy, about 4 minutes per side",
+      "Toast bread slices",
+      "Spread mayonnaise on both slices of toast",
+      "Layer lettuce, tomato slices, and bacon on one slice",
+      "Top with second slice and serve"
+    ]
+  },
+  {
+    "name": "Grilled Cheese Sandwich",
+    "category": "lunch",
+    "description": "Crispy, buttery grilled cheese sandwich",
+    "prep_time_minutes": 5,
+    "cook_time_minutes": 10,
+    "servings": 1,
+    "ingredients": [
+      { "name": "Bread", "quantity": "2 slices" },
+      { "name": "Cheddar Cheese", "quantity": "2 slices" },
+      { "name": "Butter", "quantity": "2 tbsp" }
+    ],
+    "instructions": [
+      "Butter one side of each bread slice",
+      "Place one slice butter-side down in a cold pan",
+      "Add cheese on top, then second bread slice butter-side up",
+      "Turn heat to medium-low",
+      "Cook until golden brown, about 3-4 minutes per side",
+      "Slice diagonally and serve hot"
+    ]
+  },
+  {
+    "name": "Veggie Wrap",
+    "category": "lunch",
+    "description": "Fresh and healthy vegetable wrap with hummus",
+    "prep_time_minutes": 10,
+    "cook_time_minutes": 0,
+    "servings": 1,
+    "ingredients": [
+      { "name": "Tortilla", "quantity": "1 large" },
+      { "name": "Hummus", "quantity": "3 tbsp" },
+      { "name": "Lettuce", "quantity": "1 cup" },
+      { "name": "Tomato", "quantity": "1/2" },
+      { "name": "Cucumber", "quantity": "1/4" },
+      { "name": "Bell Pepper", "quantity": "1/4" },
+      { "name": "Onion", "quantity": "2 tbsp" }
+    ],
+    "instructions": [
+      "Spread hummus evenly across the tortilla",
+      "Layer lettuce, sliced tomato, cucumber, bell pepper, and onion",
+      "Fold in the sides and roll tightly",
+      "Cut in half and serve"
+    ]
+  },
+  {
+    "name": "Tomato Soup",
+    "category": "lunch",
+    "description": "Creamy homemade tomato soup",
+    "prep_time_minutes": 10,
+    "cook_time_minutes": 25,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Tomato", "quantity": "4 large" },
+      { "name": "Onion", "quantity": "1 medium" },
+      { "name": "Garlic", "quantity": "3 cloves" },
+      { "name": "Vegetable Stock", "quantity": "2 cups" },
+      { "name": "Heavy Cream", "quantity": "1/2 cup" },
+      { "name": "Olive Oil", "quantity": "2 tbsp" },
+      { "name": "Basil", "quantity": "1/4 cup" },
+      { "name": "Salt", "quantity": "to taste" },
+      { "name": "Black Pepper", "quantity": "to taste" }
+    ],
+    "instructions": [
+      "Heat olive oil in a pot over medium heat",
+      "Sauté diced onion until soft, about 5 minutes",
+      "Add minced garlic and cook 1 minute",
+      "Add chopped tomatoes and vegetable stock",
+      "Simmer for 15 minutes",
+      "Blend until smooth with an immersion blender",
+      "Stir in heavy cream and fresh basil",
+      "Season with salt and pepper, serve hot"
+    ]
+  },
+  {
+    "name": "Spaghetti Bolognese",
+    "category": "dinner",
+    "description": "Classic Italian pasta with rich meat sauce",
+    "prep_time_minutes": 15,
+    "cook_time_minutes": 45,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Pasta", "quantity": "400g" },
+      { "name": "Ground Beef", "quantity": "500g" },
+      { "name": "Onion", "quantity": "1 large" },
+      { "name": "Garlic", "quantity": "3 cloves" },
+      { "name": "Carrot", "quantity": "1" },
+      { "name": "Celery", "quantity": "1 stalk" },
+      { "name": "Crushed Tomato", "quantity": "400g" },
+      { "name": "Tomato Paste", "quantity": "2 tbsp" },
+      { "name": "Red Wine", "quantity": "1/2 cup" },
+      { "name": "Olive Oil", "quantity": "2 tbsp" },
+      { "name": "Basil", "quantity": "1/4 cup" },
+      { "name": "Parmesan", "quantity": "1/2 cup" }
+    ],
+    "instructions": [
+      "Heat olive oil in a large pan over medium-high heat",
+      "Brown ground beef, breaking it up as it cooks",
+      "Add diced onion, carrot, and celery, cook until soft",
+      "Add minced garlic, cook 1 minute",
+      "Pour in red wine and let it reduce by half",
+      "Add crushed tomatoes and tomato paste, stir well",
+      "Reduce heat and simmer for 30 minutes",
+      "Cook spaghetti according to package directions",
+      "Serve sauce over pasta, top with parmesan and basil"
+    ]
+  },
+  {
+    "name": "Grilled Chicken",
+    "category": "dinner",
+    "description": "Juicy grilled chicken breast with herbs",
+    "prep_time_minutes": 10,
+    "cook_time_minutes": 15,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Chicken Breast", "quantity": "4" },
+      { "name": "Olive Oil", "quantity": "3 tbsp" },
+      { "name": "Lemon", "quantity": "1" },
+      { "name": "Garlic", "quantity": "3 cloves" },
+      { "name": "Rosemary", "quantity": "2 sprigs" },
+      { "name": "Thyme", "quantity": "4 sprigs" },
+      { "name": "Salt", "quantity": "1 tsp" },
+      { "name": "Black Pepper", "quantity": "1/2 tsp" }
+    ],
+    "instructions": [
+      "Whisk olive oil with lemon juice, minced garlic, salt, and pepper",
+      "Marinate chicken breasts in the mixture for at least 30 minutes",
+      "Preheat grill to medium-high heat",
+      "Grill chicken for 6-7 minutes per side",
+      "Internal temperature should reach 165°F",
+      "Let rest for 5 minutes before serving",
+      "Garnish with fresh rosemary and thyme"
+    ]
+  },
+  {
+    "name": "Beef Tacos",
+    "category": "dinner",
+    "description": "Seasoned ground beef tacos with fresh toppings",
+    "prep_time_minutes": 15,
+    "cook_time_minutes": 15,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Ground Beef", "quantity": "500g" },
+      { "name": "Taco Shells", "quantity": "8" },
+      { "name": "Onion", "quantity": "1 medium" },
+      { "name": "Tomato", "quantity": "2" },
+      { "name": "Lettuce", "quantity": "1 cup" },
+      { "name": "Cheddar Cheese", "quantity": "1 cup" },
+      { "name": "Sour Cream", "quantity": "1/2 cup" },
+      { "name": "Cumin", "quantity": "1 tsp" },
+      { "name": "Chili Powder", "quantity": "1 tbsp" },
+      { "name": "Garlic", "quantity": "2 cloves" }
+    ],
+    "instructions": [
+      "Brown ground beef in a large skillet over medium-high heat",
+      "Add diced onion and cook until softened",
+      "Add minced garlic, cumin, and chili powder, cook 1 minute",
+      "Add a splash of water and simmer for 5 minutes",
+      "Warm taco shells according to package directions",
+      "Chop lettuce and dice tomatoes for toppings",
+      "Fill shells with beef, top with lettuce, tomato, cheese, and sour cream"
+    ]
+  },
+  {
+    "name": "Chicken Stir Fry",
+    "category": "dinner",
+    "description": "Quick and healthy chicken stir fry with vegetables",
+    "prep_time_minutes": 15,
+    "cook_time_minutes": 15,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Chicken Breast", "quantity": "500g" },
+      { "name": "Broccoli", "quantity": "2 cups" },
+      { "name": "Bell Pepper", "quantity": "1" },
+      { "name": "Carrot", "quantity": "2" },
+      { "name": "Snow Pea", "quantity": "1 cup" },
+      { "name": "Soy Sauce", "quantity": "3 tbsp" },
+      { "name": "Sesame Oil", "quantity": "2 tbsp" },
+      { "name": "Garlic", "quantity": "3 cloves" },
+      { "name": "Ginger", "quantity": "1 inch" },
+      { "name": "Cornstarch", "quantity": "1 tbsp" }
+    ],
+    "instructions": [
+      "Slice chicken into thin strips and toss with cornstarch",
+      "Heat sesame oil in a wok over high heat",
+      "Stir-fry chicken until golden, about 3-4 minutes, set aside",
+      "Add more oil, stir-fry garlic and ginger for 30 seconds",
+      "Add carrots and broccoli, stir-fry for 2 minutes",
+      "Add bell pepper and snow peas, cook 2 more minutes",
+      "Return chicken to wok, add soy sauce",
+      "Toss everything together and serve over rice"
+    ]
+  },
+  {
+    "name": "Grilled Salmon",
+    "category": "dinner",
+    "description": "Simple grilled salmon with lemon and dill",
+    "prep_time_minutes": 10,
+    "cook_time_minutes": 15,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Salmon", "quantity": "4 fillets" },
+      { "name": "Lemon", "quantity": "1" },
+      { "name": "Dill", "quantity": "2 tbsp" },
+      { "name": "Olive Oil", "quantity": "2 tbsp" },
+      { "name": "Garlic", "quantity": "2 cloves" },
+      { "name": "Salt", "quantity": "1 tsp" },
+      { "name": "Black Pepper", "quantity": "1/2 tsp" }
+    ],
+    "instructions": [
+      "Mix olive oil, minced garlic, lemon juice, dill, salt, and pepper",
+      "Marinate salmon fillets for 15-30 minutes",
+      "Preheat grill to medium-high heat",
+      "Grill salmon skin-side down for 4-5 minutes",
+      "Flip carefully and grill another 3-4 minutes",
+      "Salmon is done when it flakes easily with a fork",
+      "Serve with lemon wedges and extra dill"
+    ]
+  },
+  {
+    "name": "Mushroom Risotto",
+    "category": "dinner",
+    "description": "Creamy Italian risotto with mushrooms and parmesan",
+    "prep_time_minutes": 10,
+    "cook_time_minutes": 30,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Arborio Rice", "quantity": "1.5 cups" },
+      { "name": "Mushroom", "quantity": "300g" },
+      { "name": "Onion", "quantity": "1 medium" },
+      { "name": "Garlic", "quantity": "2 cloves" },
+      { "name": "Chicken Stock", "quantity": "4 cups" },
+      { "name": "White Wine", "quantity": "1/2 cup" },
+      { "name": "Parmesan", "quantity": "1/2 cup" },
+      { "name": "Butter", "quantity": "3 tbsp" },
+      { "name": "Thyme", "quantity": "1 tsp" }
+    ],
+    "instructions": [
+      "Heat chicken stock in a pot and keep warm",
+      "Sauté sliced mushrooms in butter until golden, set aside",
+      "In the same pan, sauté diced onion until soft",
+      "Add garlic and arborio rice, toast for 1-2 minutes",
+      "Pour in white wine and stir until absorbed",
+      "Add warm stock one ladle at a time, stirring constantly",
+      "Continue for about 18-20 minutes until rice is creamy",
+      "Stir in mushrooms, parmesan, and remaining butter",
+      "Season and serve immediately"
+    ]
+  },
+  {
+    "name": "Classic Burger",
+    "category": "dinner",
+    "description": "Juicy homemade beef burger with all the fixings",
+    "prep_time_minutes": 15,
+    "cook_time_minutes": 10,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Ground Beef", "quantity": "500g" },
+      { "name": "Bread", "quantity": "4 burger buns" },
+      { "name": "Cheddar Cheese", "quantity": "4 slices" },
+      { "name": "Lettuce", "quantity": "4 leaves" },
+      { "name": "Tomato", "quantity": "1" },
+      { "name": "Onion", "quantity": "1/2" },
+      { "name": "Pickle", "quantity": "4 slices" },
+      { "name": "Ketchup", "quantity": "4 tbsp" },
+      { "name": "Mayonnaise", "quantity": "2 tbsp" },
+      { "name": "Salt", "quantity": "1 tsp" },
+      { "name": "Black Pepper", "quantity": "1/2 tsp" }
+    ],
+    "instructions": [
+      "Divide ground beef into 4 portions and form into patties",
+      "Season patties with salt and pepper",
+      "Heat grill or pan to medium-high heat",
+      "Cook burgers 4-5 minutes per side for medium",
+      "Add cheese in the last minute to melt",
+      "Toast burger buns on the grill",
+      "Spread ketchup and mayo on buns",
+      "Layer lettuce, tomato, onion, pickle, and patty",
+      "Serve immediately"
+    ]
+  },
+  {
+    "name": "Vegetable Curry",
+    "category": "dinner",
+    "description": "Hearty vegetable curry with coconut milk",
+    "prep_time_minutes": 15,
+    "cook_time_minutes": 25,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Cauliflower", "quantity": "1 head" },
+      { "name": "Potato", "quantity": "2 medium" },
+      { "name": "Chickpeas", "quantity": "1 can" },
+      { "name": "Coconut Milk", "quantity": "400ml" },
+      { "name": "Onion", "quantity": "1 large" },
+      { "name": "Garlic", "quantity": "3 cloves" },
+      { "name": "Ginger", "quantity": "1 inch" },
+      { "name": "Curry Powder", "quantity": "2 tbsp" },
+      { "name": "Turmeric", "quantity": "1 tsp" },
+      { "name": "Spinach", "quantity": "2 cups" }
+    ],
+    "instructions": [
+      "Cut cauliflower into florets and dice potatoes",
+      "Sauté diced onion until golden",
+      "Add minced garlic and ginger, cook 1 minute",
+      "Add curry powder and turmeric, toast for 30 seconds",
+      "Add potatoes and cauliflower, stir to coat",
+      "Pour in coconut milk and bring to simmer",
+      "Cook for 15 minutes until vegetables are tender",
+      "Stir in chickpeas and spinach",
+      "Cook until spinach wilts, serve over rice"
+    ]
+  },
+  {
+    "name": "Pork Chops with Apples",
+    "category": "dinner",
+    "description": "Pan-seared pork chops with caramelized apples",
+    "prep_time_minutes": 10,
+    "cook_time_minutes": 20,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Pork Chop", "quantity": "4" },
+      { "name": "Apple", "quantity": "2" },
+      { "name": "Onion", "quantity": "1 medium" },
+      { "name": "Butter", "quantity": "3 tbsp" },
+      { "name": "Brown Sugar", "quantity": "2 tbsp" },
+      { "name": "Sage", "quantity": "1 tsp" },
+      { "name": "Salt", "quantity": "1 tsp" },
+      { "name": "Black Pepper", "quantity": "1/2 tsp" }
+    ],
+    "instructions": [
+      "Season pork chops with salt and pepper",
+      "Heat butter in a large oven-safe skillet",
+      "Sear pork chops 3-4 minutes per side until golden",
+      "Remove pork chops and set aside",
+      "Add sliced apples and onion to the pan",
+      "Cook until softened, about 5 minutes",
+      "Add brown sugar and sage, stir",
+      "Return pork chops to pan",
+      "Simmer for 5 minutes, serve hot"
+    ]
+  },
+  {
+    "name": "Shrimp Scampi",
+    "category": "dinner",
+    "description": "Garlic butter shrimp served over pasta",
+    "prep_time_minutes": 10,
+    "cook_time_minutes": 15,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Shrimp", "quantity": "500g" },
+      { "name": "Pasta", "quantity": "300g" },
+      { "name": "Butter", "quantity": "4 tbsp" },
+      { "name": "Garlic", "quantity": "6 cloves" },
+      { "name": "White Wine", "quantity": "1/2 cup" },
+      { "name": "Lemon", "quantity": "1" },
+      { "name": "Parsley", "quantity": "1/4 cup" },
+      { "name": "Red Pepper Flake", "quantity": "1/4 tsp" },
+      { "name": "Salt", "quantity": "to taste" }
+    ],
+    "instructions": [
+      "Cook pasta according to package directions",
+      "Melt butter in a large skillet over medium heat",
+      "Add minced garlic and red pepper flakes, cook 1 minute",
+      "Add shrimp, cook 2 minutes per side until pink",
+      "Pour in white wine and lemon juice",
+      "Toss in cooked pasta and parsley",
+      "Season with salt, serve immediately"
+    ]
+  },
+  {
+    "name": "Classic Guacamole",
+    "category": "snack",
+    "description": "Fresh homemade guacamole with lime and cilantro",
+    "prep_time_minutes": 10,
+    "cook_time_minutes": 0,
+    "servings": 4,
+    "ingredients": [
+      { "name": "Avocado", "quantity": "3 ripe" },
+      { "name": "Lime", "quantity": "1" },
+      { "name": "Onion", "quantity": "1/4 cup" },
+      { "name": "Tomato", "quantity": "1 medium" },
+      { "name": "Cilantro", "quantity": "2 tbsp" },
+      { "name": "Jalapeño", "quantity": "1" },
+      { "name": "Garlic", "quantity": "1 clove" },
+      { "name": "Salt", "quantity": "1/2 tsp" }
+    ],
+    "instructions": [
+      "Cut avocados in half and remove pits",
+      "Scoop flesh into a bowl and mash with a fork",
+      "Add lime juice immediately to prevent browning",
+      "Dice onion, tomato, and jalapeño finely",
+      "Mix in vegetables, cilantro, minced garlic, and salt",
+      "Taste and adjust seasoning",
+      "Serve immediately with tortilla chips"
+    ]
+  },
+  {
+    "name": "Hummus",
+    "category": "snack",
+    "description": "Smooth Middle Eastern chickpea dip",
+    "prep_time_minutes": 10,
+    "cook_time_minutes": 0,
+    "servings": 6,
+    "ingredients": [
+      { "name": "Chickpeas", "quantity": "1 can" },
+      { "name": "Tahini", "quantity": "1/4 cup" },
+      { "name": "Lemon", "quantity": "2" },
+      { "name": "Garlic", "quantity": "2 cloves" },
+      { "name": "Olive Oil", "quantity": "3 tbsp" },
+      { "name": "Cumin", "quantity": "1/2 tsp" },
+      { "name": "Salt", "quantity": "1/2 tsp" }
+    ],
+    "instructions": [
+      "Drain and rinse chickpeas",
+      "Add chickpeas to food processor with tahini",
+      "Blend until smooth, scraping sides as needed",
+      "Add lemon juice, garlic, cumin, and salt",
+      "With processor running, drizzle in olive oil",
+      "Add water if needed for desired consistency",
+      "Taste and adjust seasoning",
+      "Drizzle with olive oil and serve with pita"
+    ]
+  },
+  {
+    "name": "Bruschetta",
+    "category": "snack",
+    "description": "Italian tomato and basil on toasted bread",
+    "prep_time_minutes": 15,
+    "cook_time_minutes": 5,
+    "servings": 6,
+    "ingredients": [
+      { "name": "Baguette", "quantity": "1" },
+      { "name": "Tomato", "quantity": "4 large" },
+      { "name": "Basil", "quantity": "1/4 cup" },
+      { "name": "Garlic", "quantity": "3 cloves" },
+      { "name": "Olive Oil", "quantity": "4 tbsp" },
+      { "name": "Balsamic Vinegar", "quantity": "1 tbsp" },
+      { "name": "Salt", "quantity": "1/2 tsp" }
+    ],
+    "instructions": [
+      "Dice tomatoes and place in a bowl",
+      "Add minced garlic, chopped basil, olive oil, and vinegar",
+      "Season with salt and let marinate for 15 minutes",
+      "Slice baguette and brush with olive oil",
+      "Toast until golden, about 2-3 minutes",
+      "Rub toast with cut garlic clove",
+      "Top with tomato mixture and serve"
+    ]
+  },
+  {
+    "name": "Fruit Smoothie",
+    "category": "snack",
+    "description": "Refreshing mixed berry smoothie",
+    "prep_time_minutes": 5,
+    "cook_time_minutes": 0,
+    "servings": 2,
+    "ingredients": [
+      { "name": "Banana", "quantity": "1" },
+      { "name": "Strawberry", "quantity": "1/2 cup" },
+      { "name": "Blueberry", "quantity": "1/2 cup" },
+      { "name": "Yogurt", "quantity": "1 cup" },
+      { "name": "Milk", "quantity": "1/2 cup" },
+      { "name": "Honey", "quantity": "1 tbsp" }
+    ],
+    "instructions": [
+      "Add all ingredients to a blender",
+      "Blend until smooth",
+      "Add more milk if too thick",
+      "Pour into glasses and serve immediately"
+    ]
+  },
+  {
+    "name": "Deviled Eggs",
+    "category": "snack",
+    "description": "Classic deviled eggs with tangy filling",
+    "prep_time_minutes": 15,
+    "cook_time_minutes": 12,
+    "servings": 6,
+    "ingredients": [
+      { "name": "Egg", "quantity": "6" },
+      { "name": "Mayonnaise", "quantity": "3 tbsp" },
+      { "name": "Mustard", "quantity": "1 tsp" },
+      { "name": "Vinegar", "quantity": "1 tsp" },
+      { "name": "Salt", "quantity": "1/4 tsp" },
+      { "name": "Paprika", "quantity": "for garnish" }
+    ],
+    "instructions": [
+      "Place eggs in a single layer in a pot, cover with cold water",
+      "Bring to a boil, then turn off heat and cover for 12 minutes",
+      "Transfer eggs to ice bath for 5 minutes",
+      "Peel eggs and slice in half lengthwise",
+      "Remove yolks and place in a bowl",
+      "Mash yolks with mayo, mustard, vinegar, and salt",
+      "Pipe or spoon filling back into egg whites",
+      "Sprinkle with paprika and serve"
+    ]
+  },
+  {
+    "name": "Chocolate Chip Cookies",
+    "category": "dessert",
+    "description": "Classic homemade chocolate chip cookies",
+    "prep_time_minutes": 15,
+    "cook_time_minutes": 12,
+    "servings": 24,
+    "ingredients": [
+      { "name": "Flour", "quantity": "2.25 cups" },
+      { "name": "Butter", "quantity": "1 cup" },
+      { "name": "Sugar", "quantity": "3/4 cup" },
+      { "name": "Brown Sugar", "quantity": "3/4 cup" },
+      { "name": "Egg", "quantity": "2" },
+      { "name": "Vanilla Extract", "quantity": "1 tsp" },
+      { "name": "Baking Soda", "quantity": "1 tsp" },
+      { "name": "Salt", "quantity": "1 tsp" },
+      { "name": "Chocolate Chips", "quantity": "2 cups" }
+    ],
+    "instructions": [
+      "Preheat oven to 375°F",
+      "Cream butter and sugars until light and fluffy",
+      "Beat in eggs one at a time, then add vanilla",
+      "Mix flour, baking soda, and salt in separate bowl",
+      "Gradually add dry ingredients to wet mixture",
+      "Fold in chocolate chips",
+      "Drop rounded tablespoons onto ungreased baking sheets",
+      "Bake 9-12 minutes until golden brown",
+      "Cool on baking sheet for 2 minutes, then transfer to rack"
+    ]
+  },
+  {
+    "name": "Chocolate Cake",
+    "category": "dessert",
+    "description": "Rich and moist chocolate cake",
+    "prep_time_minutes": 20,
+    "cook_time_minutes": 35,
+    "servings": 12,
+    "ingredients": [
+      { "name": "Flour", "quantity": "2 cups" },
+      { "name": "Sugar", "quantity": "2 cups" },
+      { "name": "Cocoa Powder", "quantity": "3/4 cup" },
+      { "name": "Baking Powder", "quantity": "2 tsp" },
+      { "name": "Baking Soda", "quantity": "2 tsp" },
+      { "name": "Egg", "quantity": "2" },
+      { "name": "Milk", "quantity": "1 cup" },
+      { "name": "Butter", "quantity": "1/2 cup" },
+      { "name": "Vanilla Extract", "quantity": "2 tsp" },
+      { "name": "Hot Water", "quantity": "1 cup" }
+    ],
+    "instructions": [
+      "Preheat oven to 350°F, grease and flour two 9-inch round pans",
+      "Mix flour, sugar, cocoa, baking powder, and baking soda in a large bowl",
+      "Add eggs, milk, melted butter, and vanilla, beat for 2 minutes",
+      "Stir in hot water (batter will be thin)",
+      "Pour into prepared pans",
+      "Bake 30-35 minutes",
+      "Cool in pans 10 minutes, then remove to wire racks",
+      "Frost with your favorite frosting"
+    ]
+  }
+]

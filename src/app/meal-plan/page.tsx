@@ -484,7 +484,9 @@ export default function MealPlanPage() {
                       <CardContent className="p-3 flex items-center justify-between">
                         <div>
                           <div className="font-medium text-sm">{recipe.name}</div>
-                          <div className="text-xs text-muted-foreground capitalize">{recipe.category}</div>
+                          <div className="text-xs text-muted-foreground capitalize">
+                            {Array.isArray(recipe.category) ? recipe.category.join(', ') : recipe.category}
+                          </div>
                         </div>
                         <Button size="sm" variant="outline">Add</Button>
                       </CardContent>

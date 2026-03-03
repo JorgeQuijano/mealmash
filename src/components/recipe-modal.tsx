@@ -31,7 +31,7 @@ type Recipe = {
   name: string
   description: string
   instructions: string[]
-  category: string
+  category: string[]  // Now supports multiple categories
   prep_time_minutes: number
   cook_time_minutes: number
   servings: number
@@ -65,7 +65,8 @@ function isSuggestedRecipe(recipe: Recipe | SuggestedRecipe): recipe is Suggeste
   return 'matchedIngredients' in recipe && 'missingIngredients' in recipe
 }
 
-function getCategoryColor(category: string) {
+function getCategoryColor(category: string | string[]) {
+  const cat = Array.isArray(category) ? category[0] : category
   const colors: Record<string, string> = {
     breakfast: "bg-yellow-100 text-yellow-800",
     lunch: "bg-green-100 text-green-800",
@@ -303,7 +304,7 @@ export default function RecipeModal({
             {/* Category, Times, Servings */}
             <div className="flex flex-wrap items-center gap-4">
               <Badge className={getCategoryColor(recipe.category)}>
-                {recipe.category}
+                {Array.isArray(recipe.category) ? recipe.category.join(', ') : recipe.category}
               </Badge>
               <span className="text-sm">⏱️ Prep: {recipe.prep_time_minutes} min</span>
               <span className="text-sm">🍳 Cook: {recipe.cook_time_minutes} min</span>

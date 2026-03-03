@@ -212,7 +212,12 @@ export default function SuggestionsPage() {
   // Filter by category
   const filteredSuggestions = selectedCategory === "all" 
     ? suggestedRecipes 
-    : suggestedRecipes.filter(s => s.recipe.category === selectedCategory)
+  // Update the filter to handle array category
+  const displayedRecipes = selectedCategory === "all" 
+    ? suggestedRecipes 
+    : suggestedRecipes.filter(s => 
+        s.recipe.category && s.recipe.category.includes(selectedCategory)
+      )
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {

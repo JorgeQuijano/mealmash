@@ -36,7 +36,7 @@ type Recipe = {
   name: string
   description: string
   instructions: string[]
-  category: string
+  category: string[]  // Now an array for multiple categories
   prep_time_minutes: number
   cook_time_minutes: number
   servings: number
@@ -83,23 +83,28 @@ export default function RecipesPage() {
   async function loadRecipes() {
     setLoading(true)
     
-    let query = supabase.from("recipes").select(`
-      *,
-      recipe_ingredients (
-        ingredient_id,
-        quantity,
-        ingredients (name, category)
-      )
-    `)
-    
-    if (selectedCategory !== "all") {
-      query = query.eq("category", selectedCategory)
-    }
-    
-    const { data, error } = await query
+    // Fetch all recipes and filter in JS (to handle array category)
+    const { data, error } = await supabase
+      .from("recipes")
+      .select(`
+        *,
+        recipe_ingredients (
+          ingredient_id,
+          quantity,
+          ingredients (name, category)
+        )
+      `)
     
     if (data) {
-      setRecipes(data)
+      // Filter by category if selected
+      let filtered = data
+      if (selectedCategory !== "all") {
+        filtered = data.filter((r: Recipe) => 
+          r.category && r.category.includes(selectedCategory)
+        )
+      }
+      setRecipes(filtered)
+    } else {
     } else {
       console.error("Error loading recipes:", error)
     }
@@ -111,7 +116,8 @@ export default function RecipesPage() {
     recipe.description?.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = (category: string | string[]) => {
+    const cat = Array.isArray(category) ? category[0] : category
     const colors: Record<string, string> = {
       breakfast: "bg-yellow-100 text-yellow-800",
       lunch: "bg-green-100 text-green-800",
@@ -199,7 +205,7 @@ export default function RecipesPage() {
                   <div className="flex items-start justify-between">
                     <CardTitle className="text-lg">{recipe.name}</CardTitle>
                     <Badge className={getCategoryColor(recipe.category)}>
-                      {recipe.category}
+                      {Array.isArray(recipe.category) ? recipe.category.join(', ') : recipe.category}
                     </Badge>
                   </div>
                   <CardDescription>{recipe.description}</CardDescription>
