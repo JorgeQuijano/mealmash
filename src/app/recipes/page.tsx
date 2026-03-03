@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 
 import MobileNav from "@/components/mobile-nav"
 import RecipeModal from "@/components/recipe-modal"
+import { getImageUrl } from "@/lib/images"
 
 // Helper to parse category from any format to string array
 function parseCategory(cat: any): string[] {
@@ -238,10 +239,10 @@ export default function RecipesPage() {
                 className="hover:shadow-lg transition-shadow cursor-pointer h-full"
                 onClick={() => setSelectedRecipe(recipe)}
               >
-                {recipe.image_url && (
+                {getImageUrl(recipe.image_url) && (
                   <div className="aspect-video bg-muted relative overflow-hidden rounded-t-lg">
                     <img 
-                      src={recipe.image_url} 
+                      src={getImageUrl(recipe.image_url)!} 
                       alt={recipe.name}
                       className="object-cover w-full h-full"
                     />

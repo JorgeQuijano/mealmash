@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { getUser, isUserAdmin, supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
@@ -67,6 +67,52 @@ export default function AdminPage() {
     servings: 2,
     image_url: ""
   })
+
+  // Image upload state
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Image upload function
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingImage(true)
+    setImagePreview(URL.createObjectURL(file))
+
+    try {
+      // Upload to Supabase Storage
+      const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`
+      const { data, error } = await supabase.storage
+        .from('recipe-images')
+        .upload(fileName, file)
+
+      if (error) throw error
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('recipe-images')
+        .getPublicUrl(fileName)
+
+      setNewRecipe({ ...newRecipe, image_url: publicUrl })
+      toast.success('Image uploaded!')
+    } catch (err: any) {
+      console.error('Upload error:', err)
+      toast.error('Failed to upload image')
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  // Clear image
+  const clearImage = () => {
+    setNewRecipe({ ...newRecipe, image_url: '' })
+    setImagePreview(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
   
   // Normalized ingredients
   const [selectedIngredients, setSelectedIngredients] = useState<SelectedIngredient[]>([])
@@ -242,6 +288,13 @@ export default function AdminPage() {
       servings: recipe.servings,
       image_url: recipe.image_url || ""
     })
+    
+    // Set image preview if there's an existing image
+    if (recipe.image_url) {
+      setImagePreview(recipe.image_url)
+    } else {
+      setImagePreview(null)
+    }
     
     // Load existing ingredients
     const { data: existingIngs } = await supabase
@@ -640,12 +693,34 @@ export default function AdminPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Image URL</label>
-                    <Input
-                      value={newRecipe.image_url}
-                      onChange={(e) => setNewRecipe({ ...newRecipe, image_url: e.target.value })}
-                      placeholder="https://..."
+                    <label className="text-sm font-medium">Recipe Image</label>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploadingImage}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                     />
+                    {uploadingImage && <p className="text-sm text-muted-foreground">Uploading...</p>}
+                    {imagePreview || newRecipe.image_url ? (
+                      <div className="relative mt-2">
+                        <img 
+                          src={imagePreview || newRecipe.image_url} 
+                          alt="Preview" 
+                          className="h-32 w-32 object-cover rounded"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="absolute -top-2 -right-2"
+                          onClick={clearImage}
+                        >
+                          ✕
+                        </Button>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
 
