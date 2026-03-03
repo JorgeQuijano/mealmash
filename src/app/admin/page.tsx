@@ -681,7 +681,7 @@ export default function AdminPage() {
                       <div className="flex-1">
                         <h4 className="font-semibold">{recipe.name}</h4>
                         <p className="text-sm text-muted-foreground">{recipe.description}</p>
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center gap-1 mt-2">
                           {parseCategory(recipe.category).map((cat) => (
                             <Badge key={cat} variant="outline" className="capitalize">
                               {cat}

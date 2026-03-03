@@ -206,15 +206,15 @@ export default function FavoritesPage() {
                 onClick={() => setSelectedRecipe(recipe)}
               >
                 <CardHeader>
-                  <div className="flex justify-between items-start">
+                  <div className="flex justify-between items-start gap-2">
                     <CardTitle className="text-lg line-clamp-1">{recipe.name}</CardTitle>
-                    <Badge className={getCategoryColor(recipe.category)}>
+                    <div className="flex gap-1 flex-wrap justify-end">
                       {parseCategory(recipe.category).map((cat) => (
                         <Badge key={cat} className={getCategoryColor(cat)}>
                           {cat}
                         </Badge>
                       ))}
-                    </Badge>
+                    </div>
                   </div>
                   <CardDescription className="line-clamp-2">
                     {recipe.description}

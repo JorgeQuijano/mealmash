@@ -361,15 +361,15 @@ export default function SuggestionsPage() {
                 onClick={() => setSelectedRecipe(suggestion)}
               >
                 <CardHeader>
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-lg">{suggestion.recipe.name}</CardTitle>
-                    <Badge className={getCategoryColor(suggestion.recipe.category)}>
+                    <div className="flex gap-1 flex-wrap justify-end">
                       {parseCategory(suggestion.recipe.category).map((cat) => (
                         <Badge key={cat} className={getCategoryColor(cat)}>
                           {cat}
                         </Badge>
                       ))}
-                    </Badge>
+                    </div>
                   </div>
                   <CardDescription className="line-clamp-2">
                     {suggestion.recipe.description}

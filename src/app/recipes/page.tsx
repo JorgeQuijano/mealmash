@@ -216,13 +216,15 @@ export default function RecipesPage() {
                   </div>
                 )}
                 <CardHeader>
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-lg">{recipe.name}</CardTitle>
-                    {parseCategory(recipe.category).map((cat) => (
-                      <Badge key={cat} className={getCategoryColor(cat)}>
-                        {cat}
-                      </Badge>
-                    ))}
+                    <div className="flex gap-1 flex-wrap justify-end">
+                      {parseCategory(recipe.category).map((cat) => (
+                        <Badge key={cat} className={getCategoryColor(cat)}>
+                          {cat}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                   <CardDescription>{recipe.description}</CardDescription>
                 </CardHeader>
