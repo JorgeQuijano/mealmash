@@ -210,9 +210,6 @@ export default function SuggestionsPage() {
   }, [pantryItems, recipes, recipeIngredients, ingredientMap, pantryIngredientIds])
 
   // Filter by category
-  const filteredSuggestions = selectedCategory === "all" 
-    ? suggestedRecipes 
-  // Update the filter to handle array category
   const displayedRecipes = selectedCategory === "all" 
     ? suggestedRecipes 
     : suggestedRecipes.filter(s => 

@@ -105,7 +105,6 @@ export default function RecipesPage() {
       }
       setRecipes(filtered)
     } else {
-    } else {
       console.error("Error loading recipes:", error)
     }
     setLoading(false)
