@@ -218,9 +218,11 @@ export default function RecipesPage() {
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <CardTitle className="text-lg">{recipe.name}</CardTitle>
-                    <Badge className={getCategoryColor(recipe.category)}>
-                      {parseCategory(recipe.category).join(', ')}
-                    </Badge>
+                    {parseCategory(recipe.category).map((cat) => (
+                      <Badge key={cat} className={getCategoryColor(cat)}>
+                        {cat}
+                      </Badge>
+                    ))}
                   </div>
                   <CardDescription>{recipe.description}</CardDescription>
                 </CardHeader>

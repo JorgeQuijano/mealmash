@@ -364,7 +364,11 @@ export default function SuggestionsPage() {
                   <div className="flex items-start justify-between">
                     <CardTitle className="text-lg">{suggestion.recipe.name}</CardTitle>
                     <Badge className={getCategoryColor(suggestion.recipe.category)}>
-                      {parseCategory(suggestion.recipe.category).join(', ')}
+                      {parseCategory(suggestion.recipe.category).map((cat) => (
+                        <Badge key={cat} className={getCategoryColor(cat)}>
+                          {cat}
+                        </Badge>
+                      ))}
                     </Badge>
                   </div>
                   <CardDescription className="line-clamp-2">

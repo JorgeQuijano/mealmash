@@ -209,7 +209,11 @@ export default function FavoritesPage() {
                   <div className="flex justify-between items-start">
                     <CardTitle className="text-lg line-clamp-1">{recipe.name}</CardTitle>
                     <Badge className={getCategoryColor(recipe.category)}>
-                      {parseCategory(recipe.category).join(', ')}
+                      {parseCategory(recipe.category).map((cat) => (
+                        <Badge key={cat} className={getCategoryColor(cat)}>
+                          {cat}
+                        </Badge>
+                      ))}
                     </Badge>
                   </div>
                   <CardDescription className="line-clamp-2">

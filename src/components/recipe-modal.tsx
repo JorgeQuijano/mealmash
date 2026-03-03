@@ -317,9 +317,11 @@ export default function RecipeModal({
 
             {/* Category, Times, Servings */}
             <div className="flex flex-wrap items-center gap-4">
-              <Badge className={getCategoryColor(recipe.category)}>
-                {parseCategory(recipe.category).join(', ')}
-              </Badge>
+              {parseCategory(recipe.category).map((cat) => (
+                <Badge key={cat} className={getCategoryColor(cat)}>
+                  {cat}
+                </Badge>
+              ))}
               <span className="text-sm">⏱️ Prep: {recipe.prep_time_minutes} min</span>
               <span className="text-sm">🍳 Cook: {recipe.cook_time_minutes} min</span>
               <span className="text-sm">👥 {recipe.servings} servings</span>

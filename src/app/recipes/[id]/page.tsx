@@ -298,7 +298,11 @@ export default function RecipeDetailPage() {
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div className="flex-1">
               <Badge className={`${getCategoryColor(recipe.category)} mb-3`}>
-                {parseCategory(recipe.category).join(', ')}
+                {parseCategory(recipe.category).map((cat) => (
+                  <Badge key={cat} className={getCategoryColor(cat)}>
+                    {cat}
+                  </Badge>
+                ))}
               </Badge>
               <h1 className="text-4xl font-bold mb-3">{recipe.name}</h1>
               <p className="text-lg text-muted-foreground">{recipe.description}</p>
