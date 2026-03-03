@@ -237,7 +237,7 @@ export default function RecipesPage() {
             {filteredRecipes.map((recipe) => (
               <Card 
                 key={recipe.id} 
-                className="hover:shadow-lg transition-shadow cursor-pointer h-full"
+                className="hover:shadow-lg transition-shadow cursor-pointer h-full py-0"
                 onClick={() => setSelectedRecipe(recipe)}
               >
                 {getImageUrl(recipe.image_url) && (
