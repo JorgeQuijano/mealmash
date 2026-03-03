@@ -10,7 +10,7 @@ export const siteConfig = {
       { label: "Pricing", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
-    cta: { label: "Get Started", href: "#signup" },
+    cta: { label: "Login", href: "/login" },
   },
   
   hero: {
