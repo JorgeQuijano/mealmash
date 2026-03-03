@@ -113,6 +113,10 @@ export default function RecipesPage() {
         )
       `, { count: 'exact' })
     
+    let countQuery = supabase
+      .from("recipes")
+      .select("*", { count: 'exact', head: true })
+    
     // Apply category filter - use text search since category is stored as JSON string
     if (selectedCategory !== "all") {
       query = query.ilike("category", `%${selectedCategory}%`)
