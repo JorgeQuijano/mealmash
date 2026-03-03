@@ -98,23 +98,11 @@ export default function RecipesPage() {
   async function loadRecipes() {
     setLoading(true)
     
-    // First get total count for pagination
-    let countQuery = supabase
-      .from("recipes")
-      .select("*", { count: 'exact', head: true })
-    
-    if (selectedCategory !== "all") {
-      // For category filtering, we'll count after fetching
-    }
-    
-    const { count } = await countQuery
-    setTotalCount(count || 0)
-    
     // Calculate offset
     const offset = (currentPage - 1) * recipesPerPage
     
-    // Fetch paginated recipes with nested ingredients
-    const { data, error } = await supabase
+    // Build query with server-side filtering
+    let query = supabase
       .from("recipes")
       .select(`
         *,
@@ -123,19 +111,31 @@ export default function RecipesPage() {
           quantity,
           ingredients (name, category)
         )
-      `)
-      .range(offset, offset + recipesPerPage - 1)
+      `, { count: 'exact' })
+    
+    // Apply category filter on server
+    if (selectedCategory !== "all") {
+      query = query.contains("category", [selectedCategory])
+    }
+    
+    // Get count for pagination
+    let countQuery = supabase
+      .from("recipes")
+      .select("*", { count: 'exact', head: true })
+    
+    if (selectedCategory !== "all") {
+      countQuery = countQuery.contains("category", [selectedCategory])
+    }
+    
+    const [{ count }, { data, error }] = await Promise.all([
+      countQuery,
+      query.range(offset, offset + recipesPerPage - 1)
+    ])
+    
+    setTotalCount(count || 0)
     
     if (data) {
-      // Filter by category if selected (client-side for now)
-      let filtered = data
-      if (selectedCategory !== "all") {
-        filtered = data.filter((r: Recipe) => {
-          const cats = parseCategory(r.category)
-          return cats && cats.includes(selectedCategory)
-        })
-      }
-      setRecipes(filtered)
+      setRecipes(data)
     } else {
       console.error("Error loading recipes:", error)
     }
