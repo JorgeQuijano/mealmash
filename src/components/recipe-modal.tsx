@@ -3,6 +3,20 @@
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
+// Helper to parse category from any format to string array
+function parseCategory(cat: any): string[] {
+  if (Array.isArray(cat)) return cat
+  if (typeof cat === "string") {
+    try {
+      const parsed = JSON.parse(cat)
+      return Array.isArray(parsed) ? parsed : [parsed]
+    } catch {
+      return [cat]
+    }
+  }
+  return [String(cat)]
+}
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -304,7 +318,7 @@ export default function RecipeModal({
             {/* Category, Times, Servings */}
             <div className="flex flex-wrap items-center gap-4">
               <Badge className={getCategoryColor(recipe.category)}>
-                {Array.isArray(recipe.category) ? recipe.category.join(', ') : recipe.category}
+                {parseCategory(recipe.category).join(', ')}
               </Badge>
               <span className="text-sm">⏱️ Prep: {recipe.prep_time_minutes} min</span>
               <span className="text-sm">🍳 Cook: {recipe.cook_time_minutes} min</span>

@@ -3,6 +3,20 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { getUser, supabase } from "@/lib/supabase"
+// Helper to parse category from any format to string array
+function parseCategory(cat: any): string[] {
+  if (Array.isArray(cat)) return cat
+  if (typeof cat === "string") {
+    try {
+      const parsed = JSON.parse(cat)
+      return Array.isArray(parsed) ? parsed : [parsed]
+    } catch {
+      return [cat]
+    }
+  }
+  return [String(cat)]
+}
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -485,7 +499,7 @@ export default function MealPlanPage() {
                         <div>
                           <div className="font-medium text-sm">{recipe.name}</div>
                           <div className="text-xs text-muted-foreground capitalize">
-                            {Array.isArray(recipe.category) ? recipe.category.join(', ') : recipe.category}
+                            {parseCategory(recipe.category).join(', ')}
                           </div>
                         </div>
                         <Button size="sm" variant="outline">Add</Button>

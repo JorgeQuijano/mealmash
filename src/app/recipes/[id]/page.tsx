@@ -3,6 +3,20 @@
 import { useEffect, useState, useMemo } from "react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
+// Helper to parse category from any format to string array
+function parseCategory(cat: any): string[] {
+  if (Array.isArray(cat)) return cat
+  if (typeof cat === "string") {
+    try {
+      const parsed = JSON.parse(cat)
+      return Array.isArray(parsed) ? parsed : [parsed]
+    } catch {
+      return [cat]
+    }
+  }
+  return [String(cat)]
+}
+
 import { getUser, getUserProfile, supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -284,7 +298,7 @@ export default function RecipeDetailPage() {
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div className="flex-1">
               <Badge className={`${getCategoryColor(recipe.category)} mb-3`}>
-                {recipe.category}
+                {parseCategory(recipe.category).join(', ')}
               </Badge>
               <h1 className="text-4xl font-bold mb-3">{recipe.name}</h1>
               <p className="text-lg text-muted-foreground">{recipe.description}</p>

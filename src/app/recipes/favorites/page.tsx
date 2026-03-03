@@ -3,6 +3,20 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+// Helper to parse category from any format to string array
+function parseCategory(cat: any): string[] {
+  if (Array.isArray(cat)) return cat
+  if (typeof cat === "string") {
+    try {
+      const parsed = JSON.parse(cat)
+      return Array.isArray(parsed) ? parsed : [parsed]
+    } catch {
+      return [cat]
+    }
+  }
+  return [String(cat)]
+}
+
 import { supabase, getUser } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -195,7 +209,7 @@ export default function FavoritesPage() {
                   <div className="flex justify-between items-start">
                     <CardTitle className="text-lg line-clamp-1">{recipe.name}</CardTitle>
                     <Badge className={getCategoryColor(recipe.category)}>
-                      {Array.isArray(recipe.category) ? recipe.category.join(', ') : recipe.category}
+                      {parseCategory(recipe.category).join(', ')}
                     </Badge>
                   </div>
                   <CardDescription className="line-clamp-2">

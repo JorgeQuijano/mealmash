@@ -12,6 +12,20 @@ import { Input } from "@/components/ui/input"
 import MobileNav from "@/components/mobile-nav"
 import RecipeModal from "@/components/recipe-modal"
 
+// Helper to parse category from any format to string array
+function parseCategory(cat: any): string[] {
+  if (Array.isArray(cat)) return cat
+  if (typeof cat === 'string') {
+    try {
+      const parsed = JSON.parse(cat)
+      return Array.isArray(parsed) ? parsed : [parsed]
+    } catch {
+      return [cat]
+    }
+  }
+  return [String(cat)]
+}
+
 type RecipeIngredient = {
   ingredient_id: string
   quantity: string
@@ -99,9 +113,10 @@ export default function RecipesPage() {
       // Filter by category if selected
       let filtered = data
       if (selectedCategory !== "all") {
-        filtered = data.filter((r: Recipe) => 
-          r.category && r.category.includes(selectedCategory)
-        )
+        filtered = data.filter((r: Recipe) => {
+          const cats = parseCategory(r.category)
+          return cats && cats.includes(selectedCategory)
+        })
       }
       setRecipes(filtered)
     } else {
@@ -204,7 +219,7 @@ export default function RecipesPage() {
                   <div className="flex items-start justify-between">
                     <CardTitle className="text-lg">{recipe.name}</CardTitle>
                     <Badge className={getCategoryColor(recipe.category)}>
-                      {Array.isArray(recipe.category) ? recipe.category.join(', ') : recipe.category}
+                      {parseCategory(recipe.category).join(', ')}
                     </Badge>
                   </div>
                   <CardDescription>{recipe.description}</CardDescription>

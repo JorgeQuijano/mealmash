@@ -3,6 +3,20 @@
 import { useEffect, useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { getUser, getUserProfile, supabase } from "@/lib/supabase"
+// Helper to parse category from any format to string array
+function parseCategory(cat: any): string[] {
+  if (Array.isArray(cat)) return cat
+  if (typeof cat === "string") {
+    try {
+      const parsed = JSON.parse(cat)
+      return Array.isArray(parsed) ? parsed : [parsed]
+    } catch {
+      return [cat]
+    }
+  }
+  return [String(cat)]
+}
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -213,7 +227,7 @@ export default function SuggestionsPage() {
   const displayedRecipes = selectedCategory === "all" 
     ? suggestedRecipes 
     : suggestedRecipes.filter(s => 
-        s.recipe.category && s.recipe.category.includes(selectedCategory)
+        s.recipe.category && parseCategory(s.recipe.category).includes(selectedCategory)
       )
 
   const getCategoryColor = (category: string | string[]) => {
@@ -350,7 +364,7 @@ export default function SuggestionsPage() {
                   <div className="flex items-start justify-between">
                     <CardTitle className="text-lg">{suggestion.recipe.name}</CardTitle>
                     <Badge className={getCategoryColor(suggestion.recipe.category)}>
-                      {suggestion.recipe.category}
+                      {parseCategory(suggestion.recipe.category).join(', ')}
                     </Badge>
                   </div>
                   <CardDescription className="line-clamp-2">
