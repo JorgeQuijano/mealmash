@@ -69,6 +69,7 @@ export default function MealPlanPage() {
   const [profile, setProfile] = useState<any>(null)
   const [selectedSlot, setSelectedSlot] = useState<{date: string, mealType: string} | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [recipeFilter, setRecipeFilter] = useState<string | null>(null)
   const [selectedDay, setSelectedDay] = useState<string>(() => {
     const today = new Date()
     return formatDate(today)
@@ -76,6 +77,13 @@ export default function MealPlanPage() {
 
   const weekDates = getWeekDates(currentWeekStart)
   const today = formatDate(new Date())
+
+  // Set default filter when modal opens
+  useEffect(() => {
+    if (isModalOpen && selectedSlot) {
+      setRecipeFilter(selectedSlot.mealType)
+    }
+  }, [isModalOpen, selectedSlot])
 
   useEffect(() => {
     async function loadUser() {
@@ -435,9 +443,30 @@ export default function MealPlanPage() {
           
           {selectedSlot && (
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-muted-foreground mb-2">
                 Select a recipe for {new Date(selectedSlot.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
               </p>
+              
+              {/* Category Filter */}
+              <div className="flex flex-wrap gap-1 mb-3">
+                {MEAL_TYPES.map((type) => (
+                  <Button
+                    key={type}
+                    variant={recipeFilter === type ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setRecipeFilter(type)}
+                    className="text-xs py-1 h-7"
+                  >
+                    {MEAL_ICONS[type]} {type}
+                  </Button>
+                ))}
+              </div>
+              
+              {recipeFilter && (
+                <p className="text-xs text-muted-foreground mb-2">
+                  Showing {recipes.filter(r => r.category === recipeFilter).length} {recipeFilter} recipes
+                </p>
+              )}
               
               {recipes.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">
@@ -445,7 +474,7 @@ export default function MealPlanPage() {
                 </p>
               ) : (
                 <div className="space-y-2 max-h-[400px] overflow-y-auto">
-                  {recipes.map((recipe) => (
+                  {(recipeFilter ? recipes.filter(r => r.category === recipeFilter) : recipes).map((recipe) => (
                     <Card 
                       key={recipe.id}
                       className="cursor-pointer hover:bg-muted/50 transition-colors"
