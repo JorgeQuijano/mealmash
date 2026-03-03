@@ -24,12 +24,13 @@ interface MealPlan {
   recipe?: Recipe
 }
 
-const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'] as const
+const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack', 'dessert'] as const
 const MEAL_ICONS: Record<string, string> = {
   breakfast: '🌅',
   lunch: '☀️',
   dinner: '🌙',
-  snack: '🍿'
+  snack: '🍿',
+  dessert: '🍰'
 }
 
 function getWeekDates(date: Date): Date[] {
