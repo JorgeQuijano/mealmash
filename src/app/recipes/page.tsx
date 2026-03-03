@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import MobileNav from "@/components/mobile-nav"
 import RecipeModal from "@/components/recipe-modal"
 import { getImageUrl } from "@/lib/images"
+import Image from "next/image"
 
 // Helper to parse category from any format to string array
 function parseCategory(cat: any): string[] {
@@ -240,11 +241,13 @@ export default function RecipesPage() {
                 onClick={() => setSelectedRecipe(recipe)}
               >
                 {getImageUrl(recipe.image_url) && (
-                  <div className="aspect-video bg-muted relative overflow-hidden rounded-t-lg">
-                    <img 
+                  <div className="aspect-square relative overflow-hidden rounded-t-lg bg-muted">
+                    <Image 
                       src={getImageUrl(recipe.image_url)!} 
                       alt={recipe.name}
-                      className="object-cover w-full h-full"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                   </div>
                 )}
