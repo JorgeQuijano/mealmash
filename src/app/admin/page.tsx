@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import toast from "react-hot-toast"
 
 import MobileNav from "@/components/mobile-nav"
 import IngredientSearch from "@/components/ingredient-search"
@@ -106,7 +107,7 @@ export default function AdminPage() {
     const { data: recipe, error } = await supabase.from("recipes").insert(recipeData).select().single()
     
     if (error) {
-      alert("Error adding recipe: " + error.message)
+      toast.error("Error adding recipe: " + error.message)
       return
     }
 
@@ -125,12 +126,12 @@ export default function AdminPage() {
       if (recipeIngredientsData.length > 0) {
         const { error: riError } = await supabase.from("recipe_ingredients").insert(recipeIngredientsData)
         if (riError) {
-          alert("Recipe saved but error adding ingredients: " + riError.message)
+          toast.error("Recipe saved but error adding ingredients: " + riError.message)
         }
       }
     }
     
-    alert("Recipe added successfully!")
+    toast.success("Recipe added successfully!")
     setShowAddForm(false)
     setNewRecipe({
       name: "",
@@ -173,7 +174,7 @@ export default function AdminPage() {
       .eq("id", editingRecipe.id)
     
     if (error) {
-      alert("Error updating recipe: " + error.message)
+      toast.error("Error updating recipe: " + error.message)
       return
     }
 
@@ -196,7 +197,7 @@ export default function AdminPage() {
       }
     }
     
-    alert("Recipe updated successfully!")
+    toast.success("Recipe updated successfully!")
     setEditingRecipe(null)
     setShowAddForm(false)
     setNewRecipe({
@@ -479,9 +480,9 @@ export default function AdminPage() {
     const { error } = await supabase.from("recipes").insert(sampleRecipes)
     
     if (error) {
-      alert("Error seeding recipes: " + error.message)
+      toast.error("Error seeding recipes: " + error.message)
     } else {
-      alert("Successfully seeded 20 recipes!")
+      toast.success("Successfully seeded 20 recipes!")
       loadRecipes()
     }
     setLoading(false)
@@ -493,7 +494,7 @@ export default function AdminPage() {
     const { error } = await supabase.from("recipes").delete().eq("id", id)
     
     if (error) {
-      alert("Error deleting recipe: " + error.message)
+      toast.error("Error deleting recipe: " + error.message)
     } else {
       loadRecipes()
     }
