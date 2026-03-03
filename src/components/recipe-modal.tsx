@@ -94,6 +94,78 @@ export default function RecipeModal({
   const [addingToList, setAddingToList] = useState(false)
   const [addedToList, setAddedToList] = useState(false)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [isFavorite, setIsFavorite] = useState(false)
+  const [checkingFavorite, setCheckingFavorite] = useState(false)
+  const [updatingFavorite, setUpdatingFavorite] = useState(false)
+
+  // Get the actual recipe ID
+  const recipeId = isSuggestedRecipe(initialRecipe) 
+    ? initialRecipe.recipe.id 
+    : (initialRecipe as Recipe).id
+
+  // Check if recipe is already favorited
+  useEffect(() => {
+    if (!user || !recipeId) return
+
+    const checkFavorite = async () => {
+      setCheckingFavorite(true)
+      try {
+        const { data, error } = await supabase
+          .from('user_favorites')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('recipe_id', recipeId)
+          .single()
+        
+        if (data) {
+          setIsFavorite(true)
+        }
+      } catch (err) {
+        console.error('Error checking favorite:', err)
+      } finally {
+        setCheckingFavorite(false)
+      }
+    }
+
+    checkFavorite()
+  }, [user, recipeId])
+
+  // Toggle favorite
+  const handleToggleFavorite = async () => {
+    if (!user || !recipeId) return
+
+    setUpdatingFavorite(true)
+    try {
+      if (isFavorite) {
+        // Remove from favorites
+        const { error } = await supabase
+          .from('user_favorites')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('recipe_id', recipeId)
+        
+        if (!error) {
+          setIsFavorite(false)
+        }
+      } else {
+        // Add to favorites
+        const { error } = await supabase
+          .from('user_favorites')
+          .insert({
+            user_id: user.id,
+            recipe_id: recipeId
+          })
+        
+        if (!error) {
+          setIsFavorite(true)
+        }
+      }
+    } catch (err) {
+      console.error('Error toggling favorite:', err)
+    } finally {
+      setUpdatingFavorite(false)
+    }
+  }
 
   // For recipes page: need to compute match from pantryItems
   const isLoggedIn = !!user
@@ -307,7 +379,28 @@ export default function RecipeModal({
               </ol>
             </div>
 
-            <Button className="w-full">❤️ Add to Favorites</Button>
+            {/* Add to Favorites Button */}
+            {isLoggedIn ? (
+              <Button 
+                onClick={handleToggleFavorite}
+                disabled={checkingFavorite || updatingFavorite}
+                className={`w-full ${isFavorite ? 'bg-red-500 hover:bg-red-600' : 'bg-pink-500 hover:bg-pink-600'}`}
+              >
+                {checkingFavorite ? '⏳ Checking...' : 
+                 updatingFavorite ? '⏳ Saving...' :
+                 isFavorite ? '❤️ Remove from Favorites' : '🤍 Add to Favorites'}
+              </Button>
+            ) : (
+              <Button 
+                onClick={() => {
+                  // Could show a login prompt here
+                  alert('Please log in to save favorites!')
+                }}
+                className="w-full bg-gray-400 cursor-not-allowed"
+              >
+                🔒 Log in to Save Favorites
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>

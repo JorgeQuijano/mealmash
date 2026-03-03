@@ -7,6 +7,7 @@ import { getUserProfile } from "@/lib/supabase"
 const navItems = [
   { href: "/dashboard", label: "Home", icon: "🏠" },
   { href: "/recipes", label: "Recipes", icon: "📖" },
+  { href: "/recipes/favorites", label: "Favorites", icon: "❤️" },
   { href: "/pantry", label: "Pantry", icon: "🥕" },
   { href: "/random", label: "Random", icon: "🎲" },
 ]
