@@ -33,6 +33,20 @@ type Recipe = {
   image_url: string
 }
 
+// Helper to parse category from any format to string array
+function parseCategory(cat: any): string[] {
+  if (Array.isArray(cat)) return cat
+  if (typeof cat === 'string') {
+    try {
+      const parsed = JSON.parse(cat)
+      return Array.isArray(parsed) ? parsed : [parsed]
+    } catch {
+      return [cat]
+    }
+  }
+  return [String(cat)]
+}
+
 export default function AdminPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
@@ -222,7 +236,7 @@ export default function AdminPage() {
       name: recipe.name,
       description: recipe.description || "",
       instructions: Array.isArray(recipe.instructions) ? recipe.instructions.join('\n') : "",
-      category: Array.isArray(recipe.category) ? recipe.category : [recipe.category],
+      category: parseCategory(recipe.category),
       prep_time_minutes: recipe.prep_time_minutes,
       cook_time_minutes: recipe.cook_time_minutes,
       servings: recipe.servings,
@@ -669,7 +683,7 @@ export default function AdminPage() {
                         <p className="text-sm text-muted-foreground">{recipe.description}</p>
                         <div className="flex items-center gap-2 mt-2">
                           <Badge variant="outline" className="capitalize">
-                            {Array.isArray(recipe.category) ? recipe.category.join(', ') : recipe.category}
+                            {parseCategory(recipe.category).join(', ')}
                           </Badge>
                           <span className="text-xs text-muted-foreground">
                             {recipe.prep_time_minutes + recipe.cook_time_minutes} min
