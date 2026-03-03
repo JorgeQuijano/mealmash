@@ -25,7 +25,7 @@ type Recipe = {
   description: string
   ingredients: any
   instructions: string[]
-  category: string
+  category: string[]
   prep_time_minutes: number
   cook_time_minutes: number
   servings: number
@@ -45,7 +45,7 @@ export default function AdminPage() {
     name: "",
     description: "",
     instructions: "",
-    category: "dinner",
+    category: ["dinner"] as string[],
     prep_time_minutes: 10,
     cook_time_minutes: 20,
     servings: 2,
@@ -135,7 +135,7 @@ export default function AdminPage() {
       name: "",
       description: "",
       instructions: "",
-      category: "dinner",
+      category: ["dinner"],
       prep_time_minutes: 10,
       cook_time_minutes: 20,
       servings: 2,
@@ -445,17 +445,28 @@ export default function AdminPage() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Category</label>
-                    <select
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                      value={newRecipe.category}
-                      onChange={(e) => setNewRecipe({ ...newRecipe, category: e.target.value })}
-                    >
-                      <option value="breakfast">Breakfast</option>
-                      <option value="lunch">Lunch</option>
-                      <option value="dinner">Dinner</option>
-                      <option value="snack">Snack</option>
-                      <option value="dessert">Dessert</option>
-                    </select>
+                    <div className="flex gap-2 flex-wrap">
+                      {["breakfast", "lunch", "dinner", "snack", "dessert"].map((cat) => (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => {
+                            const current = newRecipe.category || []
+                            const newCats = current.includes(cat)
+                              ? current.filter(c => c !== cat)
+                              : [...current, cat]
+                            setNewRecipe({ ...newRecipe, category: newCats })
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-sm capitalize transition-colors ${
+                            (newRecipe.category || []).includes(cat)
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                          }`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -546,7 +557,9 @@ export default function AdminPage() {
                         <h4 className="font-semibold">{recipe.name}</h4>
                         <p className="text-sm text-muted-foreground">{recipe.description}</p>
                         <div className="flex items-center gap-2 mt-2">
-                          <Badge variant="outline">{recipe.category}</Badge>
+                          <Badge variant="outline" className="capitalize">
+                            {Array.isArray(recipe.category) ? recipe.category.join(', ') : recipe.category}
+                          </Badge>
                           <span className="text-xs text-muted-foreground">
                             {recipe.prep_time_minutes + recipe.cook_time_minutes} min
                           </span>
