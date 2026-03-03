@@ -17,7 +17,7 @@ type Recipe = {
   description: string
   ingredients: any
   instructions: string[]
-  category: string
+  category: string[]
   prep_time_minutes: number
   cook_time_minutes: number
   servings: number
@@ -216,7 +216,8 @@ export default function SuggestionsPage() {
         s.recipe.category && s.recipe.category.includes(selectedCategory)
       )
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = (category: string | string[]) => {
+    const cat = Array.isArray(category) ? category[0] : category
     const colors: Record<string, string> = {
       breakfast: "bg-yellow-100 text-yellow-800",
       lunch: "bg-green-100 text-green-800",
@@ -224,7 +225,7 @@ export default function SuggestionsPage() {
       snack: "bg-purple-100 text-purple-800",
       dessert: "bg-pink-100 text-pink-800"
     }
-    return colors[category] || "bg-gray-100 text-gray-800"
+    return colors[cat] || "bg-gray-100 text-gray-800"
   }
 
   const getMatchColor = (matched: number, total: number) => {
@@ -317,7 +318,7 @@ export default function SuggestionsPage() {
         )}
 
         {/* No Matches */}
-        {pantryItems.length > 0 && filteredSuggestions.length === 0 && (
+        {pantryItems.length > 0 && displayedRecipes.length === 0 && (
           <Card className="max-w-md mx-auto">
             <CardHeader>
               <CardTitle className="text-center">No matches yet 😔</CardTitle>
@@ -337,9 +338,9 @@ export default function SuggestionsPage() {
         )}
 
         {/* Suggestions Grid */}
-        {filteredSuggestions.length > 0 && (
+        {displayedRecipes.length > 0 && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredSuggestions.map((suggestion) => (
+            {displayedRecipes.map((suggestion) => (
               <Card 
                 key={suggestion.recipe.id}
                 className="hover:shadow-lg transition-shadow cursor-pointer"

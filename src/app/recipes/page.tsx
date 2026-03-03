@@ -124,7 +124,7 @@ export default function RecipesPage() {
       snack: "bg-purple-100 text-purple-800",
       dessert: "bg-pink-100 text-pink-800"
     }
-    return colors[category] || "bg-gray-100 text-gray-800"
+    return colors[cat] || "bg-gray-100 text-gray-800"
   }
 
   return (

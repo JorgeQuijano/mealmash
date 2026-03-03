@@ -206,7 +206,8 @@ export default function RecipeDetailPage() {
     setTimeout(() => setAddedToList(false), 3000)
   }
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = (category: string | string[]) => {
+    const cat = Array.isArray(category) ? category[0] : category
     const colors: Record<string, string> = {
       breakfast: "bg-yellow-100 text-yellow-800",
       lunch: "bg-green-100 text-green-800",
@@ -214,7 +215,7 @@ export default function RecipeDetailPage() {
       snack: "bg-purple-100 text-purple-800",
       dessert: "bg-pink-100 text-pink-800"
     }
-    return colors[category] || "bg-gray-100 text-gray-800"
+    return colors[cat] || "bg-gray-100 text-gray-800"
   }
 
   const formatIngredient = (ing: any, index: number): string => {
