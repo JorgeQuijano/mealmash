@@ -241,7 +241,7 @@ export default function RecipesPage() {
                 onClick={() => setSelectedRecipe(recipe)}
               >
                 {getImageUrl(recipe.image_url) && (
-                  <div className="aspect-square relative overflow-hidden rounded-t-lg">
+                  <div className="aspect-square relative overflow-hidden rounded-t-lg -mb-2">
                     <Image 
                       src={getImageUrl(recipe.image_url)!} 
                       alt={recipe.name}
@@ -251,9 +251,9 @@ export default function RecipesPage() {
                     />
                   </div>
                 )}
-                <CardHeader className="p-4">
+                <div className="p-4 pt-0">
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-lg">{recipe.name}</CardTitle>
+                    <h3 className="text-lg font-semibold">{recipe.name}</h3>
                     <div className="flex gap-1 flex-wrap justify-end">
                       {parseCategory(recipe.category).map((cat) => (
                         <Badge key={cat} className={getCategoryColor(cat)}>
@@ -262,9 +262,9 @@ export default function RecipesPage() {
                       ))}
                     </div>
                   </div>
-                  <CardDescription>{recipe.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-3">
+                  <p className="text-sm text-muted-foreground mt-1">{recipe.description}</p>
+                </div>
+                <div className="p-4 pt-0 flex flex-col gap-3">
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <span>⏱️ {recipe.prep_time_minutes + recipe.cook_time_minutes} min</span>
                     <span>👥 {recipe.servings} servings</span>
