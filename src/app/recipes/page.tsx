@@ -272,7 +272,7 @@ export default function RecipesPage() {
                   <Button variant="outline" size="sm" className="w-full mt-auto" asChild>
                     <Link href={`/recipes/${recipe.id}`}>👁️ View Recipe</Link>
                   </Button>
-                </CardContent>
+                </div>
               </Card>
             ))}
           </div>
