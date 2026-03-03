@@ -241,7 +241,7 @@ export default function RecipesPage() {
                 onClick={() => setSelectedRecipe(recipe)}
               >
                 {getImageUrl(recipe.image_url) && (
-                  <div className="aspect-square relative overflow-hidden rounded-t-lg bg-muted">
+                  <div className="aspect-square relative overflow-hidden rounded-t-lg -mt-2">
                     <Image 
                       src={getImageUrl(recipe.image_url)!} 
                       alt={recipe.name}
