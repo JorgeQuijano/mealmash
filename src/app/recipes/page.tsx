@@ -113,18 +113,10 @@ export default function RecipesPage() {
         )
       `, { count: 'exact' })
     
-    // Apply category filter on server
+    // Apply category filter - use text search since category is stored as JSON string
     if (selectedCategory !== "all") {
-      query = query.contains("category", [selectedCategory])
-    }
-    
-    // Get count for pagination
-    let countQuery = supabase
-      .from("recipes")
-      .select("*", { count: 'exact', head: true })
-    
-    if (selectedCategory !== "all") {
-      countQuery = countQuery.contains("category", [selectedCategory])
+      query = query.ilike("category", `%${selectedCategory}%`)
+      countQuery = countQuery.ilike("category", `%${selectedCategory}%`)
     }
     
     const [{ count }, { data, error }] = await Promise.all([
