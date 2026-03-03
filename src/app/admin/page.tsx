@@ -82,6 +82,23 @@ export default function AdminPage() {
     setImagePreview(URL.createObjectURL(file))
 
     try {
+      // If there's an old image, try to delete it first
+      const oldUrl = newRecipe.image_url
+      if (oldUrl && oldUrl.includes('recipe-images')) {
+        try {
+          // Extract filename from URL
+          const oldFilename = oldUrl.split('/recipe-images/')[1]
+          if (oldFilename) {
+            await supabase.storage
+              .from('recipe-images')
+              .remove([oldFilename])
+          }
+        } catch (deleteErr) {
+          // Ignore delete errors - maybe file didn't exist
+          console.log('Could not delete old image:', deleteErr)
+        }
+      }
+
       // Upload to Supabase Storage
       const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`
       const { data, error } = await supabase.storage
@@ -106,7 +123,23 @@ export default function AdminPage() {
   }
 
   // Clear image
-  const clearImage = () => {
+  const clearImage = async () => {
+    const oldUrl = newRecipe.image_url
+    
+    // Try to delete the old image from storage
+    if (oldUrl && oldUrl.includes('recipe-images')) {
+      try {
+        const oldFilename = oldUrl.split('/recipe-images/')[1]
+        if (oldFilename) {
+          await supabase.storage
+            .from('recipe-images')
+            .remove([oldFilename])
+        }
+      } catch (err) {
+        console.log('Could not delete image:', err)
+      }
+    }
+    
     setNewRecipe({ ...newRecipe, image_url: '' })
     setImagePreview(null)
     if (fileInputRef.current) {
