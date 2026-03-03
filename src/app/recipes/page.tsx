@@ -71,15 +71,13 @@ export default function RecipesPage() {
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([])
 
   useEffect(() => {
-    loadRecipes()
-    loadUser()
+    loadAllData()
   }, [selectedCategory])
 
   async function loadUser() {
     const currentUser = await getUser()
     if (currentUser) {
       setUser(currentUser)
-      await loadPantryItems(currentUser.id)
     }
   }
 
@@ -97,7 +95,7 @@ export default function RecipesPage() {
   async function loadRecipes() {
     setLoading(true)
     
-    // Fetch all recipes and filter in JS (to handle array category)
+    // Fetch all recipes with nested ingredients (single query)
     const { data, error } = await supabase
       .from("recipes")
       .select(`
@@ -122,6 +120,25 @@ export default function RecipesPage() {
     } else {
       console.error("Error loading recipes:", error)
     }
+    setLoading(false)
+  }
+
+  // Batch load all data in parallel
+  async function loadAllData() {
+    const currentUser = await getUser()
+    if (!currentUser) {
+      router.push("/login")
+      return
+    }
+    
+    setUser(currentUser)
+    
+    // Run all queries in parallel
+    await Promise.all([
+      loadRecipes(),
+      loadPantryItems(currentUser.id)
+    ])
+    
     setLoading(false)
   }
 
