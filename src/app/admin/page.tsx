@@ -39,6 +39,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [showAddForm, setShowAddForm] = useState(false)
+  const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
   
   // New recipe form
   const [newRecipe, setNewRecipe] = useState({
@@ -143,6 +144,108 @@ export default function AdminPage() {
     })
     setSelectedIngredients([])
     loadRecipes()
+  }
+
+  // Handle update recipe
+  const handleUpdateRecipe = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!editingRecipe) return
+
+    const instructionsArray = newRecipe.instructions
+      .split('\n')
+      .filter(line => line.trim())
+    
+    const recipeData = {
+      name: newRecipe.name,
+      description: newRecipe.description,
+      instructions: instructionsArray,
+      category: newRecipe.category,
+      prep_time_minutes: newRecipe.prep_time_minutes,
+      cook_time_minutes: newRecipe.cook_time_minutes,
+      servings: newRecipe.servings,
+      image_url: newRecipe.image_url
+    }
+
+    const { error } = await supabase
+      .from("recipes")
+      .update(recipeData)
+      .eq("id", editingRecipe.id)
+    
+    if (error) {
+      alert("Error updating recipe: " + error.message)
+      return
+    }
+
+    // Delete existing recipe_ingredients and re-add
+    await supabase.from("recipe_ingredients").delete().eq("recipe_id", editingRecipe.id)
+    
+    if (selectedIngredients.length > 0) {
+      const recipeIngredientsData = selectedIngredients
+        .filter(i => i.ingredient_id)
+        .map(i => ({
+          recipe_id: editingRecipe.id,
+          ingredient_id: i.ingredient_id,
+          quantity: i.quantity || null,
+          quantity_num: i.quantity ? parseFloat(i.quantity) : null,
+          unit: i.unit || null
+        }))
+
+      if (recipeIngredientsData.length > 0) {
+        await supabase.from("recipe_ingredients").insert(recipeIngredientsData)
+      }
+    }
+    
+    alert("Recipe updated successfully!")
+    setEditingRecipe(null)
+    setShowAddForm(false)
+    setNewRecipe({
+      name: "",
+      description: "",
+      instructions: "",
+      category: ["dinner"],
+      prep_time_minutes: 10,
+      cook_time_minutes: 20,
+      servings: 2,
+      image_url: ""
+    })
+    setSelectedIngredients([])
+    loadRecipes()
+  }
+
+  // Function to start editing a recipe
+  const startEditing = async (recipe: Recipe) => {
+    setEditingRecipe(recipe)
+    setShowAddForm(true)
+    setNewRecipe({
+      name: recipe.name,
+      description: recipe.description || "",
+      instructions: Array.isArray(recipe.instructions) ? recipe.instructions.join('\n') : "",
+      category: Array.isArray(recipe.category) ? recipe.category : [recipe.category],
+      prep_time_minutes: recipe.prep_time_minutes,
+      cook_time_minutes: recipe.cook_time_minutes,
+      servings: recipe.servings,
+      image_url: recipe.image_url || ""
+    })
+    
+    // Load existing ingredients
+    const { data: existingIngs } = await supabase
+      .from("recipe_ingredients")
+      .select("*, ingredients(name, category)")
+      .eq("recipe_id", recipe.id)
+    
+    if (existingIngs && existingIngs.length > 0) {
+      const mapped = existingIngs.map((ri: any) => ({
+        ingredient_id: ri.ingredient_id,
+        name: ri.ingredients?.name || "",
+        quantity: ri.quantity || "",
+        unit: ri.unit || "",
+        category: ri.ingredients?.category || ""
+      }))
+      setSelectedIngredients(mapped)
+    } else {
+      setSelectedIngredients([])
+    }
   }
 
   // Seed 20 sample recipes
@@ -425,15 +528,15 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Add Recipe Form */}
+        {/* Add/Edit Recipe Form */}
         {showAddForm && (
           <Card className="mb-8">
             <CardHeader>
-              <CardTitle>Add New Recipe</CardTitle>
-              <CardDescription>Fill in the details to add a new recipe</CardDescription>
+              <CardTitle>{editingRecipe ? "Edit Recipe" : "Add New Recipe"}</CardTitle>
+              <CardDescription>{editingRecipe ? "Update the recipe details" : "Fill in the details to add a new recipe"}</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleAddRecipe} className="space-y-4">
+              <form onSubmit={editingRecipe ? handleUpdateRecipe : handleAddRecipe} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Recipe Name</label>
@@ -531,7 +634,14 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full">Add Recipe</Button>
+                <div className="flex gap-2">
+                  <Button type="button" variant="outline" onClick={() => { setShowAddForm(false); setEditingRecipe(null); setNewRecipe({ name: "", description: "", instructions: "", category: ["dinner"], prep_time_minutes: 10, cook_time_minutes: 20, servings: 2, image_url: "" }); setSelectedIngredients([]); }} className="flex-1">
+                    Cancel
+                  </Button>
+                  <Button type="submit" className="flex-1">
+                    {editingRecipe ? "Update Recipe" : "Add Recipe"}
+                  </Button>
+                </div>
               </form>
             </CardContent>
           </Card>
@@ -566,6 +676,13 @@ export default function AdminPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => startEditing(recipe)}
+                        >
+                          Edit
+                        </Button>
                         <Button 
                           variant="destructive" 
                           size="sm"
