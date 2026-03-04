@@ -8,17 +8,31 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 // GET /api/pantry - Get user's pantry items
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('user_id')
-
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID required' }, { status: 400 })
+    // Get the authenticated user's token
+    const authHeader = request.headers.get('Authorization')
+    const token = authHeader?.replace('Bearer ', '')
+    
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
+    
+    // Verify token and get the authenticated user
+    const supabaseWithAuth = createClient(supabaseUrl, supabaseKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    })
+    
+    const { data: { user } } = await supabaseWithAuth.auth.getUser()
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    }
+    
+    // Query pantry items for the authenticated user only
     const { data, error } = await supabase
       .from('pantry_items')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
     if (error) {
