@@ -621,6 +621,178 @@ export default function AdminPage() {
       
       <MobileNav />
 
+      <Dialog open={showAddForm} onOpenChange={(open) => {
+        setShowAddForm(open)
+        if (!open) {
+          // Reset form when modal closes
+          setEditingRecipe(null)
+          setNewRecipe({
+            name: "",
+            description: "",
+            instructions: "",
+            category: ["dinner"],
+            prep_time_minutes: 10,
+            cook_time_minutes: 20,
+            servings: 2,
+            image_url: ""
+          })
+          setSelectedIngredients([])
+          setImagePreview(null)
+          if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+          }
+        }
+      }}>
+        <DialogTrigger asChild>
+          {/* Hidden trigger - we control open state manually */}
+          <Button className="hidden">Open</Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingRecipe ? "Edit Recipe" : "Add New Recipe"}</DialogTitle>
+            <DialogDescription>{editingRecipe ? "Update the recipe details" : "Fill in the details to add a new recipe"}</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={editingRecipe ? handleUpdateRecipe : handleAddRecipe} className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Recipe Name</label>
+                <Input
+                  value={newRecipe.name}
+                  onChange={(e) => setNewRecipe({ ...newRecipe, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Category</label>
+                <div className="flex gap-2 flex-wrap">
+                  {["breakfast", "lunch", "dinner", "snack", "dessert"].map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => {
+                        const current = newRecipe.category || []
+                        const newCats = current.includes(cat)
+                          ? current.filter(c => c !== cat)
+                          : [...current, cat]
+                        setNewRecipe({ ...newRecipe, category: newCats })
+                      }}
+                      className={`px-3 py-1.5 rounded-full text-sm capitalize transition-colors ${
+                        (newRecipe.category || []).includes(cat)
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Description</label>
+              <Input
+                value={newRecipe.description}
+                onChange={(e) => setNewRecipe({ ...newRecipe, description: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Ingredients</label>
+              <IngredientSearch
+                selectedIngredients={selectedIngredients}
+                onChange={setSelectedIngredients}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Instructions (one per line)</label>
+              <textarea
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={newRecipe.instructions}
+                onChange={(e) => setNewRecipe({ ...newRecipe, instructions: e.target.value })}
+                placeholder="Cook pasta in boiling water&#10;Fry pancetta until crispy"
+              />
+            </div>
+
+            <div className="grid md:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Prep Time (min)</label>
+                <Input
+                  type="number"
+                  value={newRecipe.prep_time_minutes}
+                  onChange={(e) => setNewRecipe({ ...newRecipe, prep_time_minutes: parseInt(e.target.value) })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Cook Time (min)</label>
+                <Input
+                  type="number"
+                  value={newRecipe.cook_time_minutes}
+                  onChange={(e) => setNewRecipe({ ...newRecipe, cook_time_minutes: parseInt(e.target.value) })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Servings</label>
+                <Input
+                  type="number"
+                  value={newRecipe.servings}
+                  onChange={(e) => setNewRecipe({ ...newRecipe, servings: parseInt(e.target.value) })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Recipe Image</label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploadingImage}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                />
+                {uploadingImage && <p className="text-sm text-muted-foreground">Uploading...</p>}
+                {imagePreview || newRecipe.image_url ? (
+                  <div className="relative mt-2">
+                    <img 
+                      src={imagePreview || newRecipe.image_url} 
+                      alt="Preview" 
+                      className="h-32 w-32 object-cover rounded"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute -top-2 -right-2"
+                      onClick={clearImage}
+                    >
+                      ✕
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <Button type="button" variant="outline" onClick={() => {
+                setShowAddForm(false)
+                setEditingRecipe(null)
+                setNewRecipe({ name: "", description: "", instructions: "", category: ["dinner"], prep_time_minutes: 10, cook_time_minutes: 20, servings: 2, image_url: "" })
+                setSelectedIngredients([])
+                setImagePreview(null)
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = ''
+                }
+              }} className="flex-1">
+                Cancel
+              </Button>
+              <Button type="submit" className="flex-1">
+                {editingRecipe ? "Update Recipe" : "Add Recipe"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
       <main className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -631,178 +803,10 @@ export default function AdminPage() {
             <Button variant="outline" onClick={seedRecipes}>
               🌱 Seed 20 Recipes
             </Button>
-            <Dialog open={showAddForm} onOpenChange={(open) => {
-              setShowAddForm(open)
-              if (!open) {
-                // Reset form when modal closes
-                setEditingRecipe(null)
-                setNewRecipe({
-                  name: "",
-                  description: "",
-                  instructions: "",
-                  category: ["dinner"],
-                  prep_time_minutes: 10,
-                  cook_time_minutes: 20,
-                  servings: 2,
-                  image_url: ""
-                })
-                setSelectedIngredients([])
-                setImagePreview(null)
-                if (fileInputRef.current) {
-                  fileInputRef.current.value = ''
-                }
-              }
-            }}>
-              <DialogTrigger asChild>
-                <Button onClick={() => { setShowAddForm(true); setSelectedIngredients([]); }}>
-                  ➕ Add Recipe
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>{editingRecipe ? "Edit Recipe" : "Add New Recipe"}</DialogTitle>
-                  <DialogDescription>{editingRecipe ? "Update the recipe details" : "Fill in the details to add a new recipe"}</DialogDescription>
-                </DialogHeader>
-                <form onSubmit={editingRecipe ? handleUpdateRecipe : handleAddRecipe} className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Recipe Name</label>
-                    <Input
-                      value={newRecipe.name}
-                      onChange={(e) => setNewRecipe({ ...newRecipe, name: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Category</label>
-                    <div className="flex gap-2 flex-wrap">
-                      {["breakfast", "lunch", "dinner", "snack", "dessert"].map((cat) => (
-                        <button
-                          key={cat}
-                          type="button"
-                          onClick={() => {
-                            const current = newRecipe.category || []
-                            const newCats = current.includes(cat)
-                              ? current.filter(c => c !== cat)
-                              : [...current, cat]
-                            setNewRecipe({ ...newRecipe, category: newCats })
-                          }}
-                          className={`px-3 py-1.5 rounded-full text-sm capitalize transition-colors ${
-                            (newRecipe.category || []).includes(cat)
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                          }`}
-                        >
-                          {cat}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Description</label>
-                  <Input
-                    value={newRecipe.description}
-                    onChange={(e) => setNewRecipe({ ...newRecipe, description: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Ingredients</label>
-                  <IngredientSearch
-                    selectedIngredients={selectedIngredients}
-                    onChange={setSelectedIngredients}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Instructions (one per line)</label>
-                  <textarea
-                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    value={newRecipe.instructions}
-                    onChange={(e) => setNewRecipe({ ...newRecipe, instructions: e.target.value })}
-                    placeholder="Cook pasta in boiling water&#10;Fry pancetta until crispy"
-                  />
-                </div>
-
-                <div className="grid md:grid-cols-4 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Prep Time (min)</label>
-                    <Input
-                      type="number"
-                      value={newRecipe.prep_time_minutes}
-                      onChange={(e) => setNewRecipe({ ...newRecipe, prep_time_minutes: parseInt(e.target.value) })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Cook Time (min)</label>
-                    <Input
-                      type="number"
-                      value={newRecipe.cook_time_minutes}
-                      onChange={(e) => setNewRecipe({ ...newRecipe, cook_time_minutes: parseInt(e.target.value) })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Servings</label>
-                    <Input
-                      type="number"
-                      value={newRecipe.servings}
-                      onChange={(e) => setNewRecipe({ ...newRecipe, servings: parseInt(e.target.value) })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Recipe Image</label>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      disabled={uploadingImage}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    />
-                    {uploadingImage && <p className="text-sm text-muted-foreground">Uploading...</p>}
-                    {imagePreview || newRecipe.image_url ? (
-                      <div className="relative mt-2">
-                        <img 
-                          src={imagePreview || newRecipe.image_url} 
-                          alt="Preview" 
-                          className="h-32 w-32 object-cover rounded"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          className="absolute -top-2 -right-2"
-                          onClick={clearImage}
-                        >
-                          ✕
-                        </Button>
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <Button type="button" variant="outline" onClick={() => {
-                    setShowAddForm(false)
-                    setEditingRecipe(null)
-                    setNewRecipe({ name: "", description: "", instructions: "", category: ["dinner"], prep_time_minutes: 10, cook_time_minutes: 20, servings: 2, image_url: "" })
-                    setSelectedIngredients([])
-                    setImagePreview(null)
-                    if (fileInputRef.current) {
-                      fileInputRef.current.value = ''
-                    }
-                  }} className="flex-1">
-                    Cancel
-                  </Button>
-                  <Button type="submit" className="flex-1">
-                    {editingRecipe ? "Update Recipe" : "Add Recipe"}
-                  </Button>
-                </div>
-              </form>
-              </DialogContent>
-            </Dialog>
+            <Button onClick={() => { setShowAddForm(true); setSelectedIngredients([]); }}>
+              ➕ Add Recipe
+            </Button>
+          </div>
         </div>
 
         {/* Recipe List */}
