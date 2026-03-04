@@ -133,14 +133,23 @@ export async function PUT(request: NextRequest) {
     const { ingredient_id, action } = body
 
     if (action === 'flag') {
-      // Get current flag count for user
+      // Check flag count BEFORE allowing to flag
       const { data: profile } = await supabase
         .from('user_profiles')
         .select('flag_count')
         .eq('id', session.user.id)
         .single()
 
-      const newFlagCount = (profile?.flag_count || 0) + 1
+      const flagCount = profile?.flag_count || 0
+
+      if (flagCount >= MAX_FLAG_COUNT) {
+        return NextResponse.json(
+          { error: 'You have reached the maximum number of flags. Contact support.' },
+          { status: 403 }
+        )
+      }
+
+      const newFlagCount = flagCount + 1
 
       // Update user's flag_count
       await supabase
