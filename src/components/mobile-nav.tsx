@@ -56,7 +56,7 @@ export default function MobileNav() {
           <button
             onClick={() => setShowMore(!showMore)}
             className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
-              showMore ? "text-primary" : "text-muted-foreground"
+              showMore ? "text-primary" : "text-foreground"
             }`}
           >
             <span className="text-lg">☰</span>
