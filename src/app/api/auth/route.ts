@@ -1,15 +1,47 @@
 import { NextResponse } from "next/server"
 import { supabase } from "@/lib/supabase"
+import { Ratelimit } from "@upstash/ratelimit"
+import { Redis } from "@upstash/redis"
+
+// Rate limiter for auth endpoints (5 requests per 60 seconds)
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, "60 s"),
+  prefix: "ratelimit:auth:",
+})
+
+// Get client IP for rate limiting
+function getClientIP(request: Request): string {
+  const forwarded = request.headers.get("x-forwarded-for")
+  return forwarded?.split(",")[0]?.trim() || "unknown"
+}
 
 export async function POST(request: Request) {
   try {
+    // Apply rate limiting for signin/signup actions
     const body = await request.json()
-    const { action, email, password, name } = body
+    const { action, email } = body
 
-    switch (action) {
+    if (action === "signin" || action === "signup") {
+      // Use email as identifier for more targeted rate limiting
+      const identifier = email || getClientIP(request)
+      const { success } = await ratelimit.limit(identifier)
+
+      if (!success) {
+        return NextResponse.json(
+          { error: "Too many attempts. Please try again in 60 seconds." },
+          { status: 429 }
+        )
+      }
+    }
+
+    // Re-parse body after rate limit check
+    const { action: authAction, email: authEmail, password, name } = body
+
+    switch (authAction) {
       case "signin": {
         const { data, error } = await supabase.auth.signInWithPassword({
-          email,
+          email: authEmail,
           password
         })
         
@@ -23,7 +55,7 @@ export async function POST(request: Request) {
 
       case "signup": {
         const { data, error } = await supabase.auth.signUp({
-          email,
+          email: authEmail,
           password,
           options: {
             data: {
