@@ -803,7 +803,7 @@ export default function AdminPage() {
               </form>
               </DialogContent>
             </Dialog>
-        )}
+        </div>
 
         {/* Recipe List */}
         <div className="space-y-4">
