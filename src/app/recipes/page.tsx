@@ -269,9 +269,6 @@ export default function RecipesPage() {
                     <span>⏱️ {recipe.prep_time_minutes + recipe.cook_time_minutes} min</span>
                     <span>👥 {recipe.servings} servings</span>
                   </div>
-                  <Button variant="outline" size="sm" className="w-full mt-auto" asChild>
-                    <Link href={`/recipes/${recipe.id}`}>👁️ View Recipe</Link>
-                  </Button>
                 </div>
               </Card>
             ))}
