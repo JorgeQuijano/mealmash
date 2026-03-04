@@ -38,7 +38,8 @@ export default function LoginPage() {
       setError(error.message)
       setLoading(false)
     } else {
-      router.push("/dashboard")
+      // Use full redirect to ensure middleware sees the session
+      window.location.href = "/dashboard"
     }
   }
 
@@ -53,7 +54,8 @@ export default function LoginPage() {
       setError(error.message)
       setLoading(false)
     } else {
-      router.push("/dashboard")
+      // Use full redirect to ensure middleware sees the session
+      window.location.href = "/dashboard"
     }
   }
 
