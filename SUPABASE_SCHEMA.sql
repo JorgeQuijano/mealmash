@@ -79,6 +79,20 @@ CREATE TABLE meal_plans (
 ALTER TABLE meal_plans ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users manage own meal plans" ON meal_plans FOR ALL USING (auth.uid() = user_id);
 
+-- Pantry Items table
+CREATE TABLE pantry_items (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  category TEXT,
+  quantity TEXT DEFAULT '1',
+  ingredient_id UUID REFERENCES ingredients(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE pantry_items ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own pantry items" ON pantry_items FOR ALL USING (auth.uid() = user_id);
+
 -- Sample Recipes (optional - for testing)
 INSERT INTO recipes (name, description, ingredients, instructions, category, prep_time_minutes, cook_time_minutes, servings) VALUES
 (
@@ -120,9 +134,6 @@ CREATE TABLE IF NOT EXISTS ingredients (
   aliases TEXT[],
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
--- Update pantry_items to reference ingredient
-ALTER TABLE pantry_items ADD COLUMN IF NOT EXISTS ingredient_id UUID REFERENCES ingredients(id);
 
 -- Enable RLS for ingredients
 ALTER TABLE ingredients ENABLE ROW LEVEL SECURITY;
