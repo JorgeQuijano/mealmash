@@ -60,6 +60,13 @@ export async function PUT(request: NextRequest) {
       global: { headers: { Authorization: `Bearer ${token}` } }
     })
 
+    // Verify the user from the token
+    const { data: { user } } = await supabaseWithAuth.auth.getUser()
+
+    if (!user) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    }
+
     const body = await request.json()
     const { id, quantity } = body
 
@@ -67,15 +74,22 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'ID and quantity required' }, { status: 400 })
     }
 
+    // Update only if the item belongs to the authenticated user
     const { data, error } = await supabaseWithAuth
       .from('pantry_items')
       .update({ quantity: String(quantity) })
       .eq('id', id)
+      .eq('user_id', user.id)
       .select()
 
     if (error) {
       console.error('Supabase error:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    // If no rows updated, the item doesn't belong to this user
+    if (!data || data.length === 0) {
+      return NextResponse.json({ error: 'Item not found or access denied' }, { status: 403 })
     }
 
     return NextResponse.json({ success: true, updated: data })
