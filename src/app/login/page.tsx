@@ -48,7 +48,7 @@ export default function LoginPage() {
     setLoading(true)
     setError("")
 
-    const { error } = await signUp(email, password)
+    const { error } = await signUp(email, password, name)
     
     if (error) {
       setError(error.message)

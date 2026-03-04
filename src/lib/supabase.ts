@@ -42,8 +42,12 @@ export async function signIn(email: string, password: string) {
 }
 
 // Helper to sign up
-export async function signUp(email: string, password: string) {
-  return await supabase.auth.signUp({ email, password })
+export async function signUp(email: string, password: string, name?: string) {
+  return await supabase.auth.signUp({ 
+    email, 
+    password,
+    options: { data: { name } }
+  })
 }
 
 // Helper to sign out
