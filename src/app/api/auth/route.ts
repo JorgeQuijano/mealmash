@@ -17,7 +17,8 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: error.message }, { status: 400 })
         }
         
-        return NextResponse.json({ user: data.user, session: data.session })
+        // Only return user - Supabase client manages tokens automatically
+        return NextResponse.json({ user: data.user })
       }
 
       case "signup": {
@@ -35,7 +36,8 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: error.message }, { status: 400 })
         }
         
-        return NextResponse.json({ user: data.user, session: data.session })
+        // Only return user - Supabase client manages tokens automatically
+        return NextResponse.json({ user: data.user })
       }
 
       case "signout": {
