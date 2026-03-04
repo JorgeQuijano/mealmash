@@ -11,6 +11,14 @@ import toast from "react-hot-toast"
 
 import MobileNav from "@/components/mobile-nav"
 import IngredientSearch from "@/components/ingredient-search"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 type SelectedIngredient = {
   ingredient_id: string
@@ -623,21 +631,39 @@ export default function AdminPage() {
             <Button variant="outline" onClick={seedRecipes}>
               🌱 Seed 20 Recipes
             </Button>
-            <Button onClick={() => { setShowAddForm(!showAddForm); setSelectedIngredients([]); }}>
-              {showAddForm ? "Cancel" : "➕ Add Recipe"}
-            </Button>
-          </div>
-        </div>
-
-        {/* Add/Edit Recipe Form */}
-        {showAddForm && (
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>{editingRecipe ? "Edit Recipe" : "Add New Recipe"}</CardTitle>
-              <CardDescription>{editingRecipe ? "Update the recipe details" : "Fill in the details to add a new recipe"}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={editingRecipe ? handleUpdateRecipe : handleAddRecipe} className="space-y-4">
+            <Dialog open={showAddForm} onOpenChange={(open) => {
+              setShowAddForm(open)
+              if (!open) {
+                // Reset form when modal closes
+                setEditingRecipe(null)
+                setNewRecipe({
+                  name: "",
+                  description: "",
+                  instructions: "",
+                  category: ["dinner"],
+                  prep_time_minutes: 10,
+                  cook_time_minutes: 20,
+                  servings: 2,
+                  image_url: ""
+                })
+                setSelectedIngredients([])
+                setImagePreview(null)
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = ''
+                }
+              }
+            }}>
+              <DialogTrigger asChild>
+                <Button onClick={() => { setShowAddForm(true); setSelectedIngredients([]); }}>
+                  ➕ Add Recipe
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>{editingRecipe ? "Edit Recipe" : "Add New Recipe"}</DialogTitle>
+                  <DialogDescription>{editingRecipe ? "Update the recipe details" : "Fill in the details to add a new recipe"}</DialogDescription>
+                </DialogHeader>
+                <form onSubmit={editingRecipe ? handleUpdateRecipe : handleAddRecipe} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Recipe Name</label>
@@ -758,7 +784,16 @@ export default function AdminPage() {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button type="button" variant="outline" onClick={() => { setShowAddForm(false); setEditingRecipe(null); setNewRecipe({ name: "", description: "", instructions: "", category: ["dinner"], prep_time_minutes: 10, cook_time_minutes: 20, servings: 2, image_url: "" }); setSelectedIngredients([]); }} className="flex-1">
+                  <Button type="button" variant="outline" onClick={() => {
+                    setShowAddForm(false)
+                    setEditingRecipe(null)
+                    setNewRecipe({ name: "", description: "", instructions: "", category: ["dinner"], prep_time_minutes: 10, cook_time_minutes: 20, servings: 2, image_url: "" })
+                    setSelectedIngredients([])
+                    setImagePreview(null)
+                    if (fileInputRef.current) {
+                      fileInputRef.current.value = ''
+                    }
+                  }} className="flex-1">
                     Cancel
                   </Button>
                   <Button type="submit" className="flex-1">
@@ -766,8 +801,8 @@ export default function AdminPage() {
                   </Button>
                 </div>
               </form>
-            </CardContent>
-          </Card>
+              </DialogContent>
+            </Dialog>
         )}
 
         {/* Recipe List */}
