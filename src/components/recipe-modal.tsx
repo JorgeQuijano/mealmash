@@ -273,14 +273,14 @@ export default function RecipeModal({
   return (
     <>
       <div 
-        className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto"
+        className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
         onClick={onClose}
       >
         <Card 
-          className="max-w-2xl w-full max-h-[90vh] overflow-y-auto my-8"
+          className="max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
-          <CardHeader>
+          <CardHeader className="flex-shrink-0">
             <div className="flex items-start justify-between">
               <div>
                 <CardTitle className="text-2xl">{recipe.name}</CardTitle>
@@ -289,7 +289,7 @@ export default function RecipeModal({
               <Button variant="ghost" size="sm" onClick={onClose}>✕</Button>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="overflow-y-auto flex-1 pb-safe space-y-6">
             {/* Ingredient Match Progress (logged in users only) */}
             {showIngredientMatch && (
               <div className="p-4 bg-muted rounded-lg">
