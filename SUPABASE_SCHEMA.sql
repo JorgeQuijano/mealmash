@@ -146,8 +146,8 @@ BEGIN
   RETURN QUERY
   SELECT i.id, i.name, i.category
   FROM ingredients i
-  WHERE i.name ILIKE '%' || query_text || '%'
-     OR EXISTS (SELECT 1 FROM unnest(i.aliases) a WHERE a ILIKE '%' || query_text || '%')
+  WHERE i.name ILIKE '%' || $1 || '%'
+     OR EXISTS (SELECT 1 FROM unnest(i.aliases) a WHERE a ILIKE '%' || $1 || '%')
   ORDER BY i.name
   LIMIT 20;
 END;
