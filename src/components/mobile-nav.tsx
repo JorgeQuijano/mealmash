@@ -36,9 +36,10 @@ export default function MobileNav() {
       <nav className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50 safe-area-pb">
         <div className="flex items-center justify-around h-14">
           {navItems.map((item) => {
+            // Exact match, or special cases for dashboard root and recipes sub-pages
             const isActive = pathname === item.href || 
               (item.href === "/dashboard" && pathname === "/") ||
-              (item.href === "/recipes" && (pathname === "/recipes" || pathname.startsWith("/recipes/")))
+              (item.href === "/recipes" && pathname === "/recipes")
             return (
               <a
                 key={item.href}
