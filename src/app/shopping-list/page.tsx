@@ -534,8 +534,13 @@ export default function ShoppingListPage() {
             </div>
           </DialogContent>
         </Dialog>
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-          <div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+          {/* Mobile: Compact title */}
+          <div className="md:hidden">
+            <h2 className="text-xl font-bold">🛒 Shopping List</h2>
+          </div>
+          {/* Desktop: Full hero */}
+          <div className="hidden md:block">
             <h2 className="text-3xl font-bold mb-2">📝 Shopping List</h2>
             <p className="text-muted-foreground">
               {shoppingMode ? "Check off items as you shop" : "Keep track of what you need to buy"}
