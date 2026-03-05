@@ -459,15 +459,55 @@ export default function ShoppingListPage() {
               <DialogTitle>Add Shopping Item</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <div>
+              <div className="relative">
                 <label className="text-sm font-medium">Item Name</label>
                 <Input
-                  placeholder="e.g., Milk"
-                  value={newItem.item_name}
-                  onChange={(e) => setNewItem({ ...newItem, item_name: e.target.value })}
+                  placeholder="Search ingredient..."
+                  value={ingredientQuery}
+                  onChange={(e) => {
+                    setIngredientQuery(e.target.value)
+                    setNewItem({ ...newItem, item_name: e.target.value, ingredientId: undefined })
+                  }}
+                  onFocus={() => ingredientQuery.length >= 2 && setShowSuggestions(true)}
                   className="mt-1"
-                  onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault()
+                      if (ingredientSuggestions.length > 0) {
+                        selectSuggestion(ingredientSuggestions[0])
+                      } else {
+                        handleAddItem()
+                      }
+                    }
+                    if (e.key === "Escape") {
+                      setShowSuggestions(false)
+                    }
+                  }}
                 />
+                {/* Autocomplete suggestions */}
+                {showSuggestions && (ingredientSuggestions.length > 0 || loadingSuggestions) && (
+                  <div 
+                    ref={suggestionsRef}
+                    className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg max-h-48 overflow-auto"
+                  >
+                    {loadingSuggestions ? (
+                      <div className="p-3 text-sm text-muted-foreground">Searching...</div>
+                    ) : (
+                      ingredientSuggestions.map((ingredient) => (
+                        <button
+                          key={ingredient.id}
+                          className="w-full text-left px-3 py-2 hover:bg-accent flex items-center justify-between"
+                          onClick={() => selectSuggestion(ingredient)}
+                        >
+                          <span>{ingredient.name}</span>
+                          <Badge variant="secondary" className="text-xs">
+                            {ingredient.category}
+                          </Badge>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
               </div>
               <div>
                 <label className="text-sm font-medium">Quantity</label>
@@ -478,6 +518,9 @@ export default function ShoppingListPage() {
                   className="mt-1"
                 />
               </div>
+              {newItem.ingredientId && (
+                <p className="text-xs text-green-600">✓ Linked to ingredient database</p>
+              )}
               <Button 
                 onClick={async () => {
                   await handleAddItem()
@@ -523,9 +566,9 @@ export default function ShoppingListPage() {
           </div>
         </div>
 
-        {/* Add Item Form - hidden in shopping mode */}
+        {/* Add Item Form - hidden on mobile (use FAB instead) */}
         {!shoppingMode && (
-        <Card className="mb-8">
+        <Card className="hidden md:block mb-6">
           <CardHeader>
             <CardTitle>Add Item</CardTitle>
           </CardHeader>
