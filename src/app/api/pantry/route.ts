@@ -68,16 +68,22 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { id, quantity } = body
+    const { id, quantity, expires_at } = body
 
     if (!id || quantity === undefined) {
       return NextResponse.json({ error: 'ID and quantity required' }, { status: 400 })
     }
 
+    // Build update object
+    const updateData: any = { quantity: String(quantity) }
+    if (expires_at !== undefined) {
+      updateData.expires_at = expires_at
+    }
+
     // Update only if the item belongs to the authenticated user
     const { data, error } = await supabaseWithAuth
       .from('pantry_items')
-      .update({ quantity: String(quantity) })
+      .update(updateData)
       .eq('id', id)
       .eq('user_id', user.id)
       .select()

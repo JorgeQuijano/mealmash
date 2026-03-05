@@ -20,6 +20,7 @@ export default function DashboardPage() {
     shoppingList: 0,
     pantryItems: 0
   })
+  const [expiringItems, setExpiringItems] = useState<any[]>([])
 
   useEffect(() => {
     async function loadUser() {
@@ -75,6 +76,23 @@ export default function DashboardPage() {
       shoppingList: shoppingListCount || 0,
       pantryItems: pantryItemsCount || 0
     })
+
+    // Get items expiring in next 7 days
+    const today = new Date()
+    const sevenDaysLater = new Date()
+    sevenDaysLater.setDate(today.getDate() + 7)
+
+    const { data: expiring } = await supabase
+      .from('pantry_items')
+      .select('*')
+      .eq('user_id', userId)
+      .not('expires_at', 'is', null)
+      .gte('expires_at', today.toISOString().split('T')[0])
+      .lte('expires_at', sevenDaysLater.toISOString().split('T')[0])
+      .order('expires_at', { ascending: true })
+      .limit(5)
+
+    setExpiringItems(expiring || [])
   }
 
   if (loading) {
@@ -173,6 +191,35 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Expiring Soon Section */}
+        {expiringItems.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <h3 className="text-xl font-bold">⚠️ Expiring Soon</h3>
+              <Badge variant="destructive">{expiringItems.length} items</Badge>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {expiringItems.map((item) => (
+                <Card 
+                  key={item.id} 
+                  className="hover:shadow-lg transition-shadow cursor-pointer border-orange-200 dark:border-orange-800"
+                  onClick={() => router.push("/pantry")}
+                >
+                  <CardContent className="pt-4 flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">{item.name}</p>
+                      <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                    </div>
+                    <Badge variant="outline" className="text-orange-600 border-orange-300">
+                      {new Date(item.expires_at).toLocaleDateString()}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid md:grid-cols-4 gap-4">

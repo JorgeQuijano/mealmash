@@ -25,6 +25,7 @@ interface PantryItem {
   quantity: string
   created_at: string
   ingredient_id?: string
+  expires_at?: string | null
 }
 
 const CATEGORIES = [
@@ -50,11 +51,13 @@ export default function PantryPage() {
     name: "", 
     category: "Other", 
     quantity: "",
-    ingredientId: "" as string | undefined
+    ingredientId: "" as string | undefined,
+    expiresAt: ""
   })
   const [adding, setAdding] = useState(false)
   const [editingItem, setEditingItem] = useState<PantryItem | null>(null)
   const [editQuantity, setEditQuantity] = useState("")
+  const [editExpiresAt, setEditExpiresAt] = useState("")
   const [saving, setSaving] = useState(false)
   
   // Autocomplete state
@@ -150,20 +153,27 @@ export default function PantryPage() {
     if (!newItem.name.trim() || !user) return
 
     setAdding(true)
+    const insertData: any = {
+      user_id: user.id,
+      name: newItem.name.trim(),
+      category: newItem.category,
+      quantity: newItem.quantity.trim() || "1",
+      ingredient_id: newItem.ingredientId || null
+    }
+
+    // Add expiration date if provided
+    if (newItem.expiresAt) {
+      insertData.expires_at = newItem.expiresAt
+    }
+
     const { data, error } = await supabase
       .from("pantry_items")
-      .insert({
-        user_id: user.id,
-        name: newItem.name.trim(),
-        category: newItem.category,
-        quantity: newItem.quantity.trim() || "1",
-        ingredient_id: newItem.ingredientId || null
-      })
+      .insert(insertData)
       .select()
 
     if (!error && data) {
       setItems([...data, ...items])
-      setNewItem({ name: "", category: "Other", quantity: "", ingredientId: undefined })
+      setNewItem({ name: "", category: "Other", quantity: "", ingredientId: undefined, expiresAt: "" })
       setIngredientQuery("")
       setIngredientSuggestions([])
       setShowSuggestions(false)
@@ -185,6 +195,7 @@ export default function PantryPage() {
   const openEditModal = (item: PantryItem) => {
     setEditingItem(item)
     setEditQuantity(item.quantity)
+    setEditExpiresAt(item.expires_at || "")
   }
 
   const handleSaveQuantity = async () => {
@@ -202,14 +213,15 @@ export default function PantryPage() {
         },
         body: JSON.stringify({
           id: editingItem.id,
-          quantity: editQuantity
+          quantity: editQuantity,
+          expires_at: editExpiresAt || null
         })
       })
 
       if (response.ok) {
         setItems(items.map(item => 
           item.id === editingItem.id 
-            ? { ...item, quantity: editQuantity }
+            ? { ...item, quantity: editQuantity, expires_at: editExpiresAt || null }
             : item
         ))
         setEditingItem(null)
@@ -367,6 +379,13 @@ export default function PantryPage() {
                   className="w-24"
                   onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
                 />
+                <Input
+                  type="date"
+                  placeholder="Expires"
+                  value={newItem.expiresAt}
+                  onChange={(e) => setNewItem({ ...newItem, expiresAt: e.target.value })}
+                  className="w-36"
+                />
                 <Button onClick={handleAddItem} disabled={adding || !newItem.name.trim()}>
                   {adding ? "Adding..." : "Add"}
                 </Button>
@@ -411,6 +430,14 @@ export default function PantryPage() {
                 +
               </Button>
             </div>
+            <div className="space-y-2 mb-4">
+              <label className="text-sm font-medium">Expires (optional)</label>
+              <Input
+                type="date"
+                value={editExpiresAt}
+                onChange={(e) => setEditExpiresAt(e.target.value)}
+              />
+            </div>
             <div className="flex gap-2 justify-end">
               <Button variant="outline" onClick={() => setEditingItem(null)}>
                 Cancel
@@ -445,6 +472,11 @@ export default function PantryPage() {
                         <div className="flex-1 min-w-0">
                           <p className="font-medium truncate">{item.name}</p>
                           <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                          {item.expires_at && (
+                            <p className="text-xs text-orange-600 mt-1">
+                              ⚠️ Expires: {new Date(item.expires_at).toLocaleDateString()}
+                            </p>
+                          )}
                         </div>
                         <div className="flex items-center gap-1 ml-2">
                           <Button
