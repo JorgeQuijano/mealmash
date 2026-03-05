@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { getUser, getUserProfile } from "@/lib/supabase"
+import { getUser, getUserProfile, supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -14,6 +14,12 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({
+    favorites: 0,
+    mealsPlanned: 0,
+    shoppingList: 0,
+    pantryItems: 0
+  })
 
   useEffect(() => {
     async function loadUser() {
@@ -28,11 +34,48 @@ export default function DashboardPage() {
       
       const { data } = await getUserProfile(currentUser.id)
       setProfile(data)
+      
+      // Load real stats
+      await loadStats(currentUser.id)
+      
       setLoading(false)
     }
     
     loadUser()
   }, [router])
+
+  async function loadStats(userId: string) {
+    // Get favorites count
+    const { count: favoritesCount } = await supabase
+      .from('user_favorites')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+
+    // Get meals planned count
+    const { count: mealsPlannedCount } = await supabase
+      .from('meal_plans')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+
+    // Get shopping list count
+    const { count: shoppingListCount } = await supabase
+      .from('shopping_list')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+
+    // Get pantry items count
+    const { count: pantryItemsCount } = await supabase
+      .from('pantry_items')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+
+    setStats({
+      favorites: favoritesCount || 0,
+      mealsPlanned: mealsPlannedCount || 0,
+      shoppingList: shoppingListCount || 0,
+      pantryItems: pantryItemsCount || 0
+    })
+  }
 
   if (loading) {
     return (
@@ -133,29 +176,28 @@ export default function DashboardPage() {
 
         {/* Stats */}
         <div className="grid md:grid-cols-4 gap-4">
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => router.push("/recipes/favorites")}>
             <CardContent className="pt-6">
-              <div className="text-3xl font-bold">0</div>
+              <div className="text-3xl font-bold">{stats.favorites}</div>
               <p className="text-sm text-muted-foreground">Favorites</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => router.push("/meal-plan")}>
             <CardContent className="pt-6">
-              <div className="text-3xl font-bold">0</div>
+              <div className="text-3xl font-bold">{stats.mealsPlanned}</div>
               <p className="text-sm text-muted-foreground">Meals Planned</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => router.push("/shopping-list")}>
             <CardContent className="pt-6">
-              <div className="text-3xl font-bold">0</div>
-              <p className="text-sm text-muted-foreground">Shopping Lists</p>
+              <div className="text-3xl font-bold">{stats.shoppingList}</div>
+              <p className="text-sm text-muted-foreground">Shopping List</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => router.push("/pantry")}>
             <CardContent className="pt-6">
-              <Badge variant={profile?.is_admin ? "default" : "secondary"}>
-                {profile?.is_admin ? "Admin" : "Free User"}
-              </Badge>
+              <div className="text-3xl font-bold">{stats.pantryItems}</div>
+              <p className="text-sm text-muted-foreground">Pantry Items</p>
             </CardContent>
           </Card>
         </div>
