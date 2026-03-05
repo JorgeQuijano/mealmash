@@ -118,7 +118,7 @@ function Hero() {
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-stone-50 dark:bg-stone-950">
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-dots opacity-50 dark:opacity-30" />
+      <div className="absolute inset-0 bg-dots opacity-50 dark:opacity-0" />
       <div className="absolute top-20 right-0 w-96 h-96 bg-orange-200 rounded-full blur-3xl opacity-20" />
       <div className="absolute bottom-20 left-0 w-96 h-96 bg-green-200 rounded-full blur-3xl opacity-20" />
       
