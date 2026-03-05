@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 import MobileNav from "@/components/mobile-nav"
 
@@ -39,6 +40,7 @@ export default function ShoppingListPage() {
     ingredientId: undefined as string | undefined
   })
   const [adding, setAdding] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
 
   // Shopping Mode state
   const [shoppingMode, setShoppingMode] = useState(false)
@@ -439,7 +441,56 @@ export default function ShoppingListPage() {
       
       <MobileNav />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-4">
+        {/* Mobile: Floating Add Button (FAB) */}
+        <div className="md:hidden fixed bottom-20 right-4 z-40">
+          <Button 
+            onClick={() => setShowAddModal(true)} 
+            className="h-14 w-14 rounded-full shadow-lg text-2xl"
+          >
+            +
+          </Button>
+        </div>
+
+        {/* Mobile: Add Item Modal */}
+        <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Shopping Item</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Item Name</label>
+                <Input
+                  placeholder="e.g., Milk"
+                  value={newItem.item_name}
+                  onChange={(e) => setNewItem({ ...newItem, item_name: e.target.value })}
+                  className="mt-1"
+                  onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Quantity</label>
+                <Input
+                  placeholder="e.g., 2"
+                  value={newItem.quantity}
+                  onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <Button 
+                onClick={async () => {
+                  await handleAddItem()
+                  setShowAddModal(false)
+                }} 
+                disabled={adding || !newItem.item_name.trim()}
+                className="w-full"
+              >
+                {adding ? "Adding..." : "Add to List"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h2 className="text-3xl font-bold mb-2">📝 Shopping List</h2>

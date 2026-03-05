@@ -361,13 +361,13 @@ export default function PantryPage() {
           </Badge>
         </div>
 
-        {/* Mobile: Floating Add Button */}
-        <div className="md:hidden mb-4">
+        {/* Mobile: Floating Add Button (FAB) */}
+        <div className="md:hidden fixed bottom-20 right-4 z-40">
           <Button 
             onClick={() => setShowAddModal(true)} 
-            className="w-full h-12 text-base font-semibold"
+            className="h-14 w-14 rounded-full shadow-lg text-2xl"
           >
-            ➕ Add Item
+            +
           </Button>
         </div>
 
