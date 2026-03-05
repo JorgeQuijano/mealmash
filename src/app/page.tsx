@@ -151,7 +151,7 @@ function Hero() {
                 </Button>
               </Link>
               <Link href="/login">
-                <Button size="lg" variant="outline" className="border-orange-300 text-stone-700 hover:bg-orange-50 rounded-full px-8 py-6 text-lg">
+                <Button size="lg" variant="outline" className="border-orange-300 text-stone-700 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded-full px-8 py-6 text-lg">
                   {siteConfig.hero.secondaryCta.text}
                 </Button>
               </Link>
