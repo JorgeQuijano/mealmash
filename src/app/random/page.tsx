@@ -162,7 +162,14 @@ export default function RandomPage() {
     return colors[cat] || "bg-gray-100 text-gray-800"
   }
 
-  if (loading) {
+  // Show inline loading spinner on wheel during filter changes
+  const LoadingSpinner = () => (
+    <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-full z-30">
+      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+    </div>
+  )
+
+  if (loading && recipes.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-dots">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -251,6 +258,8 @@ export default function RandomPage() {
                 transition: isSpinning ? 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)' : 'none',
               }}
             >
+              {/* Inline loading spinner - shows when filtering */}
+              {loading && <LoadingSpinner />}
               {/* Center circle */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 md:w-32 md:h-32 bg-white rounded-full shadow-inner flex items-center justify-center">
                 <div className="text-center">
