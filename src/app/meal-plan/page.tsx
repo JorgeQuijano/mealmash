@@ -259,41 +259,38 @@ export default function MealPlanPage() {
       
       <MobileNav />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-3 md:py-8">
         {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
           <div className="text-center md:text-left">
-            <h2 className="text-3xl font-bold">📅 Weekly Meal Plan</h2>
-            <p className="text-muted-foreground">Plan your meals for the week ahead</p>
+            <h2 className="text-xl md:text-3xl font-bold">📅 Meal Plan</h2>
           </div>
           
           {/* Week Navigation */}
-          <div className="flex items-center gap-2 justify-center">
+          <div className="flex items-center gap-1 justify-center">
             <Button variant="outline" size="sm" onClick={handlePrevWeek}>
-              ← Prev
+              ←
             </Button>
             <Button variant="outline" size="sm" onClick={handleGoToToday}>
               Today
             </Button>
             <Button variant="outline" size="sm" onClick={handleNextWeek}>
-              Next →
+              →
             </Button>
           </div>
         </div>
 
         {/* Week Range Display */}
-        <div className="text-center mb-6">
-          <span className="text-lg font-medium">
+        <div className="text-center mb-3">
+          <span className="text-sm font-medium">
             {formatDisplayDate(weekDates[0])} - {formatDisplayDate(weekDates[6])}
           </span>
         </div>
 
-        {/* Calendar Grid */}
-        
         {/* Mobile: Day-by-Day View */}
-        <div className="md:hidden mb-6">
+        <div className="md:hidden mb-4">
           {/* Day Tabs */}
-          <div className="flex overflow-x-auto gap-1 mb-4 pb-2 justify-between">
+          <div className="flex overflow-x-auto gap-1 mb-2 pb-2 justify-between">
             {weekDates.map((date) => {
               const dateStr = formatDate(date)
               const isToday = dateStr === today
@@ -322,7 +319,7 @@ export default function MealPlanPage() {
           {/* Selected Day Meals */}
           {selectedDay ? (
             <div className="space-y-3">
-              <div className="text-center font-medium text-lg mb-4">
+              <div className="text-center font-medium text-lg mb-2">
                 {new Date(selectedDay + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
               </div>
               {MEAL_TYPES.map((mealType) => {
@@ -438,7 +435,7 @@ export default function MealPlanPage() {
         </div>
 
         {/* Legend */}
-        <div className="mt-8 flex flex-wrap gap-4 justify-center text-sm text-muted-foreground">
+        <div className="mt-4 flex flex-wrap gap-4 justify-center text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Badge variant="outline">🌅 Breakfast</Badge>
           </div>
