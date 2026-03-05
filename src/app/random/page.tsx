@@ -182,9 +182,10 @@ export default function RandomPage() {
       
       <MobileNav />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-3 md:py-8">
         {/* Hero Section */}
-        <div className="text-center mb-8">
+        {/* Hero Section - hidden on mobile */}
+        <div className="text-center mb-4 hidden md:block">
           <h2 className="text-4xl font-bold mb-4">🎲 Can&apos;t Decide? Let Fate Choose!</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Spin the wheel and let the universe pick your next meal. Adventure awaits!
