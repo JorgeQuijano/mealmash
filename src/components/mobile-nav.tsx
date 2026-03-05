@@ -38,7 +38,7 @@ export default function MobileNav() {
           {navItems.map((item) => {
             const isActive = pathname === item.href || 
               (item.href === "/dashboard" && pathname === "/") ||
-              (item.href === "/recipes" && pathname.startsWith("/recipes"))
+              (item.href === "/recipes" && (pathname === "/recipes" || pathname.startsWith("/recipes/")))
             return (
               <a
                 key={item.href}
