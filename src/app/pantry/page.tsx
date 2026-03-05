@@ -661,13 +661,13 @@ export default function PantryPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-4">
+          <div className="grid gap-2">
             {Object.entries(groupedItems).map(([category, categoryItems]) => {
               // Further group by name within category
               const namesInCategory = [...new Set(categoryItems.map(i => i.name))]
               return (
                 <div key={category}>
-                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
                     {getCategoryEmoji(category)} {category}
                     <Badge variant="secondary" className="ml-2">{namesInCategory.length}</Badge>
                   </h3>
@@ -686,7 +686,7 @@ export default function PantryPage() {
                       
                       return (
                         <Card key={name} className="hover:shadow-md transition-shadow text-sm">
-                          <CardContent className="p-2 md:p-3">
+                          <CardContent className="p-1 md:p-2">
                             {/* Main item row - click to expand */}
                             <div 
                               className="flex items-center justify-between cursor-pointer"
