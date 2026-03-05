@@ -56,7 +56,7 @@ export default function MobileNav() {
           <button
             onClick={() => setShowMore(!showMore)}
             className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
-              showMore ? "text-primary" : "text-black"
+              showMore ? "text-primary" : "text-foreground"
             }`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
