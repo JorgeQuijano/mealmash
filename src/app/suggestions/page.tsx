@@ -375,7 +375,7 @@ export default function SuggestionsPage() {
               <Card 
                 key={suggestion.recipe.id}
                 style={{ padding: '0.5rem' }}
-                className="hover:shadow-lg transition-shadow cursor-pointer py-1"
+                className="hover:shadow-lg transition-shadow cursor-pointer py-1 !gap-0 md:!gap-6"
                 onClick={() => setSelectedRecipe(suggestion)}
               >
                 <CardHeader className="p-2 pb-0">
