@@ -20,7 +20,9 @@ export default function DashboardPage() {
     shoppingList: 0,
     pantryItems: 0
   })
-  const [expiringItems, setExpiringItems] = useState<any[]>([])
+  const [expiredItems, setExpiredItems] = useState<any[]>([])
+  const [expiringSoonItems, setExpiringSoonItems] = useState<any[]>([])
+  const [expiringWeekItems, setExpiringWeekItems] = useState<any[]>([])
 
   useEffect(() => {
     async function loadUser() {
@@ -77,22 +79,54 @@ export default function DashboardPage() {
       pantryItems: pantryItemsCount || 0
     })
 
-    // Get items expiring in next 7 days
+    // Get expiration alerts
     const today = new Date()
-    const sevenDaysLater = new Date()
-    sevenDaysLater.setDate(today.getDate() + 7)
+    today.setHours(0, 0, 0, 0)
+    const todayStr = today.toISOString().split('T')[0]
 
-    const { data: expiring } = await supabase
+    const twoDaysLater = new Date(today)
+    twoDaysLater.setDate(today.getDate() + 2)
+    const twoDaysStr = twoDaysLater.toISOString().split('T')[0]
+
+    const sevenDaysLater = new Date(today)
+    sevenDaysLater.setDate(today.getDate() + 7)
+    const sevenDaysStr = sevenDaysLater.toISOString().split('T')[0]
+
+    // Get expired items (past expiration date)
+    const { data: expired } = await supabase
       .from('pantry_items')
       .select('*')
       .eq('user_id', userId)
       .not('expires_at', 'is', null)
-      .gte('expires_at', today.toISOString().split('T')[0])
-      .lte('expires_at', sevenDaysLater.toISOString().split('T')[0])
+      .lt('expires_at', todayStr)
+      .order('expires_at', { ascending: false })
+      .limit(5)
+
+    // Get expiring in 2 days (urgent)
+    const { data: expiringSoon } = await supabase
+      .from('pantry_items')
+      .select('*')
+      .eq('user_id', userId)
+      .not('expires_at', 'is', null)
+      .gte('expires_at', todayStr)
+      .lte('expires_at', twoDaysStr)
       .order('expires_at', { ascending: true })
       .limit(5)
 
-    setExpiringItems(expiring || [])
+    // Get expiring in 3-7 days
+    const { data: expiringWeek } = await supabase
+      .from('pantry_items')
+      .select('*')
+      .eq('user_id', userId)
+      .not('expires_at', 'is', null)
+      .gt('expires_at', twoDaysStr)
+      .lte('expires_at', sevenDaysStr)
+      .order('expires_at', { ascending: true })
+      .limit(5)
+
+    setExpiredItems(expired || [])
+    setExpiringSoonItems(expiringSoon || [])
+    setExpiringWeekItems(expiringWeek || [])
   }
 
   if (loading) {
@@ -192,15 +226,44 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        {/* Expiring Soon Section */}
-        {expiringItems.length > 0 && (
+        {/* EXPIRED Section - Most Urgent */}
+        {expiredItems.length > 0 && (
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <h3 className="text-xl font-bold">⚠️ Expiring Soon</h3>
-              <Badge variant="destructive">{expiringItems.length} items</Badge>
+              <h3 className="text-xl font-bold">🔴 Expired</h3>
+              <Badge variant="destructive" className="bg-red-600">{expiredItems.length} items</Badge>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {expiringItems.map((item) => (
+              {expiredItems.map((item) => (
+                <Card 
+                  key={item.id} 
+                  className="hover:shadow-lg transition-shadow cursor-pointer border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/30"
+                  onClick={() => router.push("/pantry")}
+                >
+                  <CardContent className="pt-4 flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">{item.name}</p>
+                      <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                    </div>
+                    <Badge variant="destructive">
+                      {new Date(item.expires_at).toLocaleDateString()}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* EXPIRING SOON Section - Within 2 days */}
+        {expiringSoonItems.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <h3 className="text-xl font-bold">🔥 Expiring in 2 Days</h3>
+              <Badge className="bg-orange-500 hover:bg-orange-600">{expiringSoonItems.length} items</Badge>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {expiringSoonItems.map((item) => (
                 <Card 
                   key={item.id} 
                   className="hover:shadow-lg transition-shadow cursor-pointer border-orange-200 dark:border-orange-800"
@@ -212,6 +275,35 @@ export default function DashboardPage() {
                       <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
                     </div>
                     <Badge variant="outline" className="text-orange-600 border-orange-300">
+                      {new Date(item.expires_at).toLocaleDateString()}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* EXPIRING THIS WEEK Section - 3-7 days */}
+        {expiringWeekItems.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <h3 className="text-xl font-bold">📅 Expiring This Week</h3>
+              <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">{expiringWeekItems.length} items</Badge>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {expiringWeekItems.map((item) => (
+                <Card 
+                  key={item.id} 
+                  className="hover:shadow-lg transition-shadow cursor-pointer border-yellow-200 dark:border-yellow-800"
+                  onClick={() => router.push("/pantry")}
+                >
+                  <CardContent className="pt-4 flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">{item.name}</p>
+                      <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                    </div>
+                    <Badge variant="outline" className="text-yellow-600 border-yellow-300">
                       {new Date(item.expires_at).toLocaleDateString()}
                     </Badge>
                   </CardContent>
