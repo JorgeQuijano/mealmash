@@ -83,6 +83,8 @@ export default function SuggestionsPage() {
   const [selectedRecipe, setSelectedRecipe] = useState<SuggestedRecipe | null>(null)
   const [addingToList, setAddingToList] = useState(false)
   const [addedToList, setAddedToList] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const recipesPerPage = 12
 
   useEffect(() => {
     async function loadData() {
@@ -230,6 +232,13 @@ export default function SuggestionsPage() {
         s.recipe.category && parseCategory(s.recipe.category).includes(selectedCategory)
       )
 
+  // Paginate
+  const totalCount = displayedRecipes.length
+  const paginatedRecipes = displayedRecipes.slice(
+    (currentPage - 1) * recipesPerPage,
+    currentPage * recipesPerPage
+  )
+
   const getCategoryColor = (category: string | string[]) => {
     const cat = Array.isArray(category) ? category[0] : category
     const colors: Record<string, string> = {
@@ -313,7 +322,7 @@ export default function SuggestionsPage() {
                 key={cat}
                 variant={selectedCategory === cat ? "default" : "outline"}
                 size="sm"
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => { setSelectedCategory(cat); setCurrentPage(1); }}
                 className="capitalize"
               >
                 {cat}
@@ -360,9 +369,9 @@ export default function SuggestionsPage() {
         )}
 
         {/* Suggestions Grid */}
-        {displayedRecipes.length > 0 && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayedRecipes.map((suggestion) => (
+        {paginatedRecipes.length > 0 && (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            {paginatedRecipes.map((suggestion) => (
               <Card 
                 key={suggestion.recipe.id}
                 className="hover:shadow-lg transition-shadow cursor-pointer"
@@ -419,6 +428,31 @@ export default function SuggestionsPage() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalCount > recipesPerPage && (
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {currentPage} of {Math.ceil(totalCount / recipesPerPage)}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => p + 1)}
+              disabled={currentPage >= Math.ceil(totalCount / recipesPerPage)}
+            >
+              Next
+            </Button>
           </div>
         )}
 
