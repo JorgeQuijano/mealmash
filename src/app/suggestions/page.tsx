@@ -287,10 +287,18 @@ export default function SuggestionsPage() {
       
       <MobileNav />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-3 md:py-8">
+        {/* Hero - hidden on mobile to save space */}
+        <div className="text-center mb-4 hidden md:block">
+          <h2 className="text-2xl md:text-4xl font-bold mb-2">🍳 What Can I Make?</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Find recipes that match what you have in your pantry
+          </p>
+        </div>
+
         {/* Pantry Summary */}
         {pantryItems.length > 0 && (
-          <div className="mb-6 p-4 bg-muted rounded-lg">
+          <div className="mb-4 p-3 bg-muted rounded-lg">
             <p className="text-sm text-muted-foreground">
               📦 You have <span className="font-semibold text-foreground">{pantryItems.length}</span> items in your pantry
             </p>
@@ -298,7 +306,7 @@ export default function SuggestionsPage() {
         )}
 
         {/* Category Filters */}
-        <div className="mb-8">
+        <div className="mb-4">
           <div className="flex flex-wrap justify-center gap-2">
             {categories.map((cat) => (
               <Button

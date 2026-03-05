@@ -91,6 +91,9 @@ export default function MobileNav() {
                   <a href="/meal-plan" className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors">
                     📅 Meal Plan
                   </a>
+                  <a href="/suggestions" className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors">
+                    🍳 What Can I Make?
+                  </a>
                   {profile?.is_admin && (
                     <a href="/admin" className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors">
                       🛠️ Admin
