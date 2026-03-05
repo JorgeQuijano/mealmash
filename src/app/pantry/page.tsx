@@ -55,6 +55,7 @@ export default function PantryPage() {
     expiresAt: ""
   })
   const [adding, setAdding] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
   const [editingItem, setEditingItem] = useState<PantryItem | null>(null)
   const [editQuantity, setEditQuantity] = useState("")
   const [editExpiresAt, setEditExpiresAt] = useState("")
@@ -316,8 +317,9 @@ export default function PantryPage() {
       
       <MobileNav />
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+      <main className="container mx-auto px-4 py-4">
+        {/* Hero - hidden on mobile to save space */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 hidden md:block">
           <div>
             <h2 className="text-3xl font-bold mb-2">🥕 My Pantry</h2>
             <p className="text-muted-foreground">
@@ -329,10 +331,122 @@ export default function PantryPage() {
           </Badge>
         </div>
 
-        {/* Add Item Form */}
-        <Card className="mb-8">
+        {/* Mobile: Floating Add Button */}
+        <div className="md:hidden mb-4">
+          <Button 
+            onClick={() => setShowAddModal(true)} 
+            className="w-full h-12 text-base font-semibold"
+          >
+            ➕ Add Item
+          </Button>
+        </div>
+
+        {/* Mobile: Add Item Modal */}
+        <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add Pantry Item</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="relative">
+                <Input
+                  ref={inputRef}
+                  placeholder="Search ingredient..."
+                  value={ingredientQuery}
+                  onChange={handleInputChange}
+                  onFocus={handleInputFocus}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault()
+                      if (ingredientSuggestions.length > 0) {
+                        selectSuggestion(ingredientSuggestions[0])
+                      } else {
+                        handleAddItem()
+                      }
+                    }
+                    if (e.key === "Escape") {
+                      setShowSuggestions(false)
+                    }
+                  }}
+                />
+                {/* Autocomplete suggestions */}
+                {showSuggestions && (ingredientSuggestions.length > 0 || loadingSuggestions) && (
+                  <div 
+                    ref={suggestionsRef}
+                    className="absolute z-50 w-full mt-1 bg-background border rounded-md shadow-lg max-h-48 overflow-auto"
+                  >
+                    {loadingSuggestions ? (
+                      <div className="p-3 text-sm text-muted-foreground">Searching...</div>
+                    ) : (
+                      ingredientSuggestions.map((ingredient) => (
+                        <button
+                          key={ingredient.id}
+                          className="w-full text-left px-3 py-2 hover:bg-accent flex items-center justify-between"
+                          onClick={() => selectSuggestion(ingredient)}
+                        >
+                          <span>{ingredient.name}</span>
+                          <Badge variant="secondary" className="text-xs">
+                            {ingredient.category}
+                          </Badge>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-muted-foreground">Category</label>
+                  <select
+                    value={newItem.category}
+                    onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
+                    className="w-full px-3 py-2 rounded-md border bg-background text-sm mt-1"
+                  >
+                    {CATEGORIES.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground">Quantity</label>
+                  <Input
+                    placeholder="Qty"
+                    value={newItem.quantity}
+                    onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Expires (optional)</label>
+                <Input
+                  type="date"
+                  value={newItem.expiresAt}
+                  onChange={(e) => setNewItem({ ...newItem, expiresAt: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              {newItem.ingredientId && (
+                <p className="text-xs text-green-600">✓ Linked to ingredient database</p>
+              )}
+              <Button 
+                onClick={async () => {
+                  await handleAddItem()
+                  setShowAddModal(false)
+                }} 
+                disabled={adding || !newItem.name.trim()}
+                className="w-full"
+              >
+                {adding ? "Adding..." : "Add to Pantry"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Desktop: Add Item Card */}
+        <Card className="hidden md:block mb-6">
           <CardHeader>
-            <CardTitle>Add Item</CardTitle>
+            <CardTitle className="text-lg">Add Item</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="relative">
@@ -479,7 +593,7 @@ export default function PantryPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6">
+          <div className="grid gap-4">
             {Object.entries(groupedItems).map(([category, categoryItems]) => {
               // Further group by name within category
               const namesInCategory = [...new Set(categoryItems.map(i => i.name))]
@@ -504,7 +618,7 @@ export default function PantryPage() {
                       
                       return (
                         <Card key={name} className="hover:shadow-md transition-shadow">
-                          <CardContent className="p-4">
+                          <CardContent className="p-3 md:p-4">
                             {/* Main item row - click to expand */}
                             <div 
                               className="flex items-center justify-between cursor-pointer"
