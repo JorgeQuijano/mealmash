@@ -168,8 +168,8 @@ export default function RecipeDetailPage() {
     setLoading(false)
 
     // Load expiring pantry items for smart date suggestion
-    if (currentUser) {
-      await loadExpiringItems(currentUser.id)
+    if (user) {
+      await loadExpiringItems(user.id)
     }
   }
 
