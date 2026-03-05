@@ -462,6 +462,7 @@ export default function ShoppingListPage() {
               <div className="relative">
                 <label className="text-sm font-medium">Item Name</label>
                 <Input
+                  ref={inputRef}
                   placeholder="Search ingredient..."
                   value={ingredientQuery}
                   onChange={(e) => {
