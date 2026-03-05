@@ -374,6 +374,7 @@ export default function SuggestionsPage() {
             {paginatedRecipes.map((suggestion) => (
               <Card 
                 key={suggestion.recipe.id}
+                style={{ padding: '0.5rem' }}
                 className="hover:shadow-lg transition-shadow cursor-pointer py-1"
                 onClick={() => setSelectedRecipe(suggestion)}
               >
