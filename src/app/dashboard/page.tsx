@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 
 import MobileNav from "@/components/mobile-nav"
+import ExpiringRecipeModal from "@/components/ExpiringRecipeModal"
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -24,6 +25,7 @@ export default function DashboardPage() {
   const [expiringSoonItems, setExpiringSoonItems] = useState<any[]>([])
   const [expiringWeekItems, setExpiringWeekItems] = useState<any[]>([])
   const [todaysMeals, setTodaysMeals] = useState<any[]>([])
+  const [selectedExpiringItem, setSelectedExpiringItem] = useState<any>(null)
 
   useEffect(() => {
     async function loadUser() {
@@ -242,7 +244,7 @@ export default function DashboardPage() {
                 <Card 
                   key={item.id} 
                   className="flex-shrink-0 cursor-pointer border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/30 min-w-[140px]"
-                  onClick={() => router.push("/pantry")}
+                  onClick={() => setSelectedExpiringItem(item)}
                 >
                   <CardContent className="p-3">
                     <p className="font-medium text-sm truncate">{item.name}</p>
@@ -268,7 +270,7 @@ export default function DashboardPage() {
                 <Card 
                   key={item.id} 
                   className="flex-shrink-0 cursor-pointer border-orange-200 dark:border-orange-800 min-w-[140px]"
-                  onClick={() => router.push("/pantry")}
+                  onClick={() => setSelectedExpiringItem(item)}
                 >
                   <CardContent className="p-3">
                     <p className="font-medium text-sm truncate">{item.name}</p>
@@ -294,7 +296,7 @@ export default function DashboardPage() {
                 <Card 
                   key={item.id} 
                   className="flex-shrink-0 cursor-pointer border-yellow-200 dark:border-yellow-800 min-w-[140px]"
-                  onClick={() => router.push("/pantry")}
+                  onClick={() => setSelectedExpiringItem(item)}
                 >
                   <CardContent className="p-3">
                     <p className="font-medium text-sm truncate">{item.name}</p>
@@ -350,6 +352,14 @@ export default function DashboardPage() {
             </Card>
           </div>
         </div>
+
+        {/* Expiring Item Recipe Modal */}
+        {selectedExpiringItem && (
+          <ExpiringRecipeModal 
+            expiringItem={selectedExpiringItem}
+            onClose={() => setSelectedExpiringItem(null)}
+          />
+        )}
       </main>
     </div>
   )

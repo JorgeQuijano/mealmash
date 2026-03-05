@@ -68,6 +68,11 @@ export default function RecipeDetailPage() {
   const [missingIndices, setMissingIndices] = useState<number[]>([])
   const [showAddToListModal, setShowAddToListModal] = useState(false)
   const [addingToList, setAddingToList] = useState(false)
+  const [showAddToMealPlan, setShowAddToMealPlan] = useState(false)
+  const [suggestedDate, setSuggestedDate] = useState<string>("")
+  const [selectedMealType, setSelectedMealType] = useState<string>("dinner")
+  const [addingToMealPlan, setAddingToMealPlan] = useState(false)
+  const [expiringPantryItems, setExpiringPantryItems] = useState<any[]>([])
   const [addedToList, setAddedToList] = useState(false)
 
   useEffect(() => {
@@ -161,6 +166,116 @@ export default function RecipeDetailPage() {
       setError("Recipe not found")
     }
     setLoading(false)
+
+    // Load expiring pantry items for smart date suggestion
+    if (currentUser) {
+      await loadExpiringItems(currentUser.id)
+    }
+  }
+
+  async function loadExpiringItems(userId: string) {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const todayStr = today.toISOString().split('T')[0]
+
+    const { data: expiring } = await supabase
+      .from('pantry_items')
+      .select('id, name, ingredient_id, expires_at')
+      .eq('user_id', userId)
+      .not('expires_at', 'is', null)
+      .gte('expires_at', todayStr)
+      .order('expires_at', { ascending: true })
+
+    if (expiring) {
+      setExpiringPantryItems(expiring)
+    }
+  }
+
+  function findBestMealPlanDate() {
+    if (!recipe) return
+
+    // Get recipe category
+    const category = Array.isArray(recipe.category) ? recipe.category[0] : recipe.category
+    
+    // Get user's pantry ingredient IDs
+    const pantryIngredientIds = new Set(
+      pantryItems.filter(p => p.ingredient_id).map(p => p.ingredient_id)
+    )
+    
+    // Get ingredients user has for this recipe
+    const recipeIngredientIds = recipe.recipe_ingredients
+      ?.filter(ri => pantryIngredientIds.has(ri.ingredient_id))
+      .map(ri => ri.ingredient_id) || []
+    
+    // Find earliest expiring ingredient that user has for this recipe
+    const relevantExpiring = expiringPantryItems
+      .filter(item => item.ingredient_id && recipeIngredientIds.includes(item.ingredient_id))
+      .sort((a, b) => new Date(a.expires_at).getTime() - new Date(b.expires_at).getTime())
+    
+    const maxDate = relevantExpiring.length > 0 
+      ? new Date(relevantExpiring[0].expires_at)
+      : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // Default to 7 days
+
+    // Find closest day matching recipe category before maxDate
+    for (let i = 0; i < 14; i++) {
+      const date = new Date()
+      date.setDate(date.getDate() + i)
+      
+      if (date > maxDate) break
+      
+      if (matchesMealCategory(date, category)) {
+        setSuggestedDate(date.toISOString().split('T')[0])
+        return
+      }
+    }
+    
+    // Fallback: just use today
+    setSuggestedDate(new Date().toISOString().split('T')[0])
+  }
+
+  function matchesMealCategory(date: Date, category: string): boolean {
+    const dayOfWeek = date.getDay()
+    
+    if (category === 'dinner') return true
+    if (category === 'breakfast') return dayOfWeek === 0 || dayOfWeek === 6
+    if (category === 'lunch') return dayOfWeek >= 1 && dayOfWeek <= 5
+    return true
+  }
+
+  async function handleAddToMealPlan() {
+    if (!user || !recipe || !suggestedDate) return
+
+    setAddingToMealPlan(true)
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+
+      const response = await fetch('/api/meal-plans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({
+          recipe_id: recipe.id,
+          planned_date: suggestedDate,
+          meal_type: selectedMealType
+        })
+      })
+
+      if (response.ok) {
+        alert('✅ Added to meal plan!')
+        setShowAddToMealPlan(false)
+      } else {
+        const data = await response.json()
+        alert('Error: ' + (data.error || 'Failed to add'))
+      }
+    } catch (err) {
+      console.error('Error adding to meal plan:', err)
+      alert('Failed to add to meal plan')
+    }
+
+    setAddingToMealPlan(false)
   }
 
   const toggleIngredient = (index: number) => {
@@ -312,6 +427,17 @@ export default function RecipeDetailPage() {
                 🖨️ Print
               </Button>
               <Button>❤️ Save</Button>
+              {user && (
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    findBestMealPlanDate()
+                    setShowAddToMealPlan(true)
+                  }}
+                >
+                  📅 Add to Meal Plan
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -478,6 +604,67 @@ export default function RecipeDetailPage() {
                   disabled={addingToList}
                 >
                   {addingToList ? "Adding..." : "Add to Shopping List"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Add to Meal Plan Modal */}
+        {showAddToMealPlan && recipe && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-background rounded-lg p-6 max-w-md w-full shadow-xl">
+              <h3 className="text-xl font-bold mb-2">📅 Add to Meal Plan</h3>
+              <p className="text-muted-foreground mb-4">
+                Add "{recipe.name}" to your meal plan
+              </p>
+
+              {expiringPantryItems.length > 0 && (
+                <div className="mb-4 p-3 bg-orange-50 dark:bg-orange-950/30 rounded-lg border border-orange-200">
+                  <p className="text-sm text-orange-700 dark:text-orange-300">
+                    ⚠️ Some ingredients expire soon - we&apos;ve suggested the earliest date to use them!
+                  </p>
+                </div>
+              )}
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Meal Type</label>
+                <select 
+                  value={selectedMealType}
+                  onChange={(e) => setSelectedMealType(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-md bg-background"
+                >
+                  <option value="breakfast">🌅 Breakfast</option>
+                  <option value="lunch">☀️ Lunch</option>
+                  <option value="dinner">🌙 Dinner</option>
+                  <option value="snack">🍿 Snack</option>
+                </select>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Date</label>
+                <input 
+                  type="date"
+                  value={suggestedDate}
+                  onChange={(e) => setSuggestedDate(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-md bg-background"
+                />
+              </div>
+              
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAddToMealPlan(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleAddToMealPlan}
+                  disabled={addingToMealPlan}
+                  className="flex-1"
+                >
+                  {addingToMealPlan ? "Adding..." : "Add to Plan"}
                 </Button>
               </div>
             </div>
