@@ -468,6 +468,7 @@ export default function ShoppingListPage() {
                   onChange={(e) => {
                     setIngredientQuery(e.target.value)
                     setNewItem({ ...newItem, item_name: e.target.value, ingredientId: undefined })
+                    setShowSuggestions(true)
                   }}
                   onFocus={() => ingredientQuery.length >= 2 && setShowSuggestions(true)}
                   className="mt-1"
