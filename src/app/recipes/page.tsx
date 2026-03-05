@@ -181,42 +181,43 @@ export default function RecipesPage() {
       
       <MobileNav />
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Hero */}
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold mb-4">Browse Recipes 🍳</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+      <main className="container mx-auto px-4 py-4">
+        {/* Hero - hidden on mobile for logged-in users to save space */}
+        <div className="text-center mb-4 hidden md:block">
+          <h2 className="text-2xl md:text-4xl font-bold mb-2 md:mb-4">Browse Recipes 🍳</h2>
+          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto hidden">
             Discover delicious recipes for every meal. Search by ingredients or browse by category.
           </p>
         </div>
 
-        {/* Search & Filters */}
-        <div className="mb-8 space-y-4">
+        {/* Search & Filters - compact on mobile */}
+        <div className="mb-4 space-y-3">
           <div className="flex gap-2 max-w-md mx-auto">
             <Input
               type="search"
               placeholder="Search recipes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1"
+              className="h-9 text-sm"
             />
             <Button 
               variant="outline" 
               onClick={() => router.push("/random")}
-              className="shrink-0"
+              className="h-9 text-sm shrink-0 px-3"
             >
-              🎲 Random
+              🎲
             </Button>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex flex-wrap justify-center gap-1.5">
             {categories.map((cat) => (
               <Button
                 key={cat}
                 variant={selectedCategory === cat ? "default" : "outline"}
                 size="sm"
+                h-7
                 onClick={() => { setSelectedCategory(cat); setCurrentPage(1); }}
-                className="capitalize"
+                className="capitalize text-xs h-7 px-2.5"
               >
                 {cat}
               </Button>
@@ -231,9 +232,9 @@ export default function RecipesPage() {
           </div>
         )}
 
-        {/* Recipes Grid */}
+        {/* Recipes Grid - compact cards on mobile */}
         {!loading && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {filteredRecipes.map((recipe) => (
               <Card 
                 key={recipe.id} 
@@ -241,7 +242,7 @@ export default function RecipesPage() {
                 onClick={() => setSelectedRecipe(recipe)}
               >
                 {getImageUrl(recipe.image_url) && (
-                  <div className="aspect-square relative overflow-hidden rounded-t-lg -mb-2">
+                  <div className="aspect-[4/3] relative overflow-hidden rounded-t-lg -mb-2">
                     <Image 
                       src={getImageUrl(recipe.image_url)!} 
                       alt={recipe.name}
@@ -251,9 +252,9 @@ export default function RecipesPage() {
                     />
                   </div>
                 )}
-                <div className="p-4 pt-0">
+                <div className="p-3 pt-0">
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-lg font-semibold">{recipe.name}</h3>
+                    <h3 className="text-base font-semibold">{recipe.name}</h3>
                     <div className="flex gap-1 flex-wrap justify-end">
                       {parseCategory(recipe.category).map((cat) => (
                         <Badge key={cat} className={getCategoryColor(cat)}>
@@ -262,12 +263,12 @@ export default function RecipesPage() {
                       ))}
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">{recipe.description}</p>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{recipe.description}</p>
                 </div>
-                <div className="p-4 pt-0 flex flex-col gap-3">
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="p-3 pt-0 flex flex-col gap-2">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
                     <span>⏱️ {recipe.prep_time_minutes + recipe.cook_time_minutes} min</span>
-                    <span>👥 {recipe.servings} servings</span>
+                    <span>👥 {recipe.servings}</span>
                   </div>
                 </div>
               </Card>
