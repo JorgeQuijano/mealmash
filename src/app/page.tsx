@@ -46,7 +46,7 @@ function Header() {
   }, [])
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-transparent"}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/90 dark:bg-stone-900/90 backdrop-blur-md shadow-sm" : "bg-transparent"}`}>
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
@@ -62,7 +62,7 @@ function Header() {
               <Link 
                 key={link.href} 
                 href={link.href}
-                className="text-stone-600 hover:text-orange-600 font-medium transition-colors"
+                className="text-stone-600 dark:text-stone-300 hover:text-orange-600 font-medium transition-colors"
               >
                 {link.label}
               </Link>
@@ -79,7 +79,7 @@ function Header() {
             className="md:hidden p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileMenuOpen ? <X className="w-6 h-6 text-black" /> : <Menu className="w-6 h-6 text-black" />}
+            {mobileMenuOpen ? <X className="w-6 h-6 dark:text-white" /> : <Menu className="w-6 h-6 dark:text-white" />}
           </button>
         </nav>
 
@@ -88,14 +88,14 @@ function Header() {
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="md:hidden py-4 border-t border-stone-200 mt-4 bg-white shadow-lg rounded-lg relative z-50"
+            className="md:hidden py-4 border-t border-stone-200 dark:border-stone-700 mt-4 bg-white dark:bg-stone-800 shadow-lg rounded-lg relative z-50"
           >
             <div className="flex flex-col items-center gap-4">
               {siteConfig.nav.links.map((link) => (
                 <Link 
                   key={link.href} 
                   href={link.href}
-                  className="text-stone-600 hover:text-orange-600 font-medium py-3 w-full text-center"
+                  className="text-stone-600 dark:text-stone-300 hover:text-orange-600 font-medium py-3 w-full text-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}
@@ -116,9 +116,9 @@ function Header() {
 
 function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-stone-50 dark:bg-stone-950">
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-dots opacity-50" />
+      <div className="absolute inset-0 bg-dots opacity-50 dark:opacity-30" />
       <div className="absolute top-20 right-0 w-96 h-96 bg-orange-200 rounded-full blur-3xl opacity-20" />
       <div className="absolute bottom-20 left-0 w-96 h-96 bg-green-200 rounded-full blur-3xl opacity-20" />
       
@@ -139,7 +139,7 @@ function Hero() {
               <span className="gradient-text">{siteConfig.hero.title}</span>
             </h1>
             
-            <p className="text-xl text-stone-600 mb-8 leading-relaxed">
+            <p className="text-xl text-stone-600 dark:text-stone-400 mb-8 leading-relaxed">
               {siteConfig.hero.subtitle}
             </p>
             
@@ -249,7 +249,7 @@ function Hero() {
 
 function Features() {
   return (
-    <section id="features" className="py-24 bg-white">
+    <section id="features" className="py-24 bg-white dark:bg-stone-900">
       <div className="container mx-auto px-4">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -260,7 +260,7 @@ function Features() {
           <Badge className="bg-green-100 text-green-700 hover:bg-green-200 mb-4 px-4 py-1.5 text-sm font-medium">
             Features
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-stone-800">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-stone-800 dark:text-stone-100">
             Everything you need to plan meals
           </h2>
           <p className="text-xl text-stone-600 max-w-2xl mx-auto">
@@ -279,17 +279,17 @@ function Features() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="h-full border-2 border-stone-100 hover:border-orange-200 hover:shadow-lg transition-all duration-300 bg-white">
+                <Card className="h-full border-2 border-stone-100 dark:border-stone-700 hover:border-orange-200 dark:hover:border-orange-800 hover:shadow-lg transition-all duration-300 bg-white dark:bg-stone-800">
                   <CardHeader>
-                    <div className="w-14 h-14 bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl flex items-center justify-center mb-4">
-                      <Icon className="w-7 h-7 text-orange-600" />
+                    <div className="w-14 h-14 bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 rounded-xl flex items-center justify-center mb-4">
+                      <Icon className="w-7 h-7 text-orange-600 dark:text-orange-400" />
                     </div>
-                    <CardTitle className="text-xl font-bold text-stone-800">
+                    <CardTitle className="text-xl font-bold text-stone-800 dark:text-stone-100">
                       {feature.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-stone-600 leading-relaxed">
+                    <p className="text-stone-600 dark:text-stone-400 leading-relaxed">
                       {feature.description}
                     </p>
                   </CardContent>
@@ -305,7 +305,7 @@ function Features() {
 
 function Pricing() {
   return (
-    <section id="pricing" className="py-24 bg-stone-50">
+    <section id="pricing" className="py-24 bg-stone-50 dark:bg-stone-900">
       <div className="container mx-auto px-4">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -333,30 +333,30 @@ function Pricing() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className={`h-full border-2 ${plan.popular ? 'border-orange-400 shadow-xl shadow-orange-100' : 'border-stone-200'} bg-white relative overflow-hidden`}>
+              <Card className={`h-full border-2 ${plan.popular ? 'border-orange-400 shadow-xl shadow-orange-100 dark:shadow-orange-900/20' : 'border-stone-200 dark:border-stone-700'} bg-white dark:bg-stone-800 relative overflow-hidden`}>
                 {plan.popular && (
                   <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
                     POPULAR
                   </div>
                 )}
                 <CardHeader className="text-center pb-4">
-                  <CardTitle className="text-2xl font-bold text-stone-800">
+                  <CardTitle className="text-2xl font-bold text-stone-800 dark:text-stone-100">
                     {plan.name}
                   </CardTitle>
-                  <CardDescription className="text-stone-500">
+                  <CardDescription className="text-stone-500 dark:text-stone-400">
                     {plan.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <div className="mb-6">
-                    <span className="text-5xl font-bold text-stone-800">${plan.price}</span>
-                    {plan.price > 0 && <span className="text-stone-500">/month</span>}
+                    <span className="text-5xl font-bold text-stone-800 dark:text-stone-100">${plan.price}</span>
+                    {plan.price > 0 && <span className="text-stone-500 dark:text-stone-400">/month</span>}
                   </div>
                   <ul className="space-y-3 text-left">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-stone-600">{feature}</span>
+                        <span className="text-stone-600 dark:text-stone-400">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -393,12 +393,12 @@ function FAQ() {
     },
     {
       q: "Can I cancel anytime?",
-      a: "Yes, you can cancel your subscription at any time. Your data will be saved for 30 days in case you decide to come back."
+      a: "Yes, you can cancel your subscription at any time. Your data will be saved for 30 days in case you decide to come back.",
     },
   ]
 
   return (
-    <section id="faq" className="py-24 bg-white">
+    <section id="faq" className="py-24 bg-white dark:bg-stone-900">
       <div className="container mx-auto px-4">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -422,18 +422,18 @@ function FAQ() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="border-2 border-stone-100 rounded-xl overflow-hidden"
+              className="border-2 border-stone-100 dark:border-stone-700 rounded-xl overflow-hidden"
             >
               <details className="group">
                 <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
-                  <span className="font-semibold text-stone-800 text-lg">{faq.q}</span>
+                  <span className="font-semibold text-stone-800 dark:text-stone-100 text-lg">{faq.q}</span>
                   <span className="ml-4 flex-shrink-0 transition-transform group-open:rotate-180">
                     <svg className="w-5 h-5 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </span>
                 </summary>
-                <div className="px-6 pb-6 text-stone-600 leading-relaxed">
+                <div className="px-6 pb-6 text-stone-600 dark:text-stone-400 leading-relaxed">
                   {faq.a}
                 </div>
               </details>
@@ -543,7 +543,7 @@ function Footer() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
       <Header />
       <Hero />
       <Features />
