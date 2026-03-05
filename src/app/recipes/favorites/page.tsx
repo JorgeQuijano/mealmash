@@ -21,9 +21,12 @@ import { supabase, getUser } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 
 import MobileNav from "@/components/mobile-nav"
 import RecipeModal from "@/components/recipe-modal"
+import { getImageUrl } from "@/lib/images"
+import Image from "next/image"
 
 type RecipeIngredient = {
   ingredient_id: string
@@ -173,11 +176,11 @@ export default function FavoritesPage() {
       
       <MobileNav />
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Hero */}
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold mb-4">❤️ My Favorites</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+      <main className="container mx-auto px-4 py-4">
+        {/* Hero - hidden on mobile to save space */}
+        <div className="text-center mb-4 hidden md:block">
+          <h2 className="text-2xl md:text-4xl font-bold mb-2 md:mb-4">❤️ My Favorites</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto hidden">
             Your saved recipes in one place. Quick access to your go-to meals.
           </p>
         </div>
@@ -185,7 +188,7 @@ export default function FavoritesPage() {
         {/* Loading */}
         {loading ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Loading your favorites...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
           </div>
         ) : recipes.length === 0 ? (
           <div className="text-center py-12">
@@ -197,17 +200,28 @@ export default function FavoritesPage() {
             </Button>
           </div>
         ) : (
-          /* Recipe Grid */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          /* Recipe Grid - compact cards */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {recipes.map((recipe) => (
               <Card 
                 key={recipe.id} 
-                className="hover:shadow-lg transition-shadow cursor-pointer"
+                className="hover:shadow-lg transition-shadow cursor-pointer h-full py-0"
                 onClick={() => setSelectedRecipe(recipe)}
               >
-                <CardHeader>
-                  <div className="flex justify-between items-start gap-2">
-                    <CardTitle className="text-lg line-clamp-1">{recipe.name}</CardTitle>
+                {getImageUrl(recipe.image_url) && (
+                  <div className="aspect-[4/3] relative overflow-hidden rounded-t-lg -mb-2">
+                    <Image 
+                      src={getImageUrl(recipe.image_url)!} 
+                      alt={recipe.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
+                )}
+                <div className="p-3 pt-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-base font-semibold">{recipe.name}</h3>
                     <div className="flex gap-1 flex-wrap justify-end">
                       {parseCategory(recipe.category).map((cat) => (
                         <Badge key={cat} className={getCategoryColor(cat)}>
@@ -216,16 +230,14 @@ export default function FavoritesPage() {
                       ))}
                     </div>
                   </div>
-                  <CardDescription className="line-clamp-2">
-                    {recipe.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>⏱ {recipe.prep_time_minutes + recipe.cook_time_minutes} min</span>
-                    <span>🍽 {recipe.servings} servings</span>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{recipe.description}</p>
+                </div>
+                <div className="p-3 pt-0 flex flex-col gap-2">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <span>⏱️ {recipe.prep_time_minutes + recipe.cook_time_minutes} min</span>
+                    <span>👥 {recipe.servings}</span>
                   </div>
-                </CardContent>
+                </div>
               </Card>
             ))}
           </div>
