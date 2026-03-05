@@ -370,16 +370,16 @@ export default function SuggestionsPage() {
 
         {/* Suggestions Grid */}
         {paginatedRecipes.length > 0 && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {paginatedRecipes.map((suggestion) => (
               <Card 
                 key={suggestion.recipe.id}
-                className="hover:shadow-lg transition-shadow cursor-pointer"
+                className="hover:shadow-lg transition-shadow cursor-pointer py-0"
                 onClick={() => setSelectedRecipe(suggestion)}
               >
-                <CardHeader>
+                <CardHeader className="p-3 pb-0">
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-lg">{suggestion.recipe.name}</CardTitle>
+                    <CardTitle className="text-base">{suggestion.recipe.name}</CardTitle>
                     <div className="flex gap-1 flex-wrap justify-end">
                       {parseCategory(suggestion.recipe.category).map((cat) => (
                         <Badge key={cat} className={getCategoryColor(cat)}>
@@ -388,43 +388,36 @@ export default function SuggestionsPage() {
                       ))}
                     </div>
                   </div>
-                  <CardDescription className="line-clamp-2">
+                  <CardDescription className="line-clamp-1 hidden md:block">
                     {suggestion.recipe.description}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="p-3 pt-2 space-y-2">
                   {/* Match Count */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Ingredients Match</span>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">Match</span>
                       <span className="font-semibold">
                         {suggestion.matchedCount}/{suggestion.totalCount}
                       </span>
                     </div>
                     <Progress 
                       value={(suggestion.matchedCount / suggestion.totalCount) * 100} 
-                      className="h-2"
+                      className="h-1.5"
                       indicatorClassName={getMatchColor(suggestion.matchedCount, suggestion.totalCount)}
                     />
                   </div>
 
                   {/* Missing Ingredients Preview */}
                   {suggestion.missingIngredients.length > 0 && (
-                    <div className="text-sm">
+                    <div className="text-xs">
                       <span className="text-muted-foreground">Missing: </span>
                       <span className="text-orange-600">
-                        {suggestion.missingIngredients.slice(0, 3).map(i => i.name).join(", ")}
-                        {suggestion.missingIngredients.length > 3 && ` +${suggestion.missingIngredients.length - 3} more`}
+                        {suggestion.missingIngredients.slice(0, 2).map(i => i.name).join(", ")}
+                        {suggestion.missingIngredients.length > 2 && ` +${suggestion.missingIngredients.length - 2}`}
                       </span>
                     </div>
                   )}
-
-                  <Button className="w-full" onClick={(e) => {
-                    e.stopPropagation()
-                    setSelectedRecipe(suggestion)
-                  }}>
-                    Start Cooking
-                  </Button>
                 </CardContent>
               </Card>
             ))}
