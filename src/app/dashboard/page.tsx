@@ -246,7 +246,7 @@ export default function DashboardPage() {
                       <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
                     </div>
                     <Badge variant="destructive">
-                      {new Date(item.expires_at).toLocaleDateString()}
+                      {new Date(item.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase()} ({new Date(item.expires_at).toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()})
                     </Badge>
                   </CardContent>
                 </Card>
@@ -275,7 +275,7 @@ export default function DashboardPage() {
                       <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
                     </div>
                     <Badge variant="outline" className="text-orange-600 border-orange-300">
-                      {new Date(item.expires_at).toLocaleDateString()}
+                      {new Date(item.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase()} ({new Date(item.expires_at).toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()})
                     </Badge>
                   </CardContent>
                 </Card>
@@ -304,7 +304,7 @@ export default function DashboardPage() {
                       <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
                     </div>
                     <Badge variant="outline" className="text-yellow-600 border-yellow-300">
-                      {new Date(item.expires_at).toLocaleDateString()}
+                      {new Date(item.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase()} ({new Date(item.expires_at).toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()})
                     </Badge>
                   </CardContent>
                 </Card>
