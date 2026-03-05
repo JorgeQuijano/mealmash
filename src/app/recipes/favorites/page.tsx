@@ -60,13 +60,20 @@ type Recipe = {
   recipe_ingredients?: RecipeIngredient[]
 }
 
+const categories = ["all", "breakfast", "lunch", "dinner", "snack", "dessert"]
+
 export default function FavoritesPage() {
   const router = useRouter()
   const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [allRecipes, setAllRecipes] = useState<Recipe[]>([]) // For client-side filtering
   const [loading, setLoading] = useState(true)
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [user, setUser] = useState<any>(null)
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([])
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [currentPage, setCurrentPage] = useState(1)
+  const recipesPerPage = 20
 
   useEffect(() => {
     loadUser()
@@ -105,6 +112,7 @@ export default function FavoritesPage() {
     
     if (favError || !favorites || favorites.length === 0) {
       setRecipes([])
+      setAllRecipes([])
       setLoading(false)
       return
     }
@@ -125,12 +133,29 @@ export default function FavoritesPage() {
       .in('id', recipeIds)
     
     if (data) {
+      setAllRecipes(data)
       setRecipes(data)
     } else {
       console.error("Error loading favorites:", error)
     }
     setLoading(false)
   }
+
+  // Filter recipes client-side
+  const filteredRecipes = allRecipes.filter(recipe => {
+    const matchesSearch = recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      recipe.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesCategory = selectedCategory === "all" || 
+      (recipe.category && parseCategory(recipe.category).includes(selectedCategory))
+    return matchesSearch && matchesCategory
+  })
+
+  // Paginate
+  const totalCount = filteredRecipes.length
+  const paginatedRecipes = filteredRecipes.slice(
+    (currentPage - 1) * recipesPerPage,
+    currentPage * recipesPerPage
+  )
 
   const getCategoryColor = (category: string | string[]) => {
     const cat = Array.isArray(category) ? category[0] : category
@@ -185,24 +210,60 @@ export default function FavoritesPage() {
           </p>
         </div>
 
+        {/* Search & Filters - compact on mobile */}
+        {allRecipes.length > 0 && (
+          <div className="mb-4 space-y-3">
+            <div className="flex gap-2 max-w-md mx-auto">
+              <Input
+                type="search"
+                placeholder="Search favorites..."
+                value={searchQuery}
+                onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                className="h-9 text-sm"
+              />
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-1.5">
+              {categories.map((cat) => (
+                <Button
+                  key={cat}
+                  variant={selectedCategory === cat ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => { setSelectedCategory(cat); setCurrentPage(1); }}
+                  className="capitalize text-xs h-7 px-2.5"
+                >
+                  {cat}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Loading */}
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
           </div>
-        ) : recipes.length === 0 ? (
+        ) : filteredRecipes.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground mb-4">
-              You haven&apos;t saved any favorites yet.
+              No favorites found{searchQuery || selectedCategory !== "all" ? " matching your search" : " yet"}.
             </p>
-            <Button onClick={() => router.push('/recipes')}>
-              Browse Recipes
-            </Button>
+            {(searchQuery || selectedCategory !== "all") && (
+              <Button variant="outline" onClick={() => { setSearchQuery(""); setSelectedCategory("all"); }}>
+                Clear Filters
+              </Button>
+            )}
+            {!searchQuery && selectedCategory === "all" && (
+              <Button onClick={() => router.push('/recipes')}>
+                Browse Recipes
+              </Button>
+            )}
           </div>
         ) : (
           /* Recipe Grid - compact cards */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-            {recipes.map((recipe) => (
+            {paginatedRecipes.map((recipe) => (
               <Card 
                 key={recipe.id} 
                 className="hover:shadow-lg transition-shadow cursor-pointer h-full py-0"
@@ -240,6 +301,31 @@ export default function FavoritesPage() {
                 </div>
               </Card>
             ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalCount > recipesPerPage && (
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {currentPage} of {Math.ceil(totalCount / recipesPerPage)}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => p + 1)}
+              disabled={currentPage >= Math.ceil(totalCount / recipesPerPage)}
+            >
+              Next
+            </Button>
           </div>
         )}
       </main>
