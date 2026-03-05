@@ -685,8 +685,8 @@ export default function PantryPage() {
                         .map(i => new Date(i.expires_at!).toLocaleDateString())
                       
                       return (
-                        <Card key={name} className="hover:shadow-md transition-shadow text-sm">
-                          <CardContent className="p-1 md:p-2">
+                        <Card key={name} className="hover:shadow-md transition-shadow text-sm py-2">
+                          <CardContent className="p-1 md:p-2 !px-2">
                             {/* Main item row - click to expand */}
                             <div 
                               className="flex items-center justify-between cursor-pointer"

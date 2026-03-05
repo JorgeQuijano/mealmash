@@ -571,18 +571,18 @@ export default function ShoppingListPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Unchecked Items */}
             {uncheckedItems.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold mb-3">To Buy</h3>
+                <h3 className="text-lg font-semibold mb-2">To Buy</h3>
                 <div className="space-y-2">
                   {uncheckedItems.map((item) => (
                     <Card 
                       key={item.id} 
-                      className={`hover:shadow-md transition-shadow ${shoppingMode && selectedItems.has(item.id) ? 'border-green-500 border-2' : ''}`}
+                      className={`hover:shadow-md transition-shadow py-2 ${shoppingMode && selectedItems.has(item.id) ? 'border-green-500 border-2' : ''}`}
                     >
-                      <CardContent className="p-4 flex items-center justify-between">
+                      <CardContent className="p-2 !px-2 flex items-center justify-between">
                         <div 
                           className="flex items-center gap-3 flex-1 cursor-pointer"
                           onClick={() => shoppingMode ? toggleItemSelection(item.id) : handleToggleCheck(item)}
@@ -621,11 +621,11 @@ export default function ShoppingListPage() {
             {/* Checked Items - hidden in shopping mode */}
             {!shoppingMode && checkedItems.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold mb-3 text-muted-foreground">Purchased</h3>
+                <h3 className="text-lg font-semibold mb-2 text-muted-foreground">Purchased</h3>
                 <div className="space-y-2">
                   {checkedItems.map((item) => (
-                    <Card key={item.id} className="hover:shadow-md transition-shadow bg-muted/30">
-                      <CardContent className="p-4 flex items-center justify-between">
+                    <Card key={item.id} className="hover:shadow-md transition-shadow bg-muted/30 py-2">
+                      <CardContent className="p-2 !px-2 flex items-center justify-between">
                         <div 
                           className="flex items-center gap-3 flex-1 cursor-pointer"
                           onClick={() => handleToggleCheck(item)}
