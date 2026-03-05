@@ -370,17 +370,17 @@ export default function SuggestionsPage() {
 
         {/* Suggestions Grid */}
         {paginatedRecipes.length > 0 && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-0 md:gap-0 lg:gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {paginatedRecipes.map((suggestion) => (
               <Card 
                 key={suggestion.recipe.id}
-                className="hover:shadow-lg transition-shadow cursor-pointer py-0"
+                className="hover:shadow-lg transition-shadow cursor-pointer py-1"
                 onClick={() => setSelectedRecipe(suggestion)}
               >
-                <CardHeader className="p-3 pb-0">
-                  <div className="flex items-start justify-between gap-2">
+                <CardHeader className="p-2 pb-0">
+                  <div className="flex items-start justify-between gap-1">
                     <CardTitle className="text-base">{suggestion.recipe.name}</CardTitle>
-                    <div className="flex gap-1 flex-wrap justify-end">
+                    <div className="flex gap-0.5 flex-wrap justify-end">
                       {parseCategory(suggestion.recipe.category).map((cat) => (
                         <Badge key={cat} className={getCategoryColor(cat)}>
                           {cat}
@@ -392,7 +392,7 @@ export default function SuggestionsPage() {
                     {suggestion.recipe.description}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="p-3 pt-2 space-y-2">
+                <CardContent className="p-2 pt-1 space-y-1">
                   {/* Match Count */}
                   <div className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
