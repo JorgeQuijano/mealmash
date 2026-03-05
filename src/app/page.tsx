@@ -316,10 +316,10 @@ function Pricing() {
           <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200 mb-4 px-4 py-1.5 text-sm font-medium">
             Pricing
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-stone-800">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-stone-800 dark:text-stone-100">
             Simple, transparent pricing
           </h2>
-          <p className="text-xl text-stone-600 max-w-2xl mx-auto">
+          <p className="text-xl text-stone-600 dark:text-stone-400 max-w-2xl mx-auto">
             Start free and upgrade when you're ready. No hidden fees.
           </p>
         </motion.div>
@@ -409,7 +409,7 @@ function FAQ() {
           <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-200 mb-4 px-4 py-1.5 text-sm font-medium">
             FAQ
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-stone-800">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-stone-800 dark:text-stone-100">
             Frequently asked questions
           </h2>
         </motion.div>
