@@ -58,6 +58,7 @@ export default function PantryPage() {
   const [editingItem, setEditingItem] = useState<PantryItem | null>(null)
   const [editQuantity, setEditQuantity] = useState("")
   const [editExpiresAt, setEditExpiresAt] = useState("")
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
   const [saving, setSaving] = useState(false)
   
   // Autocomplete state
@@ -198,6 +199,16 @@ export default function PantryPage() {
     setEditExpiresAt(item.expires_at || "")
   }
 
+  const toggleExpand = (name: string) => {
+    const newExpanded = new Set(expandedItems)
+    if (newExpanded.has(name)) {
+      newExpanded.delete(name)
+    } else {
+      newExpanded.add(name)
+    }
+    setExpandedItems(newExpanded)
+  }
+
   const handleSaveQuantity = async () => {
     if (!editingItem) return
 
@@ -275,6 +286,16 @@ export default function PantryPage() {
     }
   }
 
+  // Group items by name (for displaying combined quantities)
+  const itemsByName = items.reduce((acc, item) => {
+    if (!acc[item.name]) {
+      acc[item.name] = []
+    }
+    acc[item.name].push(item)
+    return acc
+  }, {} as Record<string, PantryItem[]>)
+
+  // Group by category for display
   const groupedItems = items.reduce((acc, item) => {
     const cat = item.category || "Other"
     if (!acc[cat]) acc[cat] = []
@@ -459,50 +480,120 @@ export default function PantryPage() {
           </Card>
         ) : (
           <div className="grid gap-6">
-            {Object.entries(groupedItems).map(([category, categoryItems]) => (
-              <div key={category}>
-                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                  {getCategoryEmoji(category)} {category}
-                  <Badge variant="secondary" className="ml-2">{categoryItems.length}</Badge>
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                  {categoryItems.map((item) => (
-                    <Card key={item.id} className="hover:shadow-md transition-shadow">
-                      <CardContent className="p-4 flex items-center justify-between">
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{item.name}</p>
-                          <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
-                          {item.expires_at && (
-                            <p className="text-xs text-orange-600 mt-1">
-                              ⚠️ Expires: {new Date(item.expires_at).toLocaleDateString()}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1 ml-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => openEditModal(item)}
-                            className="h-9 w-9 sm:h-8 sm:w-8 text-amber-500 hover:text-amber-600 hover:bg-amber-50"
-                            title="Edit quantity"
-                          >
-                            ✏️
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteItem(item.id)}
-                            className="h-9 w-9 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                          >
-                            ✕
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+            {Object.entries(groupedItems).map(([category, categoryItems]) => {
+              // Further group by name within category
+              const namesInCategory = [...new Set(categoryItems.map(i => i.name))]
+              return (
+                <div key={category}>
+                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    {getCategoryEmoji(category)} {category}
+                    <Badge variant="secondary" className="ml-2">{namesInCategory.length}</Badge>
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                    {namesInCategory.map(name => {
+                      const itemsWithThisName = itemsByName[name] || []
+                      const isExpanded = expandedItems.has(name)
+                      
+                      // Calculate total quantity
+                      const totalQty = itemsWithThisName.reduce((sum, i) => sum + (parseFloat(i.quantity) || 1), 0)
+                      
+                      // Get expiration dates
+                      const expires = itemsWithThisName
+                        .filter(i => i.expires_at)
+                        .map(i => new Date(i.expires_at!).toLocaleDateString())
+                      
+                      return (
+                        <Card key={name} className="hover:shadow-md transition-shadow">
+                          <CardContent className="p-4">
+                            {/* Main item row - click to expand */}
+                            <div 
+                              className="flex items-center justify-between cursor-pointer"
+                              onClick={() => toggleExpand(name)}
+                            >
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium truncate">{name}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  Total: {totalQty}
+                                  {expires.length > 0 && (
+                                    <span className="text-orange-600 ml-1">
+                                      • {expires.length} expiring
+                                    </span>
+                                  )}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-1 ml-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    // Add more of this item
+                                    const newItem = {
+                                      name: name,
+                                      category: category,
+                                      quantity: "1",
+                                      ingredientId: itemsWithThisName[0]?.ingredient_id || undefined,
+                                      expiresAt: ""
+                                    }
+                                    setNewItem(newItem)
+                                    setIngredientQuery(name)
+                                    // Focus on the name input
+                                  }}
+                                  className="h-9 w-9 sm:h-8 sm:w-8 text-green-500 hover:text-green-700 hover:bg-green-50"
+                                  title="Add another"
+                                >
+                                  ➕
+                                </Button>
+                                <span className="text-lg">{isExpanded ? '▼' : '▶'}</span>
+                              </div>
+                            </div>
+                            
+                            {/* Expanded view - show individual items */}
+                            {isExpanded && (
+                              <div className="mt-3 pt-3 border-t space-y-2">
+                                {itemsWithThisName.map((item, idx) => (
+                                  <div 
+                                    key={item.id} 
+                                    className="flex items-center justify-between text-sm bg-muted/50 p-2 rounded"
+                                  >
+                                    <div className="flex-1 min-w-0">
+                                      <span className="text-muted-foreground">Qty: {item.quantity}</span>
+                                      {item.expires_at && (
+                                        <span className="text-orange-600 ml-2">
+                                          • Exp: {new Date(item.expires_at).toLocaleDateString()}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => openEditModal(item)}
+                                        className="h-7 w-7 text-amber-500 hover:text-amber-600"
+                                      >
+                                        ✏️
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleDeleteItem(item.id)}
+                                        className="h-7 w-7 text-red-500 hover:text-red-700"
+                                      >
+                                        ✕
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </main>
