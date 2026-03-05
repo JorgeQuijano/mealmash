@@ -56,6 +56,10 @@ export default function PantryPage() {
   })
   const [adding, setAdding] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
+  const [quickAddItem, setQuickAddItem] = useState<{name: string, category: string, ingredientId?: string} | null>(null)
+  const [quickAddQty, setQuickAddQty] = useState("1")
+  const [quickAddExpires, setQuickAddExpires] = useState("")
+  const [quickAddSaving, setQuickAddSaving] = useState(false)
   const [editingItem, setEditingItem] = useState<PantryItem | null>(null)
   const [editQuantity, setEditQuantity] = useState("")
   const [editExpiresAt, setEditExpiresAt] = useState("")
@@ -181,6 +185,32 @@ export default function PantryPage() {
       setShowSuggestions(false)
     }
     setAdding(false)
+  }
+
+  // Quick add same ingredient (from + button)
+  const handleQuickAdd = async () => {
+    if (!quickAddItem || !user) return
+    
+    setQuickAddSaving(true)
+    const { data, error } = await supabase
+      .from("pantry_items")
+      .insert({
+        user_id: user.id,
+        name: quickAddItem.name,
+        category: quickAddItem.category,
+        quantity: quickAddQty || "1",
+        ingredient_id: quickAddItem.ingredientId || null,
+        expires_at: quickAddExpires || null
+      })
+      .select()
+
+    if (!error && data) {
+      setItems([...data, ...items])
+    }
+    setQuickAddSaving(false)
+    setQuickAddItem(null)
+    setQuickAddQty("1")
+    setQuickAddExpires("")
   }
 
   const handleDeleteItem = async (id: string) => {
@@ -584,6 +614,44 @@ export default function PantryPage() {
           </DialogContent>
         </Dialog>
 
+        {/* Quick Add Modal - for adding more of existing ingredient */}
+        <Dialog open={!!quickAddItem} onOpenChange={() => setQuickAddItem(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add {quickAddItem?.name}</DialogTitle>
+              <p className="text-sm text-muted-foreground">{quickAddItem?.category}</p>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Quantity</label>
+                <Input
+                  value={quickAddQty}
+                  onChange={(e) => setQuickAddQty(e.target.value)}
+                  className="mt-1 text-lg"
+                  type="number"
+                  min="1"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Expires (optional)</label>
+                <Input
+                  type="date"
+                  value={quickAddExpires}
+                  onChange={(e) => setQuickAddExpires(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <Button 
+                onClick={handleQuickAdd} 
+                disabled={quickAddSaving}
+                className="w-full"
+              >
+                {quickAddSaving ? "Adding..." : "Add to Pantry"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Pantry Items */}
         {items.length === 0 ? (
           <Card>
@@ -617,16 +685,16 @@ export default function PantryPage() {
                         .map(i => new Date(i.expires_at!).toLocaleDateString())
                       
                       return (
-                        <Card key={name} className="hover:shadow-md transition-shadow">
-                          <CardContent className="p-3 md:p-4">
+                        <Card key={name} className="hover:shadow-md transition-shadow text-sm">
+                          <CardContent className="p-2 md:p-3">
                             {/* Main item row - click to expand */}
                             <div 
                               className="flex items-center justify-between cursor-pointer"
                               onClick={() => toggleExpand(name)}
                             >
                               <div className="flex-1 min-w-0">
-                                <p className="font-medium truncate">{name}</p>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="font-medium text-sm truncate">{name}</p>
+                                <p className="text-xs text-muted-foreground">
                                   Total: {totalQty}
                                   {expires.length > 0 && (
                                     <span className="text-orange-600 ml-1">
@@ -641,49 +709,45 @@ export default function PantryPage() {
                                   size="sm"
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    // Add more of this item
-                                    const newItem = {
+                                    setQuickAddItem({
                                       name: name,
                                       category: category,
-                                      quantity: "1",
-                                      ingredientId: itemsWithThisName[0]?.ingredient_id || undefined,
-                                      expiresAt: ""
-                                    }
-                                    setNewItem(newItem)
-                                    setIngredientQuery(name)
-                                    // Focus on the name input
+                                      ingredientId: itemsWithThisName[0]?.ingredient_id || undefined
+                                    })
+                                    setQuickAddQty("1")
+                                    setQuickAddExpires("")
                                   }}
-                                  className="h-9 w-9 sm:h-8 sm:w-8 text-green-500 hover:text-green-700 hover:bg-green-50"
-                                  title="Add another"
+                                  className="h-8 w-8 text-green-500 hover:text-green-700 hover:bg-green-50"
+                                  title="Add more"
                                 >
                                   ➕
                                 </Button>
-                                <span className="text-lg">{isExpanded ? '▼' : '▶'}</span>
+                                <span className="text-sm text-muted-foreground">{isExpanded ? '▼' : '▶'}</span>
                               </div>
                             </div>
                             
                             {/* Expanded view - show individual items */}
                             {isExpanded && (
-                              <div className="mt-3 pt-3 border-t space-y-2">
+                              <div className="mt-2 pt-2 border-t space-y-1">
                                 {itemsWithThisName.map((item, idx) => (
                                   <div 
                                     key={item.id} 
-                                    className="flex items-center justify-between text-sm bg-muted/50 p-2 rounded"
+                                    className="flex items-center justify-between text-xs bg-muted/50 p-1.5 rounded"
                                   >
                                     <div className="flex-1 min-w-0">
                                       <span className="text-muted-foreground">Qty: {item.quantity}</span>
                                       {item.expires_at && (
-                                        <span className="text-orange-600 ml-2">
+                                        <span className="text-orange-600 ml-1">
                                           • Exp: {new Date(item.expires_at).toLocaleDateString()}
                                         </span>
                                       )}
                                     </div>
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-0.5">
                                       <Button
                                         variant="ghost"
                                         size="sm"
                                         onClick={() => openEditModal(item)}
-                                        className="h-7 w-7 text-amber-500 hover:text-amber-600"
+                                        className="h-6 w-6 text-amber-500 hover:text-amber-600"
                                       >
                                         ✏️
                                       </Button>
@@ -691,7 +755,7 @@ export default function PantryPage() {
                                         variant="ghost"
                                         size="sm"
                                         onClick={() => handleDeleteItem(item.id)}
-                                        className="h-7 w-7 text-red-500 hover:text-red-700"
+                                        className="h-6 w-6 text-red-500 hover:text-red-700"
                                       >
                                         ✕
                                       </Button>
