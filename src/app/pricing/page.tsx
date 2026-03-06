@@ -1,6 +1,7 @@
 'use client';
 
 import { useSubscription } from '@/hooks/useSubscription';
+import { supabase } from '@/lib/supabase';
 import { Check, X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -53,8 +54,11 @@ export default function PricingPage() {
       return;
     }
     
-    if (!priceId) {
-      alert('Subscription service is not configured. Please contact support.');
+    // Check if user is logged in
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      // Redirect to login with return URL
+      window.location.href = '/login?returnUrl=/pricing';
       return;
     }
     
