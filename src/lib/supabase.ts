@@ -3,6 +3,7 @@ import { createClient as createAdminClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 // Browser client with proper cookie handling for middleware compatibility
 export const supabase = createBrowserClient(
@@ -27,8 +28,8 @@ export const supabase = createBrowserClient(
   }
 )
 
-// Admin client for server-side operations (no cookie handling)
-export const supabaseAdmin = createAdminClient(supabaseUrl, supabaseAnonKey)
+// Admin client for server-side operations (uses service role key for elevated permissions)
+export const supabaseAdmin = createAdminClient(supabaseUrl, supabaseServiceKey)
 
 // Helper to check if user is authenticated
 export async function getUser() {
