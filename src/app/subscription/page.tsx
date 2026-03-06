@@ -86,6 +86,8 @@ function SubscriptionContent() {
             </CardContent>
           </Card>
         </div>
+
+        <MobileNav />
       </div>
     );
   }
@@ -138,15 +140,7 @@ function SubscriptionContent() {
                 </li>
                 <li className="flex items-center gap-2 text-sm">
                   <Check className="w-4 h-4 text-yellow-600" />
-                  <span>Auto shopping lists</span>
-                </li>
-                <li className="flex items-center gap-2 text-sm">
-                  <Check className="w-4 h-4 text-yellow-600" />
                   <span>Weekly meal plans</span>
-                </li>
-                <li className="flex items-center gap-2 text-sm">
-                  <Check className="w-4 h-4 text-yellow-600" />
-                  <span>Nutritional info</span>
                 </li>
               </ul>
             </div>
