@@ -107,15 +107,15 @@ export default function PricingPage() {
           )}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
           {plans.map((plan) => {
             const isCurrentPlan = plan.name === 'Pro' && subscription?.tier === 'pro';
 
             return (
               <div
                 key={plan.name}
-                className={`relative bg-card border rounded-xl p-8 ${
-                  plan.popular ? 'border-primary shadow-lg scale-105' : ''
+                className={`relative bg-card border rounded-xl p-8 flex flex-col ${
+                  plan.popular ? 'border-primary shadow-lg' : ''
                 }`}
               >
                 {plan.popular && (
@@ -136,7 +136,7 @@ export default function PricingPage() {
                   {plan.price > 0 && <span className="text-muted-foreground">/month</span>}
                 </div>
 
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-3 mb-8 flex-grow">
                   {plan.features.map((feature, index) => (
                     <li key={index} className="flex items-center gap-3">
                       {feature.included ? (
