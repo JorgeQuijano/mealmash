@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
 
-export default function ConfirmPage() {
+function ConfirmContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -57,44 +57,57 @@ export default function ConfirmPage() {
   }, [token]);
 
   return (
+    <div className="text-center">
+      {status === 'loading' && (
+        <>
+          <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-2">Confirming your email...</h1>
+          <p className="text-muted-foreground">{message}</p>
+        </>
+      )}
+
+      {status === 'success' && (
+        <>
+          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-2">Email Confirmed!</h1>
+          <p className="text-muted-foreground mb-6">{message}</p>
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90"
+          >
+            Go to Dashboard
+          </button>
+        </>
+      )}
+
+      {status === 'error' && (
+        <>
+          <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-2">Confirmation Failed</h1>
+          <p className="text-muted-foreground mb-6">{message}</p>
+          <button
+            onClick={() => router.push('/login')}
+            className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90"
+          >
+            Go to Login
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
+export default function ConfirmPage() {
+  return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="text-center">
-        {status === 'loading' && (
-          <>
-            <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto mb-4" />
-            <h1 className="text-2xl font-bold mb-2">Confirming your email...</h1>
-            <p className="text-muted-foreground">{message}</p>
-          </>
-        )}
-
-        {status === 'success' && (
-          <>
-            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold mb-2">Email Confirmed!</h1>
-            <p className="text-muted-foreground mb-6">{message}</p>
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90"
-            >
-              Go to Dashboard
-            </button>
-          </>
-        )}
-
-        {status === 'error' && (
-          <>
-            <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold mb-2">Confirmation Failed</h1>
-            <p className="text-muted-foreground mb-6">{message}</p>
-            <button
-              onClick={() => router.push('/login')}
-              className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90"
-            >
-              Go to Login
-            </button>
-          </>
-        )}
-      </div>
+      <Suspense fallback={
+        <div className="text-center">
+          <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      }>
+        <ConfirmContent />
+      </Suspense>
     </div>
   );
 }
