@@ -47,6 +47,12 @@ export default function PricingPage() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   const handleSubscribe = async (priceId: string | null | undefined, planName: string) => {
+    // Free plan - redirect to signup
+    if (!priceId) {
+      window.location.href = '/login';
+      return;
+    }
+    
     if (!priceId) {
       alert('Subscription service is not configured. Please contact support.');
       return;
