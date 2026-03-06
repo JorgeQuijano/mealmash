@@ -1,20 +1,37 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
-import { supabaseAdmin } from '@/lib/supabase';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 export async function POST(req: Request) {
   try {
     const { priceId } = await req.json();
 
+    // Create server client to get user session
+    const cookieStore = await cookies();
+    
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
+          },
+          setAll() {},
+        },
+      }
+    );
+
     // Get authenticated user
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get user email from user_profiles
-    const { data: profile } = await supabaseAdmin
+    const { data: profile } = await supabase
       .from('user_profiles')
       .select('email, stripe_customer_id')
       .eq('id', user.id)
@@ -34,7 +51,7 @@ export async function POST(req: Request) {
       });
       customerId = customer.id;
 
-      await supabaseAdmin
+      await supabase
         .from('user_profiles')
         .update({ stripe_customer_id: customerId })
         .eq('id', user.id);
