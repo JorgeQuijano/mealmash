@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { getUser, supabase } from "@/lib/supabase"
 import MealPlanPaywall from "@/components/meal-plan-paywall"
+import MealPlanShoppingModal from "@/components/meal-plan-shopping-modal"
 // Helper to parse category from any format to string array
 function parseCategory(cat: any): string[] {
   if (Array.isArray(cat)) return cat
@@ -102,6 +103,7 @@ export default function MealPlanPage() {
     return formatDate(today)
   })
   const [isPro, setIsPro] = useState(false)
+  const [showShoppingModal, setShowShoppingModal] = useState(false)
 
   const weekDates = getWeekDates(currentWeekStart)
   const today = formatDate(new Date())
@@ -284,17 +286,30 @@ export default function MealPlanPage() {
             <h2 className="text-xl md:text-3xl font-bold">📅 Meal Plan</h2>
           </div>
           
-          {/* Week Navigation */}
-          <div className="flex items-center gap-1 justify-center">
-            <Button variant="outline" size="sm" onClick={handlePrevWeek}>
-              ←
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleGoToToday}>
-              Today
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleNextWeek}>
-              →
-            </Button>
+          <div className="flex items-center gap-2">
+            {/* Add to Shopping List Button */}
+            {isPro && mealPlans.length > 0 && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowShoppingModal(true)}
+              >
+                🛒 Add to Shopping List
+              </Button>
+            )}
+            
+            {/* Week Navigation */}
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="sm" onClick={handlePrevWeek}>
+                ←
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleGoToToday}>
+                Today
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleNextWeek}>
+                →
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -550,6 +565,15 @@ export default function MealPlanPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Shopping List Modal */}
+      {showShoppingModal && user && (
+        <MealPlanShoppingModal
+          userId={user.id}
+          mealPlans={mealPlans}
+          onClose={() => setShowShoppingModal(false)}
+        />
+      )}
     </div>
   )
 }
