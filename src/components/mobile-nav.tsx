@@ -82,6 +82,9 @@ export default function MobileNav() {
             <div className="space-y-2">
               {isLoggedIn ? (
                 <>
+                  <a href="/upgrade" className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors text-primary font-medium">
+                    ⭐ Upgrade to Pro
+                  </a>
                   <a href="/settings" className="flex items-center justify-center gap-3 px-4 py-3 text-sm hover:bg-muted rounded-lg transition-colors">
                     ⚙️ Settings
                   </a>

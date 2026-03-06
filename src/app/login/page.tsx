@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { signIn, signUp, supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const returnUrl = searchParams.get('returnUrl') || '/dashboard'
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
@@ -22,11 +24,11 @@ export default function LoginPage() {
     async function checkAuth() {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        router.push("/dashboard")
+        router.push(returnUrl)
       }
     }
     checkAuth()
-  }, [router])
+  }, [router, returnUrl])
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,7 +42,7 @@ export default function LoginPage() {
       setLoading(false)
     } else {
       // Use full redirect to ensure middleware sees the session
-      window.location.href = "/dashboard"
+      window.location.href = returnUrl
     }
   }
 
@@ -56,7 +58,7 @@ export default function LoginPage() {
       setLoading(false)
     } else {
       // Use full redirect to ensure middleware sees the session
-      window.location.href = "/dashboard"
+      window.location.href = returnUrl
     }
   }
 
