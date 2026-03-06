@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { getUser, supabase } from "@/lib/supabase"
+import MealPlanPaywall from "@/components/meal-plan-paywall"
 // Helper to parse category from any format to string array
 function parseCategory(cat: any): string[] {
   if (Array.isArray(cat)) return cat
@@ -100,6 +101,7 @@ export default function MealPlanPage() {
     const today = new Date()
     return formatDate(today)
   })
+  const [isPro, setIsPro] = useState(false)
 
   const weekDates = getWeekDates(currentWeekStart)
   const today = formatDate(new Date())
@@ -129,6 +131,12 @@ export default function MealPlanPage() {
         .single()
       
       setProfile(profileData)
+      
+      // Check subscription status
+      const isProUser = profileData?.subscription_tier === 'pro' && 
+                        profileData?.subscription_status === 'active'
+      setIsPro(isProUser)
+      
       await loadRecipes()
       await loadMealPlans()
       setLoading(false)
@@ -251,6 +259,16 @@ export default function MealPlanPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
+    )
+  }
+
+  // Show paywall for free users
+  if (!isPro) {
+    return (
+      <>
+        <MobileNav />
+        <MealPlanPaywall />
+      </>
     )
   }
 
