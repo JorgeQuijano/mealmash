@@ -1,6 +1,8 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+const resend = process.env.RESEND_API_KEY 
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
 
 const FROM_EMAIL = 'MealClaw <noreply@mealclaw.com>';
 
@@ -13,6 +15,11 @@ interface SubscriptionEmailParams {
 }
 
 export async function sendSubscriptionConfirmationEmail({ email, name, tier }: SubscriptionEmailParams) {
+  if (!resend) {
+    console.log('Resend not configured, skipping email');
+    return { success: false, error: 'Resend not configured' };
+  }
+
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
@@ -47,6 +54,11 @@ export async function sendSubscriptionConfirmationEmail({ email, name, tier }: S
 }
 
 export async function sendSubscriptionCanceledEmail({ email, name, expiresAt }: SubscriptionEmailParams) {
+  if (!resend) {
+    console.log('Resend not configured, skipping email');
+    return { success: false, error: 'Resend not configured' };
+  }
+
   try {
     const formattedDate = expiresAt 
       ? new Date(expiresAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
@@ -75,6 +87,11 @@ export async function sendSubscriptionCanceledEmail({ email, name, expiresAt }: 
 }
 
 export async function sendSubscriptionUpdatedEmail({ email, name, status }: SubscriptionEmailParams) {
+  if (!resend) {
+    console.log('Resend not configured, skipping email');
+    return { success: false, error: 'Resend not configured' };
+  }
+
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
