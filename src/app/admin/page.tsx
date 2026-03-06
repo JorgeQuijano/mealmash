@@ -73,7 +73,10 @@ export default function AdminPage() {
     prep_time_minutes: 10,
     cook_time_minutes: 20,
     servings: 2,
-    image_url: ""
+    image_url: "",
+    cuisine: [] as string[],
+    dietary_tags: [] as string[],
+    difficulty: "Medium" as string,
   })
 
   // Image upload state
@@ -202,7 +205,10 @@ export default function AdminPage() {
       prep_time_minutes: newRecipe.prep_time_minutes,
       cook_time_minutes: newRecipe.cook_time_minutes,
       servings: newRecipe.servings,
-      image_url: newRecipe.image_url
+      image_url: newRecipe.image_url,
+      cuisine: newRecipe.cuisine,
+      dietary_tags: newRecipe.dietary_tags,
+      difficulty: newRecipe.difficulty,
     }
 
     const { data: recipe, error } = await supabase.from("recipes").insert(recipeData).select().single()
@@ -242,7 +248,10 @@ export default function AdminPage() {
       prep_time_minutes: 10,
       cook_time_minutes: 20,
       servings: 2,
-      image_url: ""
+      image_url: "",
+      cuisine: [],
+      dietary_tags: [],
+      difficulty: "Medium",
     })
     setSelectedIngredients([])
     loadRecipes()
@@ -266,7 +275,10 @@ export default function AdminPage() {
       prep_time_minutes: newRecipe.prep_time_minutes,
       cook_time_minutes: newRecipe.cook_time_minutes,
       servings: newRecipe.servings,
-      image_url: newRecipe.image_url
+      image_url: newRecipe.image_url,
+      cuisine: newRecipe.cuisine,
+      dietary_tags: newRecipe.dietary_tags,
+      difficulty: newRecipe.difficulty,
     }
 
     const { error } = await supabase
@@ -309,7 +321,10 @@ export default function AdminPage() {
       prep_time_minutes: 10,
       cook_time_minutes: 20,
       servings: 2,
-      image_url: ""
+      image_url: "",
+      cuisine: [],
+      dietary_tags: [],
+      difficulty: "Medium",
     })
     setSelectedIngredients([])
     loadRecipes()
@@ -327,7 +342,10 @@ export default function AdminPage() {
       prep_time_minutes: recipe.prep_time_minutes,
       cook_time_minutes: recipe.cook_time_minutes,
       servings: recipe.servings,
-      image_url: recipe.image_url || ""
+      image_url: recipe.image_url || "",
+      cuisine: (recipe as any).cuisine || [],
+      dietary_tags: (recipe as any).dietary_tags || [],
+      difficulty: (recipe as any).difficulty || "Medium",
     })
     
     // Set image preview if there's an existing image
@@ -634,7 +652,10 @@ export default function AdminPage() {
             prep_time_minutes: 10,
             cook_time_minutes: 20,
             servings: 2,
-            image_url: ""
+            image_url: "",
+            cuisine: [],
+            dietary_tags: [],
+            difficulty: "Medium",
           })
           setSelectedIngredients([])
           setImagePreview(null)
@@ -686,6 +707,81 @@ export default function AdminPage() {
                     </button>
                   ))}
                 </div>
+              </div>
+            </div>
+
+            {/* Cuisine Selection */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Cuisine</label>
+              <div className="flex gap-2 flex-wrap">
+                {['Italian', 'Mexican', 'Asian', 'American', 'Indian', 'Mediterranean', 'French', 'Japanese', 'Thai', 'Chinese'].map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => {
+                      const current = newRecipe.cuisine || []
+                      const updated = current.includes(c)
+                        ? current.filter(x => x !== c)
+                        : [...current, c]
+                      setNewRecipe({ ...newRecipe, cuisine: updated })
+                    }}
+                    className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                      (newRecipe.cuisine || []).includes(c)
+                        ? "bg-orange-500 text-white"
+                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Dietary Tags */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Dietary</label>
+              <div className="flex gap-2 flex-wrap">
+                {['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Low-Carb', 'Nut-Free'].map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    onClick={() => {
+                      const current = newRecipe.dietary_tags || []
+                      const updated = current.includes(d)
+                        ? current.filter(x => x !== d)
+                        : [...current, d]
+                      setNewRecipe({ ...newRecipe, dietary_tags: updated })
+                    }}
+                    className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                      (newRecipe.dietary_tags || []).includes(d)
+                        ? "bg-green-600 text-white"
+                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    }`}
+                  >
+                    {d}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Difficulty */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Difficulty</label>
+              <div className="flex gap-2">
+                {['Easy', 'Medium', 'Hard'].map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    onClick={() => setNewRecipe({ ...newRecipe, difficulty: d })}
+                    className={`px-4 py-2 rounded-full text-sm transition-colors ${
+                      newRecipe.difficulty === d
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    }`}
+                  >
+                    {d}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -776,7 +872,7 @@ export default function AdminPage() {
               <Button type="button" variant="outline" onClick={() => {
                 setShowAddForm(false)
                 setEditingRecipe(null)
-                setNewRecipe({ name: "", description: "", instructions: "", category: ["dinner"], prep_time_minutes: 10, cook_time_minutes: 20, servings: 2, image_url: "" })
+                setNewRecipe({ name: "", description: "", instructions: "", category: ["dinner"], prep_time_minutes: 10, cook_time_minutes: 20, servings: 2, image_url: "", cuisine: [], dietary_tags: [], difficulty: "Medium" })
                 setSelectedIngredients([])
                 setImagePreview(null)
                 if (fileInputRef.current) {

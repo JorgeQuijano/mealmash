@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Filter, X, Crown } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const CUISINES = [
   'Italian', 'Mexican', 'Asian', 'American', 'Indian', 
@@ -31,11 +32,13 @@ export interface FilterState {
 }
 
 interface RecipeFiltersProps {
+  isPro: boolean;
   filters: FilterState;
   onFilterChange: (filters: FilterState) => void;
 }
 
-export default function RecipeFilters({ filters, onFilterChange }: RecipeFiltersProps) {
+export default function RecipeFilters({ isPro, filters, onFilterChange }: RecipeFiltersProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [showAllCuisines, setShowAllCuisines] = useState(false);
 
@@ -74,6 +77,41 @@ export default function RecipeFilters({ filters, onFilterChange }: RecipeFilters
                           filters.timeRange !== null || 
                           filters.difficulty.length > 0;
 
+  // Free user - show paywall
+  if (!isPro) {
+    return (
+      <div className="w-full">
+        <Button 
+          variant="outline" 
+          className="w-full justify-between"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <span className="flex items-center gap-2">
+            <Filter className="w-4 h-4" />
+            Filters
+          </span>
+          {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </Button>
+        
+        {isOpen && (
+          <div className="space-y-4 pt-4">
+            <div className="text-center py-6 px-4">
+              <Crown className="w-10 h-10 text-yellow-500 mx-auto mb-3" />
+              <h3 className="font-semibold mb-2">Advanced Filters are for Pro Members</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Unlock cuisine, dietary, cooking time, and difficulty filters
+              </p>
+              <Button size="sm" onClick={() => router.push('/upgrade')}>
+                Upgrade to Pro - $7/month
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Pro user - show full filters
   return (
     <div className="w-full">
       <Button 
@@ -89,6 +127,9 @@ export default function RecipeFilters({ filters, onFilterChange }: RecipeFilters
               Active
             </Badge>
           )}
+          <Badge variant="secondary" className="ml-2 bg-yellow-100 text-yellow-800">
+            <Crown className="w-3 h-3 mr-1" /> Pro
+          </Badge>
         </span>
         {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
       </Button>

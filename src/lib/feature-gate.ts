@@ -22,7 +22,7 @@ export const FEATURES: Record<SubscriptionTier, FeatureAccess> = {
     wheelUnlimited: false,
     wheelSpinLimit: 3,
     searchBasic: true,
-    searchAdvanced: true, // Available to all users
+    searchAdvanced: false, // Pro-only
     pantryUnlimited: false,
     pantryItemLimit: 50,
     shoppingManual: true,
