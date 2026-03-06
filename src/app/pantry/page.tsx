@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 import MobileNav from "@/components/mobile-nav"
+import { getPantryItemLimit } from "@/lib/feature-gate"
 
 interface Ingredient {
   id: string
@@ -47,6 +48,11 @@ export default function PantryPage() {
   const [profile, setProfile] = useState<any>(null)
   const [items, setItems] = useState<PantryItem[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Get pantry item limit based on subscription
+  const tier = profile?.subscription_tier || 'free'
+  const limit = getPantryItemLimit(tier)
+
   const [newItem, setNewItem] = useState({ 
     name: "", 
     category: "Other", 
@@ -158,6 +164,14 @@ export default function PantryPage() {
   const handleAddItem = async () => {
     if (!newItem.name.trim() || !user) return
 
+    // Check pantry item limit
+    const tier = profile?.subscription_tier || 'free'
+    const limit = getPantryItemLimit(tier)
+    if (limit !== -1 && items.length >= limit) {
+      alert(`Free plan limited to ${limit} pantry items. Upgrade to Pro for unlimited items!`)
+      return
+    }
+
     setAdding(true)
     const insertData: any = {
       user_id: user.id,
@@ -190,6 +204,14 @@ export default function PantryPage() {
   // Quick add same ingredient (from + button)
   const handleQuickAdd = async () => {
     if (!quickAddItem || !user) return
+
+    // Check pantry item limit
+    const tier = profile?.subscription_tier || 'free'
+    const limit = getPantryItemLimit(tier)
+    if (limit !== -1 && items.length >= limit) {
+      alert(`Free plan limited to ${limit} pantry items. Upgrade to Pro for unlimited items!`)
+      return
+    }
     
     setQuickAddSaving(true)
     const { data, error } = await supabase
@@ -357,7 +379,7 @@ export default function PantryPage() {
             </p>
           </div>
           <Badge variant="outline" className="text-lg py-1">
-            {items.length} items
+            {items.length} {limit !== -1 ? `/ ${limit}` : 'items'} {limit !== -1 && <span className="text-muted-foreground">(Free plan)</span>}
           </Badge>
         </div>
 

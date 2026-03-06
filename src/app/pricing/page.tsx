@@ -10,12 +10,12 @@ const plans = [
     price: 0,
     description: 'Perfect for trying things out',
     features: [
-      { text: 'Spin the wheel (5x/day)', included: true },
+      { text: 'Spin the wheel (3x/day)', included: true },
       { text: 'Basic recipe search', included: true },
-      { text: '1 pantry list', included: true },
+      { text: 'Pantry (up to 50 items)', included: true },
       { text: 'Manual shopping list', included: true },
       { text: 'Advanced recipe filters', included: false },
-      { text: 'Unlimited pantry lists', included: false },
+      { text: 'Unlimited pantry items', included: false },
       { text: 'Auto shopping lists', included: false },
       { text: 'Weekly meal plans', included: false },
       { text: 'Nutritional info', included: false },
@@ -25,36 +25,20 @@ const plans = [
   },
   {
     name: 'Pro',
-    price: 4,
+    price: 7,
     description: 'For serious home cooks',
     popular: true,
     features: [
       { text: 'Spin the wheel (unlimited)', included: true },
       { text: 'Basic recipe search', included: true },
-      { text: '1 pantry list', included: true },
-      { text: 'Manual shopping list', included: true },
       { text: 'Advanced recipe filters', included: true },
-      { text: 'Unlimited pantry lists', included: true },
+      { text: 'Unlimited pantry items', included: true },
       { text: 'Auto shopping lists', included: true },
       { text: 'Weekly meal plans', included: true },
       { text: 'Nutritional info', included: true },
     ],
     priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
     cta: 'Go Pro',
-  },
-  {
-    name: 'Family',
-    price: 9,
-    description: 'The whole family covered',
-    features: [
-      { text: 'Everything in Pro', included: true },
-      { text: 'Up to 5 family members', included: true },
-      { text: 'Family favorites list', included: true },
-      { text: 'Meal prep scheduling', included: true },
-      { text: 'Priority support', included: true },
-    ],
-    priceId: process.env.NEXT_PUBLIC_STRIPE_FAMILY_PRICE_ID,
-    cta: 'Get Family Plan',
   },
 ];
 
@@ -94,9 +78,7 @@ export default function PricingPage() {
   const getCurrentPlanBadge = (planName: string) => {
     if (subscription?.tier === 'free' || !subscription) return null;
     
-    const isCurrentPlan = 
-      (planName === 'Pro' && subscription.tier === 'pro') ||
-      (planName === 'Family' && subscription.tier === 'family');
+    const isCurrentPlan = planName === 'Pro' && subscription.tier === 'pro';
     
     if (isCurrentPlan && subscription.status === 'active') {
       return <span className="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded">Current Plan</span>;
@@ -125,11 +107,9 @@ export default function PricingPage() {
           )}
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {plans.map((plan) => {
-            const isCurrentPlan = 
-              (plan.name === 'Pro' && subscription?.tier === 'pro') ||
-              (plan.name === 'Family' && subscription?.tier === 'family');
+            const isCurrentPlan = plan.name === 'Pro' && subscription?.tier === 'pro';
 
             return (
               <div
@@ -153,7 +133,7 @@ export default function PricingPage() {
 
                 <div className="text-center mb-6">
                   <span className="text-4xl font-bold">${plan.price}</span>
-                  <span className="text-muted-foreground">/month</span>
+                  {plan.price > 0 && <span className="text-muted-foreground">/month</span>}
                 </div>
 
                 <ul className="space-y-3 mb-8">

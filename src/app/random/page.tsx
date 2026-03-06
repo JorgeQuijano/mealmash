@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 
 import MobileNav from "@/components/mobile-nav"
 import RecipeModal from "@/components/recipe-modal"
+import { getWheelSpinLimit } from "@/lib/feature-gate"
 
 type RecipeIngredient = {
   ingredient_id: string
@@ -70,10 +71,23 @@ export default function RandomPage() {
     loadUser()
   }, [])
 
+  const [profile, setProfile] = useState<any>(null)
+  const [todaySpins, setTodaySpins] = useState(0)
+  const todayDate = new Date().toDateString()
+
   async function loadUser() {
     const currentUser = await getUser()
     if (currentUser) {
       setUser(currentUser)
+      // Get user profile for subscription tier
+      const { data: profileData } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', currentUser.id)
+        .single()
+      if (profileData) {
+        setProfile(profileData)
+      }
       const { data } = await supabase
         .from("pantry_items")
         .select("id, name, quantity, ingredient_id, user_id")
@@ -125,7 +139,16 @@ export default function RandomPage() {
 
   function spinWheel() {
     if (isSpinning || recipes.length === 0) return
-    
+
+    // Check spin limit
+    const tier = profile?.subscription_tier || 'free'
+    const spinLimit = getWheelSpinLimit(tier)
+    if (spinLimit !== -1 && todaySpins >= spinLimit) {
+      alert(`Free plan limited to ${spinLimit} spins per day. Upgrade to Pro for unlimited spins!`)
+      return
+    }
+
+    setTodaySpins(prev => prev + 1)
     setIsSpinning(true)
     setSelectedRecipe(null)
     
