@@ -33,8 +33,9 @@ export async function POST(req: Request) {
         }
 
         // Retrieve subscription details
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId) as Stripe.Subscription;
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         const priceId = subscription.items.data[0].price.id;
+        const currentPeriodEnd = (subscription as any).current_period_end;
 
         // Determine tier from price ID
         const proPriceId = process.env.STRIPE_PRO_PRICE_ID;
@@ -54,7 +55,7 @@ export async function POST(req: Request) {
             subscription_tier: tier,
             subscription_status: 'active',
             subscription_id: subscriptionId,
-            plan_expires_at: new Date(subscription.current_period_end * 1000).toISOString(),
+            plan_expires_at: new Date(currentPeriodEnd * 1000).toISOString(),
           })
           .eq('id', userId);
 
@@ -159,6 +160,7 @@ async function handleSubscriptionUpdate(
   const priceId = subscription.items.data[0].price.id;
   const proPriceId = process.env.STRIPE_PRO_PRICE_ID;
   const familyPriceId = process.env.STRIPE_FAMILY_PRICE_ID;
+  const currentPeriodEnd = (subscription as any).current_period_end;
 
   let tier = 'free';
   if (priceId === familyPriceId) {
@@ -172,7 +174,7 @@ async function handleSubscriptionUpdate(
     .update({
       subscription_tier: tier,
       subscription_status: subscription.status,
-      plan_expires_at: new Date(subscription.current_period_end * 1000).toISOString(),
+      plan_expires_at: new Date(currentPeriodEnd * 1000).toISOString(),
     })
     .eq('id', userId);
 
