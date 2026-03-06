@@ -520,7 +520,7 @@ export default function MealPlanPage() {
               
               {recipeFilter && (
                 <p className="text-xs text-muted-foreground mb-2">
-                  Showing {recipes.filter(r => r.category === recipeFilter).length} {recipeFilter} recipes
+                  Showing {recipes.filter(r => parseCategory(r.category).includes(recipeFilter)).length} {recipeFilter} recipes
                 </p>
               )}
               
@@ -530,7 +530,7 @@ export default function MealPlanPage() {
                 </p>
               ) : (
                 <div className="space-y-2 max-h-[400px] overflow-y-auto">
-                  {(recipeFilter ? recipes.filter(r => r.category === recipeFilter) : recipes).map((recipe) => (
+                  {(recipeFilter ? recipes.filter(r => parseCategory(r.category).includes(recipeFilter)) : recipes).map((recipe) => (
                     <Card 
                       key={recipe.id}
                       className="cursor-pointer hover:bg-muted/50 transition-colors"
