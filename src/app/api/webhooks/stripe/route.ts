@@ -55,7 +55,9 @@ export async function POST(req: Request) {
         }
 
         // Update user profile
-        await supabase
+        console.log('Updating user profile for userId:', userId, 'to tier:', tier);
+        
+        const { error: updateError } = await supabase
           .from('user_profiles')
           .update({
             subscription_tier: tier,
@@ -64,6 +66,12 @@ export async function POST(req: Request) {
             plan_expires_at: new Date(currentPeriodEnd * 1000).toISOString(),
           })
           .eq('id', userId);
+
+        if (updateError) {
+          console.error('Failed to update user profile:', updateError);
+        } else {
+          console.log('User profile updated successfully!');
+        }
 
         // Send confirmation email
         const { data: profile } = await supabase

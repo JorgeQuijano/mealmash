@@ -5,8 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Loader2, Check, Crown, AlertCircle } from 'lucide-react';
+import { Loader2, Check, Crown, AlertCircle, ArrowLeft } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
+import MobileNav from '@/components/mobile-nav';
 
 function SubscriptionContent() {
   const router = useRouter();
@@ -182,6 +183,8 @@ function SubscriptionContent() {
           </CardContent>
         </Card>
       </div>
+
+      <MobileNav />
     </div>
   );
 }
