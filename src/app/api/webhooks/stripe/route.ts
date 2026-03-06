@@ -43,7 +43,8 @@ export async function POST(req: Request) {
         const priceId = subscription.items.data[0].price.id;
         
         // Handle current_period_end - could be missing or in different format
-        let currentPeriodEnd = subscription.current_period_end;
+        const sub = subscription as any;
+        let currentPeriodEnd = sub.current_period_end;
         if (!currentPeriodEnd) {
           // Fallback: calculate from current_period_start + interval (default to 30 days)
           currentPeriodEnd = subscription.current_period_start + (30 * 24 * 60 * 60);
@@ -208,9 +209,10 @@ async function handleSubscriptionUpdate(
   const priceId = subscription.items.data[0].price.id;
   const proPriceId = process.env.STRIPE_PRO_PRICE_ID;
   const familyPriceId = process.env.STRIPE_FAMILY_PRICE_ID;
-  let currentPeriodEnd = subscription.current_period_end;
+  const sub = subscription as any;
+  let currentPeriodEnd = sub.current_period_end;
   if (!currentPeriodEnd) {
-    currentPeriodEnd = subscription.current_period_start + (30 * 24 * 60 * 60);
+    currentPeriodEnd = sub.current_period_start + (30 * 24 * 60 * 60);
   }
 
   let tier = 'free';
