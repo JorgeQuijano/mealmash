@@ -62,7 +62,7 @@ export default function PricingPage() {
   const { subscription, isPro, isFamily, loading, createCheckoutSession, createPortalSession } = useSubscription();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
-  const handleSubscribe = async (priceId: string | null, planName: string) => {
+  const handleSubscribe = async (priceId: string | null | undefined, planName: string) => {
     if (!priceId) return;
     
     setLoadingPlan(planName);
