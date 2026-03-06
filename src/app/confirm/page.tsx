@@ -21,20 +21,21 @@ export default function ConfirmPage() {
 
     const confirmEmail = async () => {
       try {
+        // For email confirmation, we verify the OTP token
         const { error } = await supabase.auth.verifyOtp({
-          token_hash: token as string,
-          type: 'confirmation',
+          token_hash: token,
+          type: 'email',
         });
 
         if (error) {
-          // Try with recovery type (magic link)
-          const { error: recoveryError } = await supabase.auth.verifyOtp({
-            token_hash: token as string,
-            type: 'recovery',
+          // Try magic link type as fallback
+          const { error: magicError } = await supabase.auth.verifyOtp({
+            token_hash: token,
+            type: 'magiclink',
           });
 
-          if (recoveryError) {
-            console.error('Confirmation error:', recoveryError);
+          if (magicError) {
+            console.error('Confirmation error:', magicError);
             setStatus('error');
             setMessage('Confirmation failed. The link may have expired.');
           } else {
