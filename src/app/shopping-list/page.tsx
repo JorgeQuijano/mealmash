@@ -10,6 +10,9 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 import MobileNav from "@/components/mobile-nav"
+import ShoppingListGenerator from "@/components/shopping-list-generator"
+import RecipeSelector from "@/components/recipe-selector"
+import { generateShoppingListFromRecipes, generateShoppingListFromMealPlan } from "@/lib/shopping-list"
 
 interface Ingredient {
   id: string
@@ -34,6 +37,8 @@ export default function ShoppingListPage() {
   const [profile, setProfile] = useState<any>(null)
   const [items, setItems] = useState<ShoppingItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [isPro, setIsPro] = useState(false)
+  const [recipeSelectorOpen, setRecipeSelectorOpen] = useState(false)
   const [newItem, setNewItem] = useState({ 
     item_name: "", 
     quantity: "",
@@ -78,6 +83,11 @@ export default function ShoppingListPage() {
       
       const { data } = await getUserProfile(currentUser.id)
       setProfile(data)
+      
+      // Check subscription status
+      const isProUser = data?.subscription_tier === 'pro' && data?.subscription_status === 'active'
+      setIsPro(isProUser)
+      
       await loadShoppingList(currentUser.id)
       setLoading(false)
     }
