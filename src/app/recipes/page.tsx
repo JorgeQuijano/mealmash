@@ -286,10 +286,9 @@ export default function RecipesPage() {
             ))}
           </div>
           
-          {/* Advanced Filters - Pro only */}
+          {/* Advanced Filters */}
           <div className="mt-3">
             <RecipeFilters 
-              isPro={isPro} 
               filters={filters} 
               onFilterChange={setFilters} 
             />

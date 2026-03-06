@@ -10,9 +10,6 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 import MobileNav from "@/components/mobile-nav"
-import ShoppingListGenerator from "@/components/shopping-list-generator"
-import RecipeSelector from "@/components/recipe-selector"
-import { generateShoppingListFromRecipes, generateShoppingListFromMealPlan } from "@/lib/shopping-list"
 
 interface Ingredient {
   id: string

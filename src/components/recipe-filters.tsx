@@ -3,13 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Collapsible, 
-  CollapsibleContent, 
-  CollapsibleTrigger 
-} from '@/components/ui/collapsible';
-import { ChevronDown, ChevronUp, Crown, Filter, X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 
 const CUISINES = [
   'Italian', 'Mexican', 'Asian', 'American', 'Indian', 
@@ -37,13 +31,11 @@ export interface FilterState {
 }
 
 interface RecipeFiltersProps {
-  isPro: boolean;
   filters: FilterState;
   onFilterChange: (filters: FilterState) => void;
 }
 
-export default function RecipeFilters({ isPro, filters, onFilterChange }: RecipeFiltersProps) {
-  const router = useRouter();
+export default function RecipeFilters({ filters, onFilterChange }: RecipeFiltersProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showAllCuisines, setShowAllCuisines] = useState(false);
 
@@ -82,145 +74,119 @@ export default function RecipeFilters({ isPro, filters, onFilterChange }: Recipe
                           filters.timeRange !== null || 
                           filters.difficulty.length > 0;
 
-  if (!isPro) {
-    return (
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CollapsibleTrigger asChild>
-          <Button variant="outline" className="w-full justify-between">
-            <span className="flex items-center gap-2">
-              <Filter className="w-4 h-4" />
-              Filters
-            </span>
-            {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-4 pt-4">
-          <div className="text-center py-6 px-4">
-            <Crown className="w-10 h-10 text-yellow-500 mx-auto mb-3" />
-            <h3 className="font-semibold mb-2">Advanced Filters are for Pro Members</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Unlock cuisine, dietary, cooking time, and difficulty filters
-            </p>
-            <Button size="sm" onClick={() => router.push('/upgrade')}>
-              Upgrade to Pro - $7/month
-            </Button>
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-    );
-  }
-
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleTrigger asChild>
-        <Button variant="outline" className="w-full justify-between">
-          <span className="flex items-center gap-2">
-            <Filter className="w-4 h-4" />
-            Filters
-            {hasActiveFilters && (
-              <Badge variant="secondary" className="ml-1 bg-yellow-100 text-yellow-800">
-                Active
-              </Badge>
-            )}
-            <Badge variant="secondary" className="ml-2 bg-yellow-100 text-yellow-800">
-              <Crown className="w-3 h-3 mr-1" /> Pro
+    <div className="w-full">
+      <Button 
+        variant="outline" 
+        className="w-full justify-between"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className="flex items-center gap-2">
+          <Filter className="w-4 h-4" />
+          Filters
+          {hasActiveFilters && (
+            <Badge variant="secondary" className="ml-1">
+              Active
             </Badge>
-          </span>
-          {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </Button>
-      </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-4 pt-4">
+          )}
+        </span>
+        {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+      </Button>
+      
+      {isOpen && (
+        <div className="space-y-4 pt-4">
         
-        {/* Cuisine Filter */}
-        <div>
-          <h4 className="text-sm font-medium mb-2">Cuisine</h4>
-          <div className="flex flex-wrap gap-2">
-            {CUISINES.slice(0, showAllCuisines ? CUISINES.length : 5).map(cuisine => (
-              <Badge
-                key={cuisine}
-                variant={filters.cuisine.includes(cuisine) ? 'default' : 'outline'}
-                className="cursor-pointer"
-                onClick={() => toggleCuisine(cuisine)}
-              >
-                {cuisine}
-              </Badge>
-            ))}
-            {CUISINES.length > 5 && (
-              <Button 
-                variant="link" 
-                size="sm" 
-                onClick={() => setShowAllCuisines(!showAllCuisines)}
-                className="h-auto p-0 text-xs"
-              >
-                {showAllCuisines ? 'Show less' : `+${CUISINES.length - 5} more`}
-              </Button>
-            )}
+          {/* Cuisine Filter */}
+          <div>
+            <h4 className="text-sm font-medium mb-2">Cuisine</h4>
+            <div className="flex flex-wrap gap-2">
+              {CUISINES.slice(0, showAllCuisines ? CUISINES.length : 5).map(cuisine => (
+                <Badge
+                  key={cuisine}
+                  variant={filters.cuisine.includes(cuisine) ? 'default' : 'outline'}
+                  className="cursor-pointer"
+                  onClick={() => toggleCuisine(cuisine)}
+                >
+                  {cuisine}
+                </Badge>
+              ))}
+              {CUISINES.length > 5 && (
+                <Button 
+                  variant="link" 
+                  size="sm" 
+                  onClick={() => setShowAllCuisines(!showAllCuisines)}
+                  className="h-auto p-0 text-xs"
+                >
+                  {showAllCuisines ? 'Show less' : `+${CUISINES.length - 5} more`}
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Dietary Filter */}
-        <div>
-          <h4 className="text-sm font-medium mb-2">Dietary</h4>
-          <div className="flex flex-wrap gap-2">
-            {DIETARY.map(diet => (
-              <Badge
-                key={diet}
-                variant={filters.dietary.includes(diet) ? 'default' : 'outline'}
-                className="cursor-pointer"
-                onClick={() => toggleDietary(diet)}
-              >
-                {diet}
-              </Badge>
-            ))}
+          {/* Dietary Filter */}
+          <div>
+            <h4 className="text-sm font-medium mb-2">Dietary</h4>
+            <div className="flex flex-wrap gap-2">
+              {DIETARY.map(diet => (
+                <Badge
+                  key={diet}
+                  variant={filters.dietary.includes(diet) ? 'default' : 'outline'}
+                  className="cursor-pointer"
+                  onClick={() => toggleDietary(diet)}
+                >
+                  {diet}
+                </Badge>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Cooking Time Filter */}
-        <div>
-          <h4 className="text-sm font-medium mb-2">Cooking Time</h4>
-          <div className="flex flex-wrap gap-2">
-            {TIME_RANGES.map(range => (
-              <Badge
-                key={range.label}
-                variant={filters.timeRange === range.label ? 'default' : 'outline'}
-                className="cursor-pointer"
-                onClick={() => onFilterChange({
-                  ...filters, 
-                  timeRange: filters.timeRange === range.label ? null : range.label
-                })}
-              >
-                {range.label}
-              </Badge>
-            ))}
+          {/* Cooking Time Filter */}
+          <div>
+            <h4 className="text-sm font-medium mb-2">Cooking Time</h4>
+            <div className="flex flex-wrap gap-2">
+              {TIME_RANGES.map(range => (
+                <Badge
+                  key={range.label}
+                  variant={filters.timeRange === range.label ? 'default' : 'outline'}
+                  className="cursor-pointer"
+                  onClick={() => onFilterChange({
+                    ...filters, 
+                    timeRange: filters.timeRange === range.label ? null : range.label
+                  })}
+                >
+                  {range.label}
+                </Badge>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Difficulty Filter */}
-        <div>
-          <h4 className="text-sm font-medium mb-2">Difficulty</h4>
-          <div className="flex flex-wrap gap-2">
-            {DIFFICULTY.map(diff => (
-              <Badge
-                key={diff}
-                variant={filters.difficulty.includes(diff) ? 'default' : 'outline'}
-                className="cursor-pointer"
-                onClick={() => toggleDifficulty(diff)}
-              >
-                {diff}
-              </Badge>
-            ))}
+          {/* Difficulty Filter */}
+          <div>
+            <h4 className="text-sm font-medium mb-2">Difficulty</h4>
+            <div className="flex flex-wrap gap-2">
+              {DIFFICULTY.map(diff => (
+                <Badge
+                  key={diff}
+                  variant={filters.difficulty.includes(diff) ? 'default' : 'outline'}
+                  className="cursor-pointer"
+                  onClick={() => toggleDifficulty(diff)}
+                >
+                  {diff}
+                </Badge>
+              ))}
+            </div>
           </div>
+
+          {/* Clear Filters */}
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full">
+              <X className="w-4 h-4 mr-2" />
+              Clear all filters
+            </Button>
+          )}
+
         </div>
-
-        {/* Clear Filters */}
-        {hasActiveFilters && (
-          <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full">
-            <X className="w-4 h-4 mr-2" />
-            Clear all filters
-          </Button>
-        )}
-
-      </CollapsibleContent>
-    </Collapsible>
+      )}
+    </div>
   );
 }
