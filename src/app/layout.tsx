@@ -48,6 +48,9 @@ export const metadata: Metadata = {
     description: "Spin the wheel, discover new recipes, and simplify your meal planning.",
     images: ["https://mealclaw.com/og-image.png"],
   },
+  other: {
+    "fb:app_id": "1234567890",
+  },
   robots: {
     index: true,
     follow: true,
