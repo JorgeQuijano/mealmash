@@ -33,7 +33,7 @@ export async function POST(req: Request) {
         }
 
         // Retrieve subscription details
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId) as Stripe.Subscription;
         const priceId = subscription.items.data[0].price.id;
 
         // Determine tier from price ID
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       }
 
       case 'customer.subscription.updated': {
-        const subscription = event.data.object as Stripe.Checkout.Session & Stripe.Subscription;
+        const subscription = event.data.object as Stripe.Subscription;
         const userId = subscription.metadata?.userId;
 
         if (!userId) {
