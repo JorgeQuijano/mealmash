@@ -46,8 +46,8 @@ export async function POST(req: Request) {
         const sub = subscription as any;
         let currentPeriodEnd = sub.current_period_end;
         if (!currentPeriodEnd) {
-          // Fallback: calculate from current_period_start + interval (default to 30 days)
-          currentPeriodEnd = subscription.current_period_start + (30 * 24 * 60 * 60);
+          // Fallback: default to 30 days from now
+          currentPeriodEnd = Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60);
         }
         
         console.log('Subscription current_period_end:', currentPeriodEnd);
@@ -212,7 +212,8 @@ async function handleSubscriptionUpdate(
   const sub = subscription as any;
   let currentPeriodEnd = sub.current_period_end;
   if (!currentPeriodEnd) {
-    currentPeriodEnd = sub.current_period_start + (30 * 24 * 60 * 60);
+    // Fallback: default to 30 days from now
+    currentPeriodEnd = Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60);
   }
 
   let tier = 'free';
