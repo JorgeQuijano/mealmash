@@ -41,7 +41,15 @@ export async function POST(req: Request) {
         // Retrieve subscription details
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         const priceId = subscription.items.data[0].price.id;
-        const currentPeriodEnd = (subscription as any).current_period_end;
+        
+        // Handle current_period_end - could be missing or in different format
+        let currentPeriodEnd = subscription.current_period_end;
+        if (!currentPeriodEnd) {
+          // Fallback: calculate from current_period_start + interval (default to 30 days)
+          currentPeriodEnd = subscription.current_period_start + (30 * 24 * 60 * 60);
+        }
+        
+        console.log('Subscription current_period_end:', currentPeriodEnd);
 
         // Determine tier from price ID
         const proPriceId = process.env.STRIPE_PRO_PRICE_ID;
@@ -200,7 +208,10 @@ async function handleSubscriptionUpdate(
   const priceId = subscription.items.data[0].price.id;
   const proPriceId = process.env.STRIPE_PRO_PRICE_ID;
   const familyPriceId = process.env.STRIPE_FAMILY_PRICE_ID;
-  const currentPeriodEnd = (subscription as any).current_period_end;
+  let currentPeriodEnd = subscription.current_period_end;
+  if (!currentPeriodEnd) {
+    currentPeriodEnd = subscription.current_period_start + (30 * 24 * 60 * 60);
+  }
 
   let tier = 'free';
   if (priceId === familyPriceId) {
