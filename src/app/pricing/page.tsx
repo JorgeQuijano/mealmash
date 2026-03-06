@@ -63,7 +63,10 @@ export default function PricingPage() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   const handleSubscribe = async (priceId: string | null | undefined, planName: string) => {
-    if (!priceId) return;
+    if (!priceId) {
+      alert('Subscription service is not configured. Please contact support.');
+      return;
+    }
     
     setLoadingPlan(planName);
     try {
@@ -170,7 +173,7 @@ export default function PricingPage() {
 
                 <button
                   onClick={() => handleSubscribe(plan.priceId, plan.name)}
-                  disabled={loadingPlan === plan.name || isCurrentPlan || loading || !plan.priceId}
+                  disabled={loadingPlan === plan.name || isCurrentPlan || loading}
                   className={`w-full py-3 rounded-lg font-medium transition-colors ${
                     plan.popular
                       ? 'bg-primary text-primary-foreground hover:bg-primary/90'
@@ -181,9 +184,7 @@ export default function PricingPage() {
                     ? 'Loading...' 
                     : isCurrentPlan 
                       ? 'Current Plan'
-                      : plan.priceId 
-                        ? plan.cta 
-                        : plan.cta}
+                      : plan.cta}
                 </button>
               </div>
             );
