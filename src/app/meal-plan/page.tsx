@@ -128,7 +128,7 @@ export default function MealPlanPage() {
       
       const { data: profileData } = await supabase
         .from('user_profiles')
-        .select('*')
+        .select('*, subscription_tier, subscription_status')
         .eq('id', currentUser.id)
         .single()
       
