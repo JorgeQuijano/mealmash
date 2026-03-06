@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: 'https://mealclaw.com/reset-password',
       });
 
       if (error) {
