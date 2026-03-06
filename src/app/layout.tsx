@@ -19,7 +19,12 @@ export const metadata: Metadata = {
   description: "Spin the wheel, discover new recipes, and simplify your meal planning with MealClaw. Perfect for home cooks who want meal inspiration in seconds.",
   metadataBase: new URL('https://mealclaw.com'),
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", rel: "icon", type: "image/x-icon" },
+    ],
+    apple: [
+      { url: "/favicon.ico", rel: "apple-touch-icon" },
+    ],
   },
   openGraph: {
     title: "MealClaw - Never Wonder What's for Dinner",
