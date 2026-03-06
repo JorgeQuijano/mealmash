@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { supabaseAdmin } from '@/lib/supabase';
+import { sendSubscriptionConfirmationEmail, sendSubscriptionCanceledEmail, sendSubscriptionUpdatedEmail } from '@/lib/email';
 import Stripe from 'stripe';
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -59,6 +60,21 @@ export async function POST(req: Request) {
           })
           .eq('id', userId);
 
+        // Send confirmation email
+        const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('email, name')
+          .eq('id', userId)
+          .single();
+
+        if (profile?.email) {
+          await sendSubscriptionConfirmationEmail({
+            email: profile.email,
+            name: profile.name,
+            tier,
+          });
+        }
+
         console.log(`User ${userId} upgraded to ${tier}`);
         break;
       }
@@ -88,6 +104,8 @@ export async function POST(req: Request) {
         const subscription = event.data.object as Stripe.Subscription;
         const userId = subscription.metadata?.userId;
 
+        let profileId = userId;
+
         if (!userId) {
           const { data: profile } = await supabase
             .from('user_profiles')
@@ -96,26 +114,35 @@ export async function POST(req: Request) {
             .single();
           
           if (profile) {
-            await supabase
-              .from('user_profiles')
-              .update({
-                subscription_tier: 'free',
-                subscription_status: 'canceled',
-                subscription_id: null,
-                plan_expires_at: null,
-              })
-              .eq('id', profile.id);
+            profileId = profile.id;
           }
-        } else {
+        }
+
+        if (profileId) {
+          // Get user email for cancellation email
+          const { data: profile } = await supabase
+            .from('user_profiles')
+            .select('email, name, plan_expires_at')
+            .eq('id', profileId)
+            .single();
+
           await supabase
             .from('user_profiles')
             .update({
               subscription_tier: 'free',
               subscription_status: 'canceled',
               subscription_id: null,
-              plan_expires_at: null,
             })
-            .eq('id', userId);
+            .eq('id', profileId);
+
+          // Send cancellation email
+          if (profile?.email) {
+            await sendSubscriptionCanceledEmail({
+              email: profile.email,
+              name: profile.name,
+              expiresAt: profile.plan_expires_at,
+            });
+          }
         }
         console.log(`Subscription canceled for user ${userId || subscription.customer}`);
         break;
@@ -169,6 +196,13 @@ async function handleSubscriptionUpdate(
     tier = 'pro';
   }
 
+  // Get user profile for email
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('email, name')
+    .eq('id', userId)
+    .single();
+
   await supabase
     .from('user_profiles')
     .update({
@@ -177,6 +211,15 @@ async function handleSubscriptionUpdate(
       plan_expires_at: new Date(currentPeriodEnd * 1000).toISOString(),
     })
     .eq('id', userId);
+
+  // Send update email
+  if (profile?.email && subscription.status === 'active') {
+    await sendSubscriptionUpdatedEmail({
+      email: profile.email,
+      name: profile.name,
+      status: subscription.status,
+    });
+  }
 
   console.log(`User ${userId} subscription updated to ${tier} (${subscription.status})`);
 }
