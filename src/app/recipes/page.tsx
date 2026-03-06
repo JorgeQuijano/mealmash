@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import MobileNav from "@/components/mobile-nav"
 import RecipeModal from "@/components/recipe-modal"
 import { getImageUrl } from "@/lib/images"
+import RecipeFilters, { FilterState } from "@/components/recipe-filters"
 import Image from "next/image"
 
 // Helper to parse category from any format to string array
@@ -70,6 +71,13 @@ export default function RecipesPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [user, setUser] = useState<any>(null)
+  const [isPro, setIsPro] = useState(false)
+  const [filters, setFilters] = useState<FilterState>({
+    cuisine: [],
+    dietary: [],
+    timeRange: null,
+    difficulty: [],
+  })
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
@@ -150,6 +158,16 @@ export default function RecipesPage() {
     
     setUser(currentUser)
     
+    // Check subscription status
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('subscription_tier, subscription_status')
+      .eq('id', currentUser.id)
+      .single()
+    
+    const isProUser = profile?.subscription_tier === 'pro' && profile?.subscription_status === 'active'
+    setIsPro(isProUser)
+    
     // Run all queries in parallel
     await Promise.all([
       loadRecipes(),
@@ -159,10 +177,54 @@ export default function RecipesPage() {
     setLoading(false)
   }
 
-  const filteredRecipes = recipes.filter(recipe =>
-    recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    recipe.description?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredRecipes = recipes.filter(recipe => {
+    // Basic search filter
+    const matchesSearch = 
+      recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      recipe.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    
+    // Category filter
+    const matchesCategory = selectedCategory === 'all' || 
+      (recipe.category && recipe.category.includes(selectedCategory))
+    
+    if (!matchesSearch || !matchesCategory) return false
+    
+    // Advanced filters (Pro only)
+    if (isPro) {
+      // Cuisine filter
+      if (filters.cuisine.length > 0) {
+        const recipeCategories = recipe.category || []
+        const hasCuisine = filters.cuisine.some(c => 
+          recipeCategories.some(rc => rc.toLowerCase().includes(c.toLowerCase()))
+        )
+        if (!hasCuisine) return false
+      }
+      
+      // Dietary filter
+      if (filters.dietary.length > 0) {
+        const recipeCategories = recipe.category || []
+        const hasDietary = filters.dietary.some(d => 
+          recipeCategories.some(rc => rc.toLowerCase().includes(d.toLowerCase()))
+        )
+        if (!hasDietary) return false
+      }
+      
+      // Time filter
+      if (filters.timeRange) {
+        const totalTime = (recipe.prep_time_minutes || 0) + (recipe.cook_time_minutes || 0)
+        const timeRanges: Record<string, [number, number]> = {
+          'Under 15 min': [0, 15],
+          '15-30 min': [15, 30],
+          '30-60 min': [30, 60],
+          'Over 60 min': [60, 999]
+        }
+        const [min, max] = timeRanges[filters.timeRange] || [0, 999]
+        if (totalTime < min || totalTime > max) return false
+      }
+    }
+    
+    return true
+  })
 
   const getCategoryColor = (category: string | string[]) => {
     const cat = Array.isArray(category) ? category[0] : category
@@ -222,6 +284,15 @@ export default function RecipesPage() {
                 {cat}
               </Button>
             ))}
+          </div>
+          
+          {/* Advanced Filters - Pro only */}
+          <div className="mt-3">
+            <RecipeFilters 
+              isPro={isPro} 
+              filters={filters} 
+              onFilterChange={setFilters} 
+            />
           </div>
         </div>
 
