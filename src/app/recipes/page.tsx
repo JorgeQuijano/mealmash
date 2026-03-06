@@ -72,6 +72,7 @@ export default function RecipesPage() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [user, setUser] = useState<any>(null)
   const [isPro, setIsPro] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [filters, setFilters] = useState<FilterState>({
     cuisine: [],
     dietary: [],
@@ -161,12 +162,14 @@ export default function RecipesPage() {
     // Check subscription status
     const { data: profile } = await supabase
       .from('user_profiles')
-      .select('subscription_tier, subscription_status')
+      .select('subscription_tier, subscription_status, is_admin')
       .eq('id', currentUser.id)
       .single()
     
     const isProUser = profile?.subscription_tier === 'pro' && profile?.subscription_status === 'active'
+    const isAdminUser = profile?.is_admin === true
     setIsPro(isProUser)
+    setIsAdmin(isAdminUser)
     
     // Run all queries in parallel
     await Promise.all([
@@ -286,10 +289,10 @@ export default function RecipesPage() {
             ))}
           </div>
           
-          {/* Advanced Filters - Pro only */}
+          {/* Advanced Filters - Pro only (admins bypass) */}
           <div className="mt-3">
             <RecipeFilters 
-              isPro={isPro} 
+              isPro={isPro || isAdmin} 
               filters={filters} 
               onFilterChange={setFilters} 
             />
