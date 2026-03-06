@@ -22,14 +22,14 @@ export default function ConfirmPage() {
     const confirmEmail = async () => {
       try {
         const { error } = await supabase.auth.verifyOtp({
-          token_hash: token,
-          type: 'email_confirmation',
+          token_hash: token as string,
+          type: 'confirmation',
         });
 
         if (error) {
           // Try with recovery type (magic link)
           const { error: recoveryError } = await supabase.auth.verifyOtp({
-            token_hash: token,
+            token_hash: token as string,
             type: 'recovery',
           });
 
