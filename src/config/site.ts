@@ -1,8 +1,8 @@
 export const siteConfig = {
-  name: "MealMash",
+  name: "MealClaw",
   tagline: "Stop asking 'What's for dinner?'",
   description: "End meal planning stress with random meal picker, ingredient-based recipes, pantry tracking, and auto-generated shopping lists.",
-  url: "https://mealmash.com",
+  url: "https://mealclaw.com",
   
   nav: {
     links: [

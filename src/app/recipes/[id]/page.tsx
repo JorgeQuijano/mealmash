@@ -388,7 +388,7 @@ export default function RecipeDetailPage() {
             <Link href="/recipes">
               <Button variant="ghost" size="sm">← Back</Button>
             </Link>
-            <h1 className="text-2xl font-bold gradient-text">MealMash</h1>
+            <h1 className="text-2xl font-bold gradient-text">MealClaw</h1>
           </div>
           <nav className="hidden md:flex items-center gap-6">
             <a href="/dashboard" className="text-sm hover:text-primary transition-colors">Dashboard</a>
@@ -405,7 +405,7 @@ export default function RecipeDetailPage() {
         {/* Print Header */}
         <div className="hidden print:block text-center mb-8">
           <h1 className="text-3xl font-bold">{recipe.name}</h1>
-          <p className="text-muted-foreground">MealMash Recipe</p>
+          <p className="text-muted-foreground">MealClaw Recipe</p>
         </div>
 
         {/* Recipe Header */}

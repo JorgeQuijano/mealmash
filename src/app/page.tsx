@@ -53,7 +53,7 @@ function Header() {
             <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-400 rounded-xl flex items-center justify-center">
               <ChefHat className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold gradient-text">MealMash</span>
+            <span className="text-2xl font-bold gradient-text">MealClaw</span>
           </Link>
           
           {/* Desktop nav */}
@@ -487,7 +487,7 @@ function Footer() {
               <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-400 rounded-xl flex items-center justify-center">
                 <ChefHat className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold text-white">MealMash</span>
+              <span className="text-2xl font-bold text-white">MealClaw</span>
             </Link>
             <p className="text-stone-400 mb-6 max-w-sm">
               {siteConfig.footer.tagline}
@@ -534,7 +534,7 @@ function Footer() {
         </div>
 
         <div className="border-t border-stone-800 mt-12 pt-8 text-center text-stone-500 text-sm">
-          © {new Date().getFullYear()} MealMash. All rights reserved.
+          © {new Date().getFullYear()} MealClaw. All rights reserved.
         </div>
       </div>
     </footer>

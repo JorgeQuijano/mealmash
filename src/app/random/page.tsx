@@ -34,7 +34,7 @@ type Recipe = {
   recipe_ingredients?: RecipeIngredient[]
 }
 
-// Wheel colors matching MealMash theme
+// Wheel colors matching MealClaw theme
 const wheelColors = [
   "#f97316", // orange
   "#84cc16", // green

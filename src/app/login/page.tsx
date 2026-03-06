@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { signIn, signUp, supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -63,7 +64,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl gradient-text">MealMash</CardTitle>
+          <CardTitle className="text-3xl gradient-text">MealClaw</CardTitle>
           <CardDescription>Stop asking &quot;What&apos;s for dinner?&quot;</CardDescription>
         </CardHeader>
         <CardContent>
@@ -99,6 +100,11 @@ export default function LoginPage() {
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
+                <p className="text-center text-sm">
+                  <Link href="/forgot-password" className="text-primary hover:underline">
+                    Forgot password?
+                  </Link>
+                </p>
               </form>
             </TabsContent>
             

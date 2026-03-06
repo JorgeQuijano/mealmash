@@ -44,7 +44,7 @@ export default function DesktopNav({ currentPath = "" }: DesktopNavProps) {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between w-full">
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="text-xl font-bold gradient-text">
-            MealMash
+            MealClaw
           </Link>
           <nav className="flex items-center gap-5">
             {navItems.map((item) => (

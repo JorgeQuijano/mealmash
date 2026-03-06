@@ -129,7 +129,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle>Appearance</CardTitle>
             <CardDescription>
-              Customize how MealMash looks on your device.
+              Customize how MealClaw looks on your device.
             </CardDescription>
           </CardHeader>
           <CardContent>
