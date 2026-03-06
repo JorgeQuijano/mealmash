@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { signIn, signUp, supabase } from "@/lib/supabase"
@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Loader2 } from "lucide-react"
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const returnUrl = searchParams.get('returnUrl') || '/dashboard'
@@ -33,7 +34,6 @@ export default function LoginPage() {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError("")
 
     const { error } = await signIn(email, password)
     
@@ -65,9 +65,11 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl gradient-text">MealClaw</CardTitle>
-          <CardDescription>Stop asking &quot;What&apos;s for dinner?&quot;</CardDescription>
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-3xl gradient-text text-center font-bold">MealClaw</CardTitle>
+          <CardDescription className="text-center">
+            Sign in to your account or create a new one
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
@@ -115,7 +117,7 @@ export default function LoginPage() {
                 <div className="space-y-2">
                   <Input
                     type="text"
-                    placeholder="Name (optional)"
+                    placeholder="Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
@@ -136,14 +138,13 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    minLength={6}
                   />
                 </div>
                 {error ? (
                   <p className="text-sm text-destructive">{error}</p>
                 ) : null}
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Signing up..." : "Sign Up"}
+                  {loading ? "Creating account..." : "Sign Up"}
                 </Button>
               </form>
             </TabsContent>
@@ -151,5 +152,17 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   )
 }
