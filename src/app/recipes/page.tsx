@@ -192,24 +192,33 @@ export default function RecipesPage() {
     
     if (!matchesSearch || !matchesCategory) return false
     
-    // Advanced filters (Pro only)
-    if (isPro) {
+    // Advanced filters (Pro only, but admins bypass)
+    if (isPro || isAdmin) {
       // Cuisine filter
       if (filters.cuisine.length > 0) {
-        const recipeCategories = recipe.category || []
+        const recipeCuisines = (recipe as any).cuisine || []
         const hasCuisine = filters.cuisine.some(c => 
-          recipeCategories.some(rc => rc.toLowerCase().includes(c.toLowerCase()))
+          recipeCuisines.some((rc: string) => rc.toLowerCase().includes(c.toLowerCase()))
         )
         if (!hasCuisine) return false
       }
       
       // Dietary filter
       if (filters.dietary.length > 0) {
-        const recipeCategories = recipe.category || []
+        const recipeDietary = (recipe as any).dietary_tags || []
         const hasDietary = filters.dietary.some(d => 
-          recipeCategories.some(rc => rc.toLowerCase().includes(d.toLowerCase()))
+          recipeDietary.some((rd: string) => rd.toLowerCase().includes(d.toLowerCase()))
         )
         if (!hasDietary) return false
+      }
+      
+      // Difficulty filter
+      if (filters.difficulty.length > 0) {
+        const recipeDifficulty = (recipe as any).difficulty || 'Medium'
+        const hasDifficulty = filters.difficulty.some(d => 
+          recipeDifficulty.toLowerCase() === d.toLowerCase()
+        )
+        if (!hasDifficulty) return false
       }
       
       // Time filter
