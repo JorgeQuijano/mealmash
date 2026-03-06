@@ -24,9 +24,14 @@ export async function POST(req: Request) {
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
+        console.log('Processing checkout.session.completed event');
         const session = event.data.object as Stripe.Checkout.Session;
         const userId = session.metadata?.userId;
         const subscriptionId = session.subscription as string;
+        
+        console.log('Session metadata:', session.metadata);
+        console.log('UserId from session:', userId);
+        console.log('SubscriptionId:', subscriptionId);
 
         if (!userId) {
           console.error('No userId in checkout session metadata');
