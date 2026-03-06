@@ -53,8 +53,12 @@ export async function POST(req: Request) {
         console.log('Subscription current_period_end:', currentPeriodEnd);
 
         // Determine tier from price ID
-        const proPriceId = process.env.STRIPE_PRO_PRICE_ID;
-        const familyPriceId = process.env.STRIPE_FAMILY_PRICE_ID;
+        const proPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID;
+        const familyPriceId = process.env.NEXT_PUBLIC_STRIPE_FAMILY_PRICE_ID;
+        
+        console.log('Price from Stripe:', priceId);
+        console.log('Pro Price ID:', proPriceId);
+        console.log('Family Price ID:', familyPriceId);
 
         let tier: string = 'free';
         if (priceId === familyPriceId) {
@@ -207,8 +211,11 @@ async function handleSubscriptionUpdate(
   subscription: Stripe.Subscription
 ) {
   const priceId = subscription.items.data[0].price.id;
-  const proPriceId = process.env.STRIPE_PRO_PRICE_ID;
-  const familyPriceId = process.env.STRIPE_FAMILY_PRICE_ID;
+  const proPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID;
+  const familyPriceId = process.env.NEXT_PUBLIC_STRIPE_FAMILY_PRICE_ID;
+  
+  console.log('Price from Stripe (update):', priceId);
+  console.log('Pro Price ID (update):', proPriceId);
   const sub = subscription as any;
   let currentPeriodEnd = sub.current_period_end;
   if (!currentPeriodEnd) {
