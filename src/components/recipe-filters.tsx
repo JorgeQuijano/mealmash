@@ -110,7 +110,6 @@ export default function RecipeFilters({ isPro, filters, onFilterChange }: Recipe
     );
   }
 
-  // Pro users see all filters
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
