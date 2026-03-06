@@ -54,6 +54,8 @@ export default function ResetPasswordPage() {
         setError(error.message);
       } else {
         setSuccess(true);
+        // Sign out to require fresh login with new password
+        await supabase.auth.signOut();
         // Redirect to login after 2 seconds
         setTimeout(() => {
           router.push('/login');
