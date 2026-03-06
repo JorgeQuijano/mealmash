@@ -70,7 +70,10 @@ export function canAccessFeature(
   feature: keyof FeatureAccess
 ): boolean {
   const access = getFeatureAccess(tier);
-  return access[feature];
+  const value = access[feature];
+  // Handle both boolean and number types
+  if (typeof value === 'boolean') return value;
+  return value > 0 || value === -1;
 }
 
 // Helper functions
