@@ -7,95 +7,86 @@ Generate one creative, unique recipe every time you run. Vary:
 - Cuisines (Italian, Mexican, Asian, Indian, Mediterranean, American, etc.)
 - Categories (breakfast, lunch, dinner, snack, dessert)
 - Difficulties (Easy, Medium, Hard)
-- Dietary tags (Vegetarian, Vegan, Gluten-Free, Dairy-Free, Keto, Low-Carb, Nut-Free)
 
 ## Database Schema
 
 ### recipes table
 ```sql
 INSERT INTO recipes (
-  id,
-  name,
-  description,
-  instructions,
-  category,
-  cuisine,
-  dietary_tags,
-  difficulty,
-  prep_time_minutes,
-  cook_time_minutes,
-  servings,
-  image_url,
-  created_at,
-  updated_at
+  name, description, instructions, category, cuisine, dietary_tags, difficulty,
+  prep_time_minutes, cook_time_minutes, servings, image_url, created_at, updated_at
 ) VALUES (
-  gen_random_uuid(),
   'RECIPE NAME',
   'Short description (1-2 sentences)',
-  ARRAY['Step 1', 'Step 2', 'Step 3'],  -- Array of instructions
-  ARRAY['category1'],  -- breakfast, lunch, dinner, snack, dessert
-  ARRAY['Cuisine1'],   -- Italian, Mexican, Asian, etc.
-  ARRAY[]::text[],     -- Vegetarian, Vegan, Gluten-Free, etc.
+  ARRAY['Step 1', 'Step 2', 'Step 3'],
+  ARRAY['category'],
+  ARRAY['Cuisine'],
+  ARRAY[]::text[],
   'Easy|Medium|Hard',
-  15,   -- prep time in minutes
-  30,   -- cook time in minutes
-  4,    -- servings
-  '',   -- image_url (leave empty for now)
-  NOW(),
-  NOW()
-);
+  15, 30, 4, '', NOW(), NOW()
+) RETURNING id;
 ```
 
 ### ingredients table
-```sql
-INSERT INTO ingredients (id, name, category, is_enabled) VALUES
-(UUID, 'Ingredient Name', 'category', true)
-ON CONFLICT (id) DO NOTHING;
-```
-Categories: produce, dairy, meat, pantry, frozen, bakery, other
+You MUST use ingredients from the seed file: `/home/jquijanoq/.openclaw/workspace/mealmash/scripts/seed-ingredients.sql`
+
+Common ingredients available (use these exact names):
+- **Produce**: Apple, Banana, Orange, Lemon, Lime, Avocado, Tomato, Potato, Onion, Garlic, Ginger, Carrot, Bell Pepper, Broccoli, Spinach, Mushroom, Cucumber, Zucchini, Corn, Cabbage, Sweet Potato, Basil, Cilantro, Parsley, Mint, Rosemary, Thyme, Jalapeño, Salt, Black Pepper
+- **Dairy**: Butter, Milk, Cheese, Cream, Sour Cream, Eggs, Yogurt
+- **Meat**: Chicken, Beef, Pork, Bacon, Sausage, Ground Beef, Shrimp, Salmon, Tuna
+- **Pantry**: Flour, Sugar, Brown Sugar, Rice, Pasta, Olive Oil, Vegetable Oil, Soy Sauce, Vinegar, Honey, Chicken Broth, Beef Broth, Coconut Milk, Tomato Sauce, Diced Tomatoes, Beans, Chickpeas, Lentils, Breadcrumbs, Nuts
 
 ### recipe_ingredients table (junction)
 ```sql
 INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity, quantity_num, unit) VALUES
-(UUID, UUID, '1', 1, 'unit');
+(UUID, UUID, '1', 1, 'cups');
 ```
-Units: cups, tbsp, tsp, oz, lb, g, kg, ml, L, pieces, cloves, slices, whole
+
+## IMPORTANT: Workflow
+
+1. **SELECT existing ingredients first** to get their IDs:
+```sql
+SELECT id, name, category FROM ingredients WHERE name IN ('Ingredient1', 'Ingredient2', ...);
+```
+
+2. **INSERT the recipe** and capture the returned ID
+
+3. **INSERT recipe_ingredients** using the ingredient IDs from step 1
 
 ## Output Format
 
-1. First, generate a creative recipe
-2. Check if ingredients already exist in database (use simplified names)
-3. If new ingredient needed, include INSERT for ingredients table
-4. Always include recipe_ingredients linking everything
-5. Output ONLY the SQL - nothing else
+Generate a complete SQL script with:
+1. SELECT to get ingredient IDs
+2. INSERT for recipes (with RETURNING id)
+3. INSERT for recipe_ingredients
 
-## Example Output
+Example:
 ```sql
--- Recipe: Spicy Thai Basil Chicken
-INSERT INTO recipes (
-  id, name, description, instructions, category, cuisine, dietary_tags, difficulty,
-  prep_time_minutes, cook_time_minutes, servings, image_url, created_at, updated_at
-) VALUES (
-  gen_random_uuid(),
-  'Spicy Thai Basil Chicken',
-  'A quick and flavorful Thai stir-fry with holy basil, chilies, and tender chicken',
-  ARRAY['Mince chicken and chop vegetables', 'Heat oil in wok over high heat', 'Stir-fry chicken until cooked', 'Add chilies, garlic, and fish sauce', 'Toss in fresh basil leaves', 'Serve over jasmine rice'],
+-- Get ingredient IDs
+WITH ingredient_ids AS (
+  SELECT id, name FROM ingredients WHERE name IN ('Chicken Breast', 'Lemon', 'Garlic', 'Olive Oil', 'Rosemary', 'Salt', 'Black Pepper')
+)
+-- Insert recipe and link ingredients
+INSERT INTO recipes (name, description, instructions, category, cuisine, dietary_tags, difficulty, prep_time_minutes, cook_time_minutes, servings, image_url, created_at, updated_at)
+SELECT 
+  'Lemon Herb Roasted Chicken',
+  'Whole roasted chicken with lemon, garlic, and fresh rosemary',
+  ARRAY['Preheat oven to 425°F', 'Season chicken with salt, pepper, and olive oil', 'Stuff cavity with lemon and garlic', 'Roast for 1 hour until golden'],
   ARRAY['dinner'],
-  ARRAY['Thai', 'Asian'],
+  ARRAY['American'],
   ARRAY[]::text[],
   'Medium',
   15,
-  15,
-  2,
+  60,
+  4,
   '',
   NOW(),
   NOW()
-) RETURNING id;
+RETURNING id;
 ```
 
 ## Important Rules
-- Always use `gen_random_uuid()` for IDs or generate consistent UUIDs
-- Use proper SQL syntax
-- Include RETURNING id on recipe insert so you can use it for recipe_ingredients
+- ALWAYS use existing ingredients from the database (SELECT first)
+- Include 4-12 ingredients per recipe
 - Make recipes practical and delicious
 - Vary cuisines and difficulties each time
