@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase, getUser } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
@@ -37,16 +37,6 @@ type Recipe = {
 
 const categories = ["all", "breakfast", "lunch", "dinner", "snack", "dessert"]
 
-// Card colors for visual variety
-const cardColors = [
-  "from-orange-500 to-amber-500",
-  "from-green-500 to-emerald-500",
-  "from-yellow-500 to-amber-400",
-  "from-emerald-500 to-teal-500",
-  "from-purple-500 to-pink-500",
-  "from-blue-500 to-cyan-500",
-]
-
 export default function RandomPage() {
   const router = useRouter()
   const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -59,9 +49,8 @@ export default function RandomPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [showOnlyMatch, setShowOnlyMatch] = useState(false)
   
-  // Card shuffle state
-  const [shufflePhase, setShufflePhase] = useState<"idle" | "shuffling" | "revealing">("idle")
-  const [currentCardIndex, setCurrentCardIndex] = useState(0)
+  // Cycling text state
+  const [cycleIndex, setCycleIndex] = useState(0)
   const [winnerIndex, setWinnerIndex] = useState(-1)
 
   useEffect(() => {
@@ -137,7 +126,7 @@ export default function RandomPage() {
     setLoading(false)
   }
 
-  function shuffleCards() {
+  function spin() {
     if (isSpinning || recipes.length === 0) return
 
     // Check spin limit
@@ -151,55 +140,47 @@ export default function RandomPage() {
     setTodaySpins(prev => prev + 1)
     setIsSpinning(true)
     setSelectedRecipe(null)
-    setShufflePhase("shuffling")
-    setWinnerIndex(-1)
 
-    // Pick a random winner index
+    // Pick a random winner
     const winIdx = Math.floor(Math.random() * recipes.length)
     setWinnerIndex(winIdx)
     const selected = recipes[winIdx]
 
-    // Start cycling through cards - fast at first, then slow down
-    setCurrentCardIndex(0)
-    
-    let speed = 80  // Starting speed (ms per card)
+    // Start cycling through names - fast at first, then slow down
+    let speed = 60  // Starting speed (ms per name)
     let cardCounter = 0
-    let maxCards = 15 + Math.floor(Math.random() * 10) // Show 15-25 cards total
+    let maxCards = 20 + Math.floor(Math.random() * 15) // Show 20-35 names total
     
-    function cycleCard() {
-      setCurrentCardIndex(prev => {
+    function cycleName() {
+      setCycleIndex(prev => {
         const next = (prev + 1) % recipes.length
         cardCounter++
         
-        // Check if we should slow down
         const remaining = maxCards - cardCounter
         
         if (remaining <= 0) {
-          // Done! Reveal the winner
-          setShufflePhase("revealing")
+          // Done! Show the winner
           setTimeout(() => {
             setSelectedRecipe(selected)
-            setCurrentCardIndex(winIdx) // Ensure we show the winner
+            setCycleIndex(winIdx)
             setIsSpinning(false)
-            setShufflePhase("idle")
-          }, 600)
+          }, 400)
           return next
         }
         
         // Slow down exponentially as we approach the end
-        if (remaining < 8) {
-          speed = speed * 1.25 // Slow down gradually
-        } else if (remaining < 4) {
-          speed = speed * 1.5 // Last few cards slow down more
+        if (remaining < 10) {
+          speed = speed * 1.3
+        } else if (remaining < 5) {
+          speed = speed * 1.5
         }
         
-        setTimeout(cycleCard, speed)
+        setTimeout(cycleName, speed)
         return next
       })
     }
     
-    // Start the cycling
-    setTimeout(cycleCard, speed)
+    setTimeout(cycleName, speed)
   }
 
   const getCategoryColor = (category: string | string[]) => {
@@ -214,13 +195,6 @@ export default function RandomPage() {
     return colors[cat] || "bg-gray-100 text-gray-800"
   }
 
-  // Show inline loading spinner during filter changes
-  const LoadingSpinner = () => (
-    <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-xl z-30">
-      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-    </div>
-  )
-
   if (loading && recipes.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -229,8 +203,7 @@ export default function RandomPage() {
     )
   }
 
-  // Get current card being shown
-  const currentCard = recipes[currentCardIndex]
+  const currentRecipe = recipes[cycleIndex]
 
   return (
     <div className="min-h-screen bg-background pb-safe">
@@ -242,7 +215,7 @@ export default function RandomPage() {
         <div className="text-center mb-4 hidden md:block">
           <h2 className="text-4xl font-bold mb-4">🎲 Can&apos;t Decide? Let Fate Choose!</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Shuffle the cards and let the universe pick your next meal. Adventure awaits!
+            Spin the wheel and let the universe pick your next meal. Adventure awaits!
           </p>
         </div>
 
@@ -294,68 +267,49 @@ export default function RandomPage() {
         )}
 
         <div className="flex flex-col lg:flex-row items-center justify-center gap-8">
-          {/* Card Cycling Section */}
-          <div className="relative w-full max-w-sm flex flex-col items-center">
+          {/* Cycling Text Display */}
+          <div className="w-full max-w-sm flex flex-col items-center">
             
-            {/* Card Display Area */}
-            <div className="w-56 h-80 mb-6 relative flex items-center justify-center">
-              {/* Background cards to show motion blur effect when spinning */}
-              {shufflePhase === "shuffling" && (
-                <>
-                  <div className="absolute w-52 h-72 -translate-x-16 rotate-[-8deg] opacity-40">
-                    <div className="w-full h-full rounded-xl bg-gradient-to-br from-gray-400 to-gray-600" />
-                  </div>
-                  <div className="absolute w-52 h-72 translate-x-16 rotate-[8deg] opacity-40">
-                    <div className="w-full h-full rounded-xl bg-gradient-to-br from-gray-400 to-gray-600" />
-                  </div>
-                </>
-              )}
-              
-              {/* Main Card */}
-              {currentCard && (
-                <div 
-                  key={currentCard.id}
-                  className={`w-52 h-72 rounded-2xl shadow-2xl bg-gradient-to-br ${cardColors[currentCardIndex % cardColors.length]} flex flex-col items-center justify-center p-5 text-white transition-all duration-300 ${shufflePhase === "revealing" ? 'scale-110 ring-4 ring-white ring-offset-4' : ''}`}
-                >
-                  {shufflePhase === "shuffling" ? (
-                    // Show card backs during shuffle
-                    <>
-                      <div className="text-6xl mb-3">🎴</div>
-                      <div className="text-2xl font-bold">???</div>
-                    </>
-                  ) : (
-                    // Show actual card content
-                    <>
-                      <div className="text-5xl mb-3">🍽️</div>
-                      <h3 className="text-xl font-bold text-center leading-tight">{currentCard.name}</h3>
-                      <p className="text-xs text-white/80 text-center mt-2 line-clamp-2">{currentCard.description}</p>
-                      <div className="mt-auto pt-3 flex gap-2">
-                        <Badge className="bg-white/20 text-white text-xs">
-                          {Array.isArray(currentCard.category) ? currentCard.category[0] : currentCard.category}
-                        </Badge>
-                      </div>
-                    </>
-                  )}
+            {/* Display Box */}
+            <div className="w-full mb-6 relative">
+              {/* Dice/Spinner Icon */}
+              <div className="text-center mb-4">
+                <div className={`text-8xl transition-all duration-200 ${isSpinning ? 'animate-bounce' : ''}`}>
+                  {isSpinning ? '🎲' : selectedRecipe ? '✨' : '🎯'}
                 </div>
-              )}
+              </div>
               
-              {/* Loading overlay */}
-              {loading && <LoadingSpinner />}
+              {/* Cycling Name Display */}
+              <div className="bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500 rounded-2xl p-8 shadow-2xl">
+                <div className="text-center">
+                  <p className="text-white/60 text-sm mb-2 uppercase tracking-wider font-medium">
+                    {isSpinning ? 'Picking...' : selectedRecipe ? 'Your Choice!' : 'Ready?'}
+                  </p>
+                  <h3 className={`text-3xl md:text-4xl font-bold text-white transition-all duration-300 ${isSpinning ? 'blur-sm' : ''}`}>
+                    {currentRecipe?.name || '???'}
+                  </h3>
+                </div>
+              </div>
+              
+              {/* Blur effect during spin */}
+              {isSpinning && (
+                <div className="absolute inset-0 bg-gradient-to-t from-orange-500/20 to-transparent rounded-2xl pointer-events-none" />
+              )}
             </div>
 
-            {/* Shuffle Button */}
+            {/* Spin Button */}
             <Button
-              onClick={shuffleCards}
+              onClick={spin}
               disabled={isSpinning || recipes.length === 0}
-              className={`w-40 h-14 rounded-full text-lg font-bold shadow-2xl ${isSpinning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'} bg-gradient-to-br from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600`}
+              className={`w-48 h-16 rounded-full text-xl font-bold shadow-2xl ${isSpinning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'} bg-gradient-to-br from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600`}
             >
               {isSpinning ? (
                 <span className="flex items-center gap-2">
-                  <span className="animate-spin">🔄</span>
-                  {shufflePhase === "revealing" ? "Revealing..." : "Shuffling..."}
+                  <span className="animate-spin">⚙️</span>
+                  Picking...
                 </span>
               ) : (
-                <span>🎴 Shuffle!</span>
+                <span>🎲 SPIN!</span>
               )}
             </Button>
             
@@ -404,10 +358,10 @@ export default function RandomPage() {
                     </Button>
                     <Button 
                       variant="outline"
-                      onClick={shuffleCards}
+                      onClick={spin}
                       disabled={isSpinning}
                     >
-                      🎴 Shuffle Again
+                      🎲 Spin Again
                     </Button>
                   </div>
                 </CardContent>
@@ -418,14 +372,14 @@ export default function RandomPage() {
                   <div className="text-6xl mb-4">🎯</div>
                   <h3 className="text-xl font-semibold mb-2">Ready to Discover?</h3>
                   <p className="text-muted-foreground mb-4">
-                    Click shuffle and let your next meal be a surprise!
+                    Click spin and let your next meal be a surprise!
                   </p>
                   <Button 
-                    onClick={shuffleCards}
+                    onClick={spin}
                     disabled={isSpinning || recipes.length === 0}
                     className="bg-gradient-to-r from-orange-500 to-amber-500"
                   >
-                    🎴 Shuffle Cards
+                    🎲 Spin the Wheel
                   </Button>
                 </CardContent>
               </Card>
