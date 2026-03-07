@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 
 import MobileNav from "@/components/mobile-nav"
 import ExpiringRecipeModal from "@/components/ExpiringRecipeModal"
+import RecipeModal from "@/components/recipe-modal"
 
 // Helper to parse category from any format to string array
 function parseCategory(cat: any): string[] {
@@ -51,6 +52,8 @@ export default function DashboardPage() {
   const [expiringSoonItems, setExpiringSoonItems] = useState<any[]>([])
   const [expiringWeekItems, setExpiringWeekItems] = useState<any[]>([])
   const [todaysMeals, setTodaysMeals] = useState<any[]>([])
+  const [selectedRecipe, setSelectedRecipe] = useState<any>(null)
+  const [pantryItems, setPantryItems] = useState<any[]>([])
   const [selectedExpiringItem, setSelectedExpiringItem] = useState<any>(null)
 
   useEffect(() => {
@@ -118,6 +121,13 @@ export default function DashboardPage() {
       .order('meal_type', { ascending: true })
 
     setTodaysMeals(meals || [])
+
+    // Load pantry items for recipe modal
+    const { data: pantry } = await supabase
+      .from('pantry_items')
+      .select('*')
+      .eq('user_id', userId)
+    setPantryItems(pantry || [])
 
     // Get expiration alerts
     const todayDate = new Date()
@@ -194,14 +204,14 @@ export default function DashboardPage() {
         {todaysMeals.length > 0 && (
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-              🍽️ Tonight&apos;s Dinner
+              🍽️ Today's Meals
             </h3>
             <div className="space-y-2">
               {todaysMeals.map((meal) => (
                 <Card 
                   key={meal.id} 
                   className="hover:shadow-md cursor-pointer border-primary/20"
-                  onClick={() => router.push("/meal-plan")}
+                  onClick={() => setSelectedRecipe(meal.recipes)}
                 >
                   <CardContent className="p-2 flex items-center justify-between gap-2">
                     <p className="font-medium text-sm truncate">{meal.recipes?.name || 'Recipe'}</p>
@@ -385,6 +395,16 @@ export default function DashboardPage() {
           <ExpiringRecipeModal 
             expiringItem={selectedExpiringItem}
             onClose={() => setSelectedExpiringItem(null)}
+          />
+        )}
+
+        {/* Recipe Detail Modal */}
+        {selectedRecipe && (
+          <RecipeModal
+            recipe={selectedRecipe}
+            user={user}
+            pantryItems={pantryItems}
+            onClose={() => setSelectedRecipe(null)}
           />
         )}
       </main>
