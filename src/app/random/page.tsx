@@ -266,42 +266,37 @@ export default function RandomPage() {
           </div>
         )}
 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-8">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-6">
           {/* Cycling Text Display */}
           <div className="w-full max-w-sm flex flex-col items-center">
             
-            {/* Display Box */}
-            <div className="w-full mb-6 relative">
-              {/* Dice/Spinner Icon */}
-              <div className="text-center mb-4">
-                <div className={`text-8xl transition-all duration-200 ${isSpinning ? 'animate-bounce' : ''}`}>
+            {/* Display Box - Compact */}
+            <div className="w-full mb-4">
+              {/* Emoji - Smaller */}
+              <div className="text-center mb-2">
+                <div className={`text-5xl transition-all duration-200 ${isSpinning ? 'animate-bounce' : ''}`}>
                   {isSpinning ? '🎲' : selectedRecipe ? '✨' : '🎯'}
                 </div>
               </div>
               
-              {/* Cycling Name Display */}
-              <div className="bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500 rounded-2xl p-8 shadow-2xl">
+              {/* Cycling Name Display - More compact */}
+              <div className="bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500 rounded-xl p-4 shadow-lg">
                 <div className="text-center">
-                  <p className="text-white/60 text-sm mb-2 uppercase tracking-wider font-medium">
+                  <p className="text-white/60 text-xs mb-1 uppercase tracking-wider font-medium">
                     {isSpinning ? 'Picking...' : selectedRecipe ? 'Your Choice!' : 'Ready?'}
                   </p>
-                  <h3 className={`text-3xl md:text-4xl font-bold text-white transition-all duration-300 ${isSpinning ? 'blur-sm' : ''}`}>
+                  <h3 className={`text-2xl md:text-3xl font-bold text-white transition-all duration-300 ${isSpinning ? 'blur-sm' : ''}`}>
                     {currentRecipe?.name || '???'}
                   </h3>
                 </div>
               </div>
-              
-              {/* Blur effect during spin */}
-              {isSpinning && (
-                <div className="absolute inset-0 bg-gradient-to-t from-orange-500/20 to-transparent rounded-2xl pointer-events-none" />
-              )}
             </div>
 
-            {/* Spin Button */}
+            {/* Spin Button - Smaller */}
             <Button
               onClick={spin}
               disabled={isSpinning || recipes.length === 0}
-              className={`w-48 h-16 rounded-full text-xl font-bold shadow-2xl ${isSpinning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'} bg-gradient-to-br from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600`}
+              className={`w-36 h-12 rounded-full text-lg font-bold shadow-lg ${isSpinning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'} bg-gradient-to-br from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600`}
             >
               {isSpinning ? (
                 <span className="flex items-center gap-2">
@@ -313,38 +308,38 @@ export default function RandomPage() {
               )}
             </Button>
             
-            {/* Recipe count */}
-            <p className="text-sm text-muted-foreground mt-3">
-              {recipes.length} recipes to choose from
+            {/* Recipe count - Smaller text */}
+            <p className="text-xs text-muted-foreground mt-2">
+              {recipes.length} recipes
             </p>
           </div>
 
-          {/* Result Section */}
+          {/* Result Section - More compact */}
           <div className="w-full max-w-md">
             {selectedRecipe ? (
-              <Card className="animate-slide-up shadow-xl border-2 border-primary/20">
+              <Card className="animate-slide-up shadow-lg border-2 border-primary/20">
                 <CardHeader className="text-center pb-2">
-                  <div className="text-6xl mb-4">✨ Your Choice! ✨</div>
-                  <CardTitle className="text-2xl gradient-text">{selectedRecipe.name}</CardTitle>
-                  <CardDescription>{selectedRecipe.description}</CardDescription>
+                  <div className="text-4xl mb-2">✨ Your Choice! ✨</div>
+                  <CardTitle className="text-xl gradient-text">{selectedRecipe.name}</CardTitle>
+                  <CardDescription className="text-sm">{selectedRecipe.description}</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-center gap-2 flex-wrap">
+                <CardContent className="space-y-3">
+                  <div className="flex justify-center gap-1 flex-wrap">
                     <Badge className={getCategoryColor(selectedRecipe.category)}>
                       {Array.isArray(selectedRecipe.category) ? selectedRecipe.category.join(', ') : selectedRecipe.category}
                     </Badge>
-                    <Badge variant="outline">⏱️ {selectedRecipe.prep_time_minutes + selectedRecipe.cook_time_minutes} min</Badge>
-                    <Badge variant="outline">👥 {selectedRecipe.servings} servings</Badge>
+                    <Badge variant="outline" className="text-xs">⏱️ {selectedRecipe.prep_time_minutes + selectedRecipe.cook_time_minutes}m</Badge>
+                    <Badge variant="outline" className="text-xs">👥 {selectedRecipe.servings}</Badge>
                   </div>
 
-                  <div className="bg-muted rounded-lg p-4">
-                    <h3 className="font-semibold mb-2">🥕 Ingredients</h3>
-                    <ul className="text-sm text-muted-foreground space-y-1">
+                  <div className="bg-muted rounded-lg p-3">
+                    <h4 className="font-semibold text-sm mb-1">🥕 Ingredients</h4>
+                    <ul className="text-xs text-muted-foreground space-y-0.5">
                       {selectedRecipe.recipe_ingredients?.slice(0, 5).map((ing: any, i: number) => (
                         <li key={i}>• {ing.quantity_num || ing.quantity} {ing.unit} {ing.ingredients?.name}</li>
                       ))}
                       {selectedRecipe.recipe_ingredients && selectedRecipe.recipe_ingredients.length > 5 && (
-                        <li className="text-primary">+ {selectedRecipe.recipe_ingredients.length - 5} more...</li>
+                        <li className="text-primary text-xs">+ {selectedRecipe.recipe_ingredients.length - 5} more...</li>
                       )}
                     </ul>
                   </div>
@@ -361,17 +356,17 @@ export default function RandomPage() {
                       onClick={spin}
                       disabled={isSpinning}
                     >
-                      🎲 Spin Again
+                      🎲 Again
                     </Button>
                   </div>
                 </CardContent>
               </Card>
             ) : (
-              <Card className="shadow-xl border-2 border-dashed border-muted">
-                <CardContent className="py-12 text-center">
-                  <div className="text-6xl mb-4">🎯</div>
-                  <h3 className="text-xl font-semibold mb-2">Ready to Discover?</h3>
-                  <p className="text-muted-foreground mb-4">
+              <Card className="shadow-lg border-2 border-dashed border-muted">
+                <CardContent className="py-8 text-center">
+                  <div className="text-4xl mb-2">🎯</div>
+                  <h3 className="text-lg font-semibold mb-1">Ready to Discover?</h3>
+                  <p className="text-muted-foreground text-sm mb-3">
                     Click spin and let your next meal be a surprise!
                   </p>
                   <Button 
