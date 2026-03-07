@@ -203,11 +203,8 @@ export default function DashboardPage() {
                   className="hover:shadow-md cursor-pointer border-primary/20"
                   onClick={() => router.push("/meal-plan")}
                 >
-                  <CardContent className="p-4 flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">{meal.recipes?.name || 'Recipe'}</p>
-                      <p className="text-sm text-muted-foreground capitalize">{meal.meal_type}</p>
-                    </div>
+                  <CardContent className="p-2 flex items-center justify-between gap-2">
+                    <p className="font-medium text-sm truncate">{meal.recipes?.name || 'Recipe'}</p>
                     {parseCategory(meal.recipes?.category).map((cat) => (
                       <Badge key={cat} className={getCategoryColor(cat)}>
                         {cat}
