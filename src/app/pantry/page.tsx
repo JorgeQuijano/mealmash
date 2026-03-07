@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 import MobileNav from "@/components/mobile-nav"
 import { getPantryItemLimit } from "@/lib/feature-gate"
+import { Crown } from "lucide-react"
 
 interface Ingredient {
   id: string
@@ -383,7 +384,11 @@ export default function PantryPage() {
             </p>
           </div>
           <Badge variant="outline" className="text-lg py-1">
-            {items.length} {limit === -1 ? '/ Unlimited' : `/ ${limit}`} {limit !== -1 && <span className="text-muted-foreground">(Free plan)</span>}
+            {items.length} {limit === -1 ? (
+              <span className="ml-2 bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full text-sm">
+                <Crown className="w-3 h-3 inline mr-1" /> Pro
+              </span>
+            ) : `/ ${limit} ${limit !== -1 && <span className="text-muted-foreground">(Free plan)</span>}`}
           </Badge>
         </div>
 
