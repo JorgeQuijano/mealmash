@@ -37,6 +37,20 @@ type Recipe = {
 
 const categories = ["all", "breakfast", "lunch", "dinner", "snack", "dessert"]
 
+// Helper to parse category from any format to string array
+function parseCategory(cat: any): string[] {
+  if (Array.isArray(cat)) return cat
+  if (typeof cat === 'string') {
+    try {
+      const parsed = JSON.parse(cat)
+      return Array.isArray(parsed) ? parsed : [parsed]
+    } catch {
+      return [cat]
+    }
+  }
+  return [String(cat)]
+}
+
 export default function RandomPage() {
   const router = useRouter()
   const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -183,8 +197,9 @@ export default function RandomPage() {
     setTimeout(cycleName, speed)
   }
 
-  const getCategoryColor = (category: string | string[]) => {
-    const cat = Array.isArray(category) ? category[0] : category
+  const getCategoryColor = (category: any) => {
+    const cats = parseCategory(category)
+    const cat = cats[0]
     const colors: Record<string, string> = {
       breakfast: "bg-yellow-100 text-yellow-800",
       lunch: "bg-green-100 text-green-800",
@@ -326,7 +341,7 @@ export default function RandomPage() {
                 <CardContent className="space-y-3">
                   <div className="flex justify-center gap-1 flex-wrap">
                     <Badge className={getCategoryColor(selectedRecipe.category)}>
-                      {Array.isArray(selectedRecipe.category) ? selectedRecipe.category.join(', ') : selectedRecipe.category}
+                      {parseCategory(selectedRecipe.category).join(', ')}
                     </Badge>
                     <Badge variant="outline" className="text-xs">⏱️ {selectedRecipe.prep_time_minutes + selectedRecipe.cook_time_minutes}m</Badge>
                     <Badge variant="outline" className="text-xs">👥 {selectedRecipe.servings}</Badge>
