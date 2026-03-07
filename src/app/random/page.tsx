@@ -35,19 +35,17 @@ type Recipe = {
   recipe_ingredients?: RecipeIngredient[]
 }
 
-// Wheel colors matching MealClaw theme
-const wheelColors = [
-  "#f97316", // orange
-  "#84cc16", // green
-  "#fbbf24", // yellow
-  "#22c55e", // emerald
-  "#eab308", // amber
-  "#f97316", // orange
-  "#84cc16", // green
-  "#fbbf24", // yellow
-]
-
 const categories = ["all", "breakfast", "lunch", "dinner", "snack", "dessert"]
+
+// Card shuffle colors
+const cardColors = [
+  "from-orange-500 to-amber-500",
+  "from-green-500 to-emerald-500",
+  "from-yellow-500 to-amber-400",
+  "from-emerald-500 to-teal-500",
+  "from-purple-500 to-pink-500",
+  "from-blue-500 to-cyan-500",
+]
 
 export default function RandomPage() {
   const router = useRouter()
@@ -58,10 +56,13 @@ export default function RandomPage() {
   const [user, setUser] = useState<any>(null)
   const [pantryItems, setPantryItems] = useState<any[]>([])
   const [showModal, setShowModal] = useState(false)
-  const [rotation, setRotation] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [showOnlyMatch, setShowOnlyMatch] = useState(false)
-  const wheelRef = useRef<HTMLDivElement>(null)
+  
+  // Card shuffle state
+  const [shufflePhase, setShufflePhase] = useState<"idle" | "shuffling" | "revealing">("idle")
+  const [visibleCards, setVisibleCards] = useState<Recipe[]>([])
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1)
 
   useEffect(() => {
     loadRecipes()
@@ -73,7 +74,6 @@ export default function RandomPage() {
 
   const [profile, setProfile] = useState<any>(null)
   const [todaySpins, setTodaySpins] = useState(0)
-  const todayDate = new Date().toDateString()
 
   async function loadUser() {
     const currentUser = await getUser()
@@ -137,7 +137,7 @@ export default function RandomPage() {
     setLoading(false)
   }
 
-  function spinWheel() {
+  function shuffleCards() {
     if (isSpinning || recipes.length === 0) return
 
     // Check spin limit
@@ -151,26 +151,64 @@ export default function RandomPage() {
     setTodaySpins(prev => prev + 1)
     setIsSpinning(true)
     setSelectedRecipe(null)
+    setShufflePhase("shuffling")
+
+    // Pick a random recipe from the filtered list
+    const randomIndex = Math.floor(Math.random() * recipes.length)
+    const selected = recipes[randomIndex]
     
-    // Calculate random spin
-    const spinCount = 5 + Math.floor(Math.random() * 3) // 5-7 full rotations
-    const randomDegree = Math.floor(Math.random() * 360)
-    const totalRotation = spinCount * 360 + randomDegree
+    // Get 5-7 cards for the shuffle (or fewer if not enough recipes)
+    const numVisibleCards = Math.min(7, recipes.length)
+    let shuffleCards: Recipe[] = []
     
-    setRotation(prev => prev + totalRotation)
+    // Create an array of indices and shuffle them
+    const indices = Array.from({ length: recipes.length }, (_, i) => i)
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
     
-    // Calculate which segment is selected
-    setTimeout(() => {
-      // Normalize rotation to 0-360
-      const normalizedRotation = (rotation + totalRotation) % 360
-      // Each segment is 360 / number of recipes degrees
-      const segmentSize = 360 / recipes.length
-      // The pointer is at the top (0 degrees), so we need to calculate which segment it points to
-      const selectedIndex = Math.floor((360 - normalizedRotation + segmentSize / 2) % 360 / segmentSize)
-      
-      setSelectedRecipe(recipes[selectedIndex])
-      setIsSpinning(false)
-    }, 4000) // Match with CSS animation duration
+    // Take the first N indices for visible cards
+    const visibleIndices = indices.slice(0, numVisibleCards)
+    shuffleCards = visibleIndices.map(i => recipes[i])
+    
+    // Make sure our selected recipe is in the visible cards
+    if (!shuffleCards.find(r => r.id === selected.id)) {
+      shuffleCards[Math.floor(Math.random() * shuffleCards.length)] = selected
+    }
+    
+    setVisibleCards(shuffleCards)
+    setSelectedIndex(shuffleCards.findIndex(r => r.id === selected.id))
+
+    // Shuffle animation - cards swap positions multiple times
+    let shuffleCount = 0
+    const shuffleInterval = setInterval(() => {
+      setVisibleCards((prev: Recipe[]) => {
+        if (prev.length <= 1) return prev
+        const shuffled: Recipe[] = [...prev]
+        // Swap 2 random cards
+        const i1 = Math.floor(Math.random() * shuffled.length)
+        let i2 = Math.floor(Math.random() * shuffled.length)
+        while (i2 === i1 && shuffled.length > 1) {
+          i2 = Math.floor(Math.random() * shuffled.length)
+        }
+        const temp = shuffled[i1]
+        shuffled[i1] = shuffled[i2]
+        shuffled[i2] = temp
+        return shuffled
+      })
+      shuffleCount++
+      if (shuffleCount >= 15) {
+        clearInterval(shuffleInterval)
+        // Reveal phase
+        setShufflePhase("revealing")
+        setTimeout(() => {
+          setSelectedRecipe(selected)
+          setIsSpinning(false)
+          setShufflePhase("idle")
+        }, 800)
+      }
+    }, 150)
   }
 
   const getCategoryColor = (category: string | string[]) => {
@@ -185,9 +223,9 @@ export default function RandomPage() {
     return colors[cat] || "bg-gray-100 text-gray-800"
   }
 
-  // Show inline loading spinner on wheel during filter changes
+  // Show inline loading spinner during filter changes
   const LoadingSpinner = () => (
-    <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-full z-30">
+    <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-xl z-30">
       <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
     </div>
   )
@@ -206,12 +244,11 @@ export default function RandomPage() {
       <MobileNav />
 
       <main className="container mx-auto px-4 py-3 md:py-8">
-        {/* Hero Section */}
         {/* Hero Section - hidden on mobile */}
         <div className="text-center mb-4 hidden md:block">
           <h2 className="text-4xl font-bold mb-4">🎲 Can&apos;t Decide? Let Fate Choose!</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Spin the wheel and let the universe pick your next meal. Adventure awaits!
+            Shuffle the cards and let the universe pick your next meal. Adventure awaits!
           </p>
         </div>
 
@@ -262,77 +299,93 @@ export default function RandomPage() {
           </div>
         )}
 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-12">
-          {/* Wheel Section */}
-          <div className="relative">
-            {/* Pointer */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 z-20">
-              <div className="w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-t-[30px] border-t-primary drop-shadow-lg"></div>
-            </div>
-            
-            {/* Wheel */}
-            <div 
-              ref={wheelRef}
-              className="relative w-[350px] h-[350px] md:w-[450px] md:h-[450px] rounded-full shadow-2xl"
-              style={{
-                background: `conic-gradient(${recipes.map((_, i) => 
-                  `${wheelColors[i % wheelColors.length]} ${(i * 360 / recipes.length)}deg ${((i + 1) * 360 / recipes.length)}deg`
-                ).join(', ')})`,
-                transform: `rotate(${rotation}deg)`,
-                transition: isSpinning ? 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)' : 'none',
-              }}
-            >
-              {/* Inline loading spinner - shows when filtering */}
-              {loading && <LoadingSpinner />}
-              {/* Center circle */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 md:w-32 md:h-32 bg-white rounded-full shadow-inner flex items-center justify-center">
-                <div className="text-center">
-                  <span className="text-3xl md:text-4xl">🍽️</span>
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-8">
+          {/* Card Shuffle Section */}
+          <div className="relative w-full max-w-md h-[320px] flex items-center justify-center">
+            {/* Card Stack */}
+            <div className="relative w-48 h-64">
+              {visibleCards.length > 0 ? (
+                visibleCards.map((recipe, index) => {
+                  // Calculate card position - fan out effect
+                  const totalCards = visibleCards.length
+                  const centerIndex = (totalCards - 1) / 2
+                  const offset = (index - centerIndex) * 30
+                  const isSelected = index === selectedIndex && shufflePhase === "revealing"
+                  
+                  // During shuffle, randomize positions slightly
+                  let translateX = offset
+                  let translateY = 0
+                  let rotate = offset * 0.5
+                  let scale = 1
+                  let zIndex = totalCards - Math.abs(index - centerIndex)
+                  
+                  if (shufflePhase === "shuffling") {
+                    // Add some chaos during shuffle
+                    translateX = offset + (Math.random() - 0.5) * 20
+                    translateY = (Math.random() - 0.5) * 10
+                    rotate = offset * 0.5 + (Math.random() - 0.5) * 10
+                    zIndex = Math.random() * 100
+                  }
+                  
+                  if (isSelected) {
+                    scale = 1.1
+                    zIndex = 100
+                    translateY = -20
+                  }
+                  
+                  return (
+                    <div
+                      key={`${recipe.id}-${index}`}
+                      className="absolute w-48 h-64 transition-all duration-300"
+                      style={{
+                        transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotate}deg) scale(${scale})`,
+                        zIndex,
+                      }}
+                    >
+                      <div className={`w-full h-full rounded-xl shadow-2xl bg-gradient-to-br ${cardColors[index % cardColors.length]} flex flex-col items-center justify-center p-4 text-white ${isSelected ? 'ring-4 ring-white ring-offset-4' : ''}`}>
+                        {isSelected ? (
+                          <>
+                            <div className="text-4xl mb-2">✨</div>
+                            <h3 className="text-lg font-bold text-center">{recipe.name}</h3>
+                            <p className="text-xs text-white/80 text-center mt-1 line-clamp-2">{recipe.description}</p>
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-5xl mb-3">🍽️</div>
+                            <div className="text-3xl font-bold">?</div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })
+              ) : (
+                // Empty state - show placeholder card
+                <div className="w-48 h-64 rounded-xl shadow-2xl bg-gradient-to-br from-gray-400 to-gray-600 flex flex-col items-center justify-center p-4 text-white">
+                  <div className="text-5xl mb-3">🎴</div>
+                  <div className="text-xl font-bold">Ready to Shuffle</div>
                 </div>
-              </div>
+              )}
               
-              {/* Recipe labels around the wheel */}
-              {recipes.map((recipe, i) => {
-                const angle = (i * 360 / recipes.length) + (180 / recipes.length)
-                const radians = (angle * Math.PI) / 180
-                const radius = 150 // Adjust for label distance from center
-                const x = 180 + radius * Math.sin(radians) // Center of wheel + offset
-                const y = 180 - radius * Math.cos(radians)
-                
-                return (
-                  <div
-                    key={recipe.id}
-                    className="absolute text-xs font-medium text-white text-center px-1 leading-tight drop-shadow-md"
-                    style={{
-                      left: '50%',
-                      top: '50%',
-                      transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-140px) rotate(-${angle}deg)`,
-                      maxWidth: '80px',
-                    }}
-                  >
-                    {recipe.name.length > 15 ? recipe.name.substring(0, 15) + '...' : recipe.name}
-                  </div>
-                )
-              })}
+              {/* Loading overlay */}
+              {loading && <LoadingSpinner />}
             </div>
 
-            {/* Spin Button */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 mt-32">
-              <Button
-                onClick={spinWheel}
-                disabled={isSpinning}
-                className={`w-32 h-32 rounded-full text-xl font-bold shadow-2xl ${isSpinning ? 'opacity-50 cursor-not-allowed' : 'animate-pulse-glow hover:scale-110'} bg-gradient-to-br from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600`}
-              >
-                {isSpinning ? (
-                  <span className="flex flex-col items-center">
-                    <span className="animate-spin text-2xl mb-1">⚙️</span>
-                    <span>Spinning...</span>
-                  </span>
-                ) : (
-                  <span>SPIN!</span>
-                )}
-              </Button>
-            </div>
+            {/* Shuffle Button */}
+            <Button
+              onClick={shuffleCards}
+              disabled={isSpinning || recipes.length === 0}
+              className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-14 rounded-full text-lg font-bold shadow-2xl ${isSpinning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'} bg-gradient-to-br from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600`}
+            >
+              {isSpinning ? (
+                <span className="flex items-center gap-2">
+                  <span className="animate-spin">🔄</span>
+                  Shuffling...
+                </span>
+              ) : (
+                <span>🎴 Shuffle!</span>
+              )}
+            </Button>
           </div>
 
           {/* Result Section */}
@@ -374,10 +427,10 @@ export default function RandomPage() {
                     </Button>
                     <Button 
                       variant="outline"
-                      onClick={spinWheel}
+                      onClick={shuffleCards}
                       disabled={isSpinning}
                     >
-                      🎲 Spin Again
+                      🎴 Shuffle Again
                     </Button>
                   </div>
                 </CardContent>
@@ -388,14 +441,14 @@ export default function RandomPage() {
                   <div className="text-6xl mb-4">🎯</div>
                   <h3 className="text-xl font-semibold mb-2">Ready to Discover?</h3>
                   <p className="text-muted-foreground mb-4">
-                    Click the spin button and let your next meal be a surprise!
+                    Click shuffle and let your next meal be a surprise!
                   </p>
                   <Button 
-                    onClick={spinWheel}
-                    disabled={isSpinning}
+                    onClick={shuffleCards}
+                    disabled={isSpinning || recipes.length === 0}
                     className="bg-gradient-to-r from-orange-500 to-amber-500"
                   >
-                    🎲 Spin the Wheel
+                    🎴 Shuffle Cards
                   </Button>
                 </CardContent>
               </Card>
