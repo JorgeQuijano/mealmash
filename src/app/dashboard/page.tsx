@@ -115,7 +115,19 @@ export default function DashboardPage() {
     const today = new Date().toISOString().split('T')[0]
     const { data: meals } = await supabase
       .from('meal_plans')
-      .select('*, recipes(*)')
+      .select(`
+        *,
+        recipes (
+          *,
+          recipe_ingredients (
+            ingredient_id,
+            quantity,
+            quantity_num,
+            unit,
+            ingredients (name, category)
+          )
+        )
+      `)
       .eq('user_id', userId)
       .eq('planned_date', today)
       .order('meal_type', { ascending: true })
