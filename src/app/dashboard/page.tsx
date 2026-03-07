@@ -234,34 +234,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* EXPIRING ITEMS - Combined (Expired + Soon + This Week) */}
-        {(expiredItems.length > 0 || expiringSoonItems.length > 0 || expiringWeekItems.length > 0) && (
-          <div className="mb-4">
-            <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-md font-bold">⏰ Expiring</h3>
-              <Badge variant="destructive" className="bg-red-600">
-                {expiredItems.length + expiringSoonItems.length + expiringWeekItems.length}
-              </Badge>
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
-              {expiredItems.concat(expiringSoonItems, expiringWeekItems).slice(0, 8).map((item) => (
-                <Card 
-                  key={item.id} 
-                  className="flex-shrink-0 cursor-pointer min-w-[100px]"
-                  onClick={() => setSelectedExpiringItem(item)}
-                >
-                  <CardContent className="p-2 flex items-center justify-between gap-1">
-                    <p className="font-medium text-xs truncate">{item.name}</p>
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">
-                      {new Date(item.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </span>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Today's Meals - Prominent */}
         {todaysMeals.length > 0 && (
           <div className="mb-6">
@@ -289,53 +261,25 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* EXPIRED Section - Most Urgent */}
-        {expiredItems.length > 0 && (
-          <div className="mb-4">
-            <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-md font-bold">🔴 Expired</h3>
-              <Badge variant="destructive" className="bg-red-600">{expiredItems.length}</Badge>
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
-              {expiredItems.map((item) => (
-                <Card 
-                  key={item.id} 
-                  className="flex-shrink-0 cursor-pointer border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/30 min-w-[100px]"
-                  onClick={() => setSelectedExpiringItem(item)}
-                >
-                  <CardContent className="p-2 flex items-center justify-between gap-1">
-                    <p className="font-medium text-xs truncate">{item.name}</p>
-                    <span className="text-xs text-red-600 whitespace-nowrap">
-                      {new Date(item.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </span>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* EXPIRING SOON Section - Within 2 days */}
         {expiringSoonItems.length > 0 && (
-          <div className="mb-4">
+          <div className="mb-3">
             <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-md font-bold">🔥 Expiring Soon</h3>
-              <Badge className="bg-orange-500">{expiringSoonItems.length}</Badge>
+              <h3 className="text-sm font-bold">🔥 Expiring Soon</h3>
+              <Badge className="bg-orange-500 text-xs">{expiringSoonItems.length}</Badge>
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
+            <div className="flex gap-1.5 overflow-x-auto pb-2 -mx-4 px-4">
               {expiringSoonItems.map((item) => (
-                <Card 
+                <button 
                   key={item.id} 
-                  className="flex-shrink-0 cursor-pointer border-orange-200 dark:border-orange-800 min-w-[100px]"
+                  className="flex-shrink-0 flex items-center gap-1 px-2 py-1 text-xs bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded hover:bg-orange-100 transition-colors"
                   onClick={() => setSelectedExpiringItem(item)}
                 >
-                  <CardContent className="p-2 flex items-center justify-between gap-1">
-                    <p className="font-medium text-xs truncate">{item.name}</p>
-                    <span className="text-xs text-orange-600 whitespace-nowrap">
-                      {new Date(item.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </span>
-                  </CardContent>
-                </Card>
+                  <span className="truncate max-w-[60px]">{item.name}</span>
+                  <span className="text-orange-600 whitespace-nowrap">
+                    {new Date(item.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </span>
+                </button>
               ))}
             </div>
           </div>
@@ -343,25 +287,23 @@ export default function DashboardPage() {
 
         {/* EXPIRING THIS WEEK Section - 3-7 days */}
         {expiringWeekItems.length > 0 && (
-          <div className="mb-4">
+          <div className="mb-3">
             <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-md font-semibold">📅 This Week</h3>
-              <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">{expiringWeekItems.length}</Badge>
+              <h3 className="text-sm font-semibold">📅 This Week</h3>
+              <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-xs">{expiringWeekItems.length}</Badge>
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
+            <div className="flex gap-1.5 overflow-x-auto pb-2 -mx-4 px-4">
               {expiringWeekItems.map((item) => (
-                <Card 
+                <button 
                   key={item.id} 
-                  className="flex-shrink-0 cursor-pointer border-yellow-200 dark:border-yellow-800 min-w-[100px]"
+                  className="flex-shrink-0 flex items-center gap-1 px-2 py-1 text-xs bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 rounded hover:bg-yellow-100 transition-colors"
                   onClick={() => setSelectedExpiringItem(item)}
                 >
-                  <CardContent className="p-2 flex items-center justify-between gap-1">
-                    <p className="font-medium text-xs truncate">{item.name}</p>
-                    <span className="text-xs text-yellow-600 whitespace-nowrap">
-                      {new Date(item.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </span>
-                  </CardContent>
-                </Card>
+                  <span className="truncate max-w-[60px]">{item.name}</span>
+                  <span className="text-yellow-600 whitespace-nowrap">
+                    {new Date(item.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </span>
+                </button>
               ))}
             </div>
           </div>
