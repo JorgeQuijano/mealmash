@@ -312,40 +312,40 @@ export default function DashboardPage() {
         {/* Stats - Compact */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">Your Stats</h3>
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
+          <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
             <Card 
-              className="flex-shrink-0 cursor-pointer min-w-[100px]" 
+              className="flex-shrink-0 cursor-pointer min-w-[80px]" 
               onClick={() => router.push("/recipes/favorites")}
             >
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold">{stats.favorites}</div>
+              <CardContent className="p-2 text-center">
+                <div className="text-lg font-bold">{stats.favorites}</div>
                 <p className="text-xs text-muted-foreground">Favorites</p>
               </CardContent>
             </Card>
             <Card 
-              className="flex-shrink-0 cursor-pointer min-w-[100px]" 
+              className="flex-shrink-0 cursor-pointer min-w-[80px]" 
               onClick={() => router.push("/meal-plan")}
             >
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold">{stats.mealsPlanned}</div>
+              <CardContent className="p-2 text-center">
+                <div className="text-lg font-bold">{stats.mealsPlanned}</div>
                 <p className="text-xs text-muted-foreground">Planned</p>
               </CardContent>
             </Card>
             <Card 
-              className="flex-shrink-0 cursor-pointer min-w-[100px]" 
+              className="flex-shrink-0 cursor-pointer min-w-[80px]" 
               onClick={() => router.push("/shopping-list")}
             >
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold">{stats.shoppingList}</div>
+              <CardContent className="p-2 text-center">
+                <div className="text-lg font-bold">{stats.shoppingList}</div>
                 <p className="text-xs text-muted-foreground">Shopping</p>
               </CardContent>
             </Card>
             <Card 
-              className="flex-shrink-0 cursor-pointer min-w-[100px]" 
+              className="flex-shrink-0 cursor-pointer min-w-[80px]" 
               onClick={() => router.push("/pantry")}
             >
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold">{stats.pantryItems}</div>
+              <CardContent className="p-2 text-center">
+                <div className="text-lg font-bold">{stats.pantryItems}</div>
                 <p className="text-xs text-muted-foreground">Pantry</p>
               </CardContent>
             </Card>

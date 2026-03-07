@@ -64,6 +64,10 @@ export default function AdminPage() {
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
   
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  
   // New recipe form
   const [newRecipe, setNewRecipe] = useState({
     name: "",
@@ -186,6 +190,22 @@ export default function AdminPage() {
     
     checkAdmin()
   }, [router])
+
+  // Responsive items per page + reset to page 1 when recipes change
+  useEffect(() => {
+    const updateItemsPerPage = () => {
+      // Taller screens (≥900px height) get 20, smaller get 10
+      setItemsPerPage(window.innerHeight >= 900 ? 20 : 10)
+    }
+    
+    updateItemsPerPage()
+    window.addEventListener('resize', updateItemsPerPage)
+    return () => window.removeEventListener('resize', updateItemsPerPage)
+  }, [])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [recipes.length])
 
   async function loadRecipes() {
     const { data } = await supabase.from("recipes").select("*")
@@ -910,8 +930,18 @@ export default function AdminPage() {
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-2">
-              {recipes.map((recipe) => (
+            <>
+              {/* Sorted and paginated recipes */}
+              {(() => {
+                const sortedRecipes = [...recipes].sort((a, b) => a.name.localeCompare(b.name))
+                const totalPages = Math.ceil(sortedRecipes.length / itemsPerPage)
+                const startIndex = (currentPage - 1) * itemsPerPage
+                const paginatedRecipes = sortedRecipes.slice(startIndex, startIndex + itemsPerPage)
+                
+                return (
+                  <>
+                    <div className="space-y-2">
+                      {paginatedRecipes.map((recipe) => (
                 <Card key={recipe.id} className="py-0">
                   <CardContent className="p-2 flex items-center justify-between gap-2">
                     <div className="flex-1 min-w-0">
@@ -947,8 +977,37 @@ export default function AdminPage() {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
+                      ))}
+                    </div>
+                    
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                      <div className="flex items-center justify-between pt-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                          disabled={currentPage === 1}
+                        >
+                          ← Prev
+                        </Button>
+                        <span className="text-sm text-muted-foreground">
+                          Page {currentPage} of {totalPages}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                          disabled={currentPage === totalPages}
+                        >
+                          Next →
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                )
+              })()}
+            </>
           )}
         </div>
       </main>
