@@ -106,9 +106,10 @@ interface Props {
   userId: string;
   mealPlans: MealPlan[];
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function MealPlanShoppingModal({ userId, mealPlans, onClose }: Props) {
+export default function MealPlanShoppingModal({ userId, mealPlans, onClose, onSuccess }: Props) {
   const [selectedRange, setSelectedRange] = useState(0);
   const [loading, setLoading] = useState(false);
   const [missingIngredients, setMissingIngredients] = useState<MissingIngredient[]>([]);
@@ -231,8 +232,23 @@ export default function MealPlanShoppingModal({ userId, mealPlans, onClose }: Pr
         });
       }
       
+      // Mark all meal plans in this date range as processed
+      const dateRange = DATE_RANGE_OPTIONS[selectedRange].getDates();
+      const plansInRange = mealPlans.filter(mp => 
+        mp.planned_date >= dateRange.start && mp.planned_date <= dateRange.end
+      );
+      const mealPlanIds = plansInRange.map(p => p.id);
+      
+      if (mealPlanIds.length > 0) {
+        await supabase
+          .from('meal_plans')
+          .update({ shopping_list_added: true })
+          .in('id', mealPlanIds);
+      }
+      
       setAdded(true);
       setTimeout(() => {
+        onSuccess?.();
         onClose();
       }, 1500);
     } catch (error) {

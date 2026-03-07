@@ -49,6 +49,7 @@ interface MealPlan {
   planned_date: string
   meal_type: string
   recipe?: Recipe
+  shopping_list_added?: boolean
 }
 
 const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack', 'dessert'] as const
@@ -374,6 +375,9 @@ export default function MealPlanPage() {
                         <span className="text-base font-medium">
                           {MEAL_ICONS[mealType]} {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
                         </span>
+                        {meal?.shopping_list_added && (
+                          <span className="text-green-500" title="Added to shopping list">✓</span>
+                        )}
                       </div>
                     </CardHeader>
                     <CardContent>
@@ -446,6 +450,9 @@ export default function MealPlanPage() {
                           <span className="text-xs text-muted-foreground">
                             {MEAL_ICONS[mealType]} {mealType}
                           </span>
+                          {meal?.shopping_list_added && (
+                            <span className="text-green-500 text-xs" title="Added to shopping list">✓</span>
+                          )}
                         </div>
                       </CardHeader>
                       <CardContent className="p-2">
@@ -572,6 +579,7 @@ export default function MealPlanPage() {
           userId={user.id}
           mealPlans={mealPlans}
           onClose={() => setShowShoppingModal(false)}
+          onSuccess={() => loadMealPlans()}
         />
       )}
     </div>
