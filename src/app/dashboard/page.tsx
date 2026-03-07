@@ -234,33 +234,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Today's Meals - Prominent */}
-        {todaysMeals.length > 0 && (
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-              🍽️ Today's Meals
-            </h3>
-            <div className="space-y-2">
-              {todaysMeals.map((meal) => (
-                <Card 
-                  key={meal.id} 
-                  className="hover:shadow-md cursor-pointer border-primary/20"
-                  onClick={() => handleRecipeClick(meal)}
-                >
-                  <CardContent className="p-2 flex items-center justify-between gap-2">
-                    <p className="font-medium text-sm truncate">{meal.recipes?.name || 'Recipe'}</p>
-                    {parseCategory(meal.recipes?.category).map((cat) => (
-                      <Badge key={cat} className={getCategoryColor(cat)}>
-                        {cat}
-                      </Badge>
-                    ))}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* EXPIRING SOON Section - Within 2 days */}
         {expiringSoonItems.length > 0 && (
           <div className="mb-3">
@@ -304,6 +277,33 @@ export default function DashboardPage() {
                     {new Date(item.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   </span>
                 </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Today's Meals - Prominent */}
+        {todaysMeals.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              🍽️ Today's Meals
+            </h3>
+            <div className="space-y-2">
+              {todaysMeals.map((meal) => (
+                <Card 
+                  key={meal.id} 
+                  className="hover:shadow-md cursor-pointer border-primary/20"
+                  onClick={() => handleRecipeClick(meal)}
+                >
+                  <CardContent className="p-2 flex items-center justify-between gap-2">
+                    <p className="font-medium text-sm truncate">{meal.recipes?.name || 'Recipe'}</p>
+                    {parseCategory(meal.recipes?.category).map((cat) => (
+                      <Badge key={cat} className={getCategoryColor(cat)}>
+                        {cat}
+                      </Badge>
+                    ))}
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
