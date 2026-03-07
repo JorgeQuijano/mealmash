@@ -336,7 +336,7 @@ export default function RandomPage() {
             {selectedRecipe ? (
               <Card className="animate-slide-up shadow-lg border-2 border-primary/20">
                 <CardHeader className="text-center pb-2">
-                  <div className="text-4xl mb-2">✨ Your Choice! ✨</div>
+                  <div className="text-4xl mb-2">Your Choice!</div>
                   <CardTitle className="text-xl gradient-text">{selectedRecipe.name}</CardTitle>
                   <CardDescription className="text-sm">{selectedRecipe.description}</CardDescription>
                 </CardHeader>
