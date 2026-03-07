@@ -10,6 +10,32 @@ import { Badge } from "@/components/ui/badge"
 import MobileNav from "@/components/mobile-nav"
 import ExpiringRecipeModal from "@/components/ExpiringRecipeModal"
 
+// Helper to parse category from any format to string array
+function parseCategory(cat: any): string[] {
+  if (Array.isArray(cat)) return cat
+  if (typeof cat === "string") {
+    try {
+      const parsed = JSON.parse(cat)
+      return Array.isArray(parsed) ? parsed : [parsed]
+    } catch {
+      return [cat]
+    }
+  }
+  return [String(cat)]
+}
+
+function getCategoryColor(category: string | string[]) {
+  const cat = Array.isArray(category) ? category[0] : category
+  const colors: Record<string, string> = {
+    breakfast: "bg-yellow-100 text-yellow-800",
+    lunch: "bg-green-100 text-green-800",
+    dinner: "bg-orange-100 text-orange-800",
+    snack: "bg-purple-100 text-purple-800",
+    dessert: "bg-pink-100 text-pink-800"
+  }
+  return colors[cat] || "bg-gray-100 text-gray-800"
+}
+
 export default function DashboardPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
@@ -182,7 +208,11 @@ export default function DashboardPage() {
                       <p className="font-medium">{meal.recipes?.name || 'Recipe'}</p>
                       <p className="text-sm text-muted-foreground capitalize">{meal.meal_type}</p>
                     </div>
-                    <Badge variant="secondary">{meal.recipes?.category || ''}</Badge>
+                    {parseCategory(meal.recipes?.category).map((cat) => (
+                      <Badge key={cat} className={getCategoryColor(cat)}>
+                        {cat}
+                      </Badge>
+                    ))}
                   </CardContent>
                 </Card>
               ))}
