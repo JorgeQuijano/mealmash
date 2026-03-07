@@ -889,20 +889,14 @@ export default function AdminPage() {
         </DialogContent>
       </Dialog>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
+      <main className="container mx-auto px-4 py-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
           <div>
-            <h2 className="text-3xl font-bold">Recipe Management</h2>
-            <p className="text-muted-foreground">Add, edit, or remove recipes from the database</p>
+            <h2 className="text-2xl font-bold">Recipe Management</h2>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={seedRecipes}>
-              🌱 Seed 20 Recipes
-            </Button>
-            <Button onClick={() => { setShowAddForm(true); setSelectedIngredients([]); }}>
-              ➕ Add Recipe
-            </Button>
-          </div>
+          <Button onClick={() => { setShowAddForm(true); setSelectedIngredients([]); }}>
+            ➕ Add Recipe
+          </Button>
         </div>
 
         {/* Recipe List */}
