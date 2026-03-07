@@ -37,7 +37,7 @@ type Recipe = {
 
 const categories = ["all", "breakfast", "lunch", "dinner", "snack", "dessert"]
 
-// Card shuffle colors
+// Card colors for visual variety
 const cardColors = [
   "from-orange-500 to-amber-500",
   "from-green-500 to-emerald-500",
@@ -61,8 +61,8 @@ export default function RandomPage() {
   
   // Card shuffle state
   const [shufflePhase, setShufflePhase] = useState<"idle" | "shuffling" | "revealing">("idle")
-  const [visibleCards, setVisibleCards] = useState<Recipe[]>([])
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1)
+  const [currentCardIndex, setCurrentCardIndex] = useState(0)
+  const [winnerIndex, setWinnerIndex] = useState(-1)
 
   useEffect(() => {
     loadRecipes()
@@ -152,63 +152,54 @@ export default function RandomPage() {
     setIsSpinning(true)
     setSelectedRecipe(null)
     setShufflePhase("shuffling")
+    setWinnerIndex(-1)
 
-    // Pick a random recipe from the filtered list
-    const randomIndex = Math.floor(Math.random() * recipes.length)
-    const selected = recipes[randomIndex]
-    
-    // Get 5-7 cards for the shuffle (or fewer if not enough recipes)
-    const numVisibleCards = Math.min(7, recipes.length)
-    let shuffleCards: Recipe[] = []
-    
-    // Create an array of indices and shuffle them
-    const indices = Array.from({ length: recipes.length }, (_, i) => i)
-    for (let i = indices.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [indices[i], indices[j]] = [indices[j], indices[i]];
-    }
-    
-    // Take the first N indices for visible cards
-    const visibleIndices = indices.slice(0, numVisibleCards)
-    shuffleCards = visibleIndices.map(i => recipes[i])
-    
-    // Make sure our selected recipe is in the visible cards
-    if (!shuffleCards.find(r => r.id === selected.id)) {
-      shuffleCards[Math.floor(Math.random() * shuffleCards.length)] = selected
-    }
-    
-    setVisibleCards(shuffleCards)
-    setSelectedIndex(shuffleCards.findIndex(r => r.id === selected.id))
+    // Pick a random winner index
+    const winIdx = Math.floor(Math.random() * recipes.length)
+    setWinnerIndex(winIdx)
+    const selected = recipes[winIdx]
 
-    // Shuffle animation - cards swap positions multiple times
-    let shuffleCount = 0
-    const shuffleInterval = setInterval(() => {
-      setVisibleCards((prev: Recipe[]) => {
-        if (prev.length <= 1) return prev
-        const shuffled: Recipe[] = [...prev]
-        // Swap 2 random cards
-        const i1 = Math.floor(Math.random() * shuffled.length)
-        let i2 = Math.floor(Math.random() * shuffled.length)
-        while (i2 === i1 && shuffled.length > 1) {
-          i2 = Math.floor(Math.random() * shuffled.length)
+    // Start cycling through cards - fast at first, then slow down
+    setCurrentCardIndex(0)
+    
+    let speed = 80  // Starting speed (ms per card)
+    let cardCounter = 0
+    let maxCards = 15 + Math.floor(Math.random() * 10) // Show 15-25 cards total
+    
+    function cycleCard() {
+      setCurrentCardIndex(prev => {
+        const next = (prev + 1) % recipes.length
+        cardCounter++
+        
+        // Check if we should slow down
+        const remaining = maxCards - cardCounter
+        
+        if (remaining <= 0) {
+          // Done! Reveal the winner
+          setShufflePhase("revealing")
+          setTimeout(() => {
+            setSelectedRecipe(selected)
+            setCurrentCardIndex(winIdx) // Ensure we show the winner
+            setIsSpinning(false)
+            setShufflePhase("idle")
+          }, 600)
+          return next
         }
-        const temp = shuffled[i1]
-        shuffled[i1] = shuffled[i2]
-        shuffled[i2] = temp
-        return shuffled
+        
+        // Slow down exponentially as we approach the end
+        if (remaining < 8) {
+          speed = speed * 1.25 // Slow down gradually
+        } else if (remaining < 4) {
+          speed = speed * 1.5 // Last few cards slow down more
+        }
+        
+        setTimeout(cycleCard, speed)
+        return next
       })
-      shuffleCount++
-      if (shuffleCount >= 15) {
-        clearInterval(shuffleInterval)
-        // Reveal phase
-        setShufflePhase("revealing")
-        setTimeout(() => {
-          setSelectedRecipe(selected)
-          setIsSpinning(false)
-          setShufflePhase("idle")
-        }, 800)
-      }
-    }, 150)
+    }
+    
+    // Start the cycling
+    setTimeout(cycleCard, speed)
   }
 
   const getCategoryColor = (category: string | string[]) => {
@@ -237,6 +228,9 @@ export default function RandomPage() {
       </div>
     )
   }
+
+  // Get current card being shown
+  const currentCard = recipes[currentCardIndex]
 
   return (
     <div className="min-h-screen bg-background pb-safe">
@@ -300,70 +294,48 @@ export default function RandomPage() {
         )}
 
         <div className="flex flex-col lg:flex-row items-center justify-center gap-8">
-          {/* Card Shuffle Section */}
-          <div className="relative w-full max-w-md h-[320px] flex items-center justify-center">
-            {/* Card Stack */}
-            <div className="relative w-48 h-64">
-              {visibleCards.length > 0 ? (
-                visibleCards.map((recipe, index) => {
-                  // Calculate card position - fan out effect
-                  const totalCards = visibleCards.length
-                  const centerIndex = (totalCards - 1) / 2
-                  const offset = (index - centerIndex) * 30
-                  const isSelected = index === selectedIndex && shufflePhase === "revealing"
-                  
-                  // During shuffle, randomize positions slightly
-                  let translateX = offset
-                  let translateY = 0
-                  let rotate = offset * 0.5
-                  let scale = 1
-                  let zIndex = totalCards - Math.abs(index - centerIndex)
-                  
-                  if (shufflePhase === "shuffling") {
-                    // Add some chaos during shuffle
-                    translateX = offset + (Math.random() - 0.5) * 20
-                    translateY = (Math.random() - 0.5) * 10
-                    rotate = offset * 0.5 + (Math.random() - 0.5) * 10
-                    zIndex = Math.random() * 100
-                  }
-                  
-                  if (isSelected) {
-                    scale = 1.1
-                    zIndex = 100
-                    translateY = -20
-                  }
-                  
-                  return (
-                    <div
-                      key={`${recipe.id}-${index}`}
-                      className="absolute w-48 h-64 transition-all duration-300"
-                      style={{
-                        transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotate}deg) scale(${scale})`,
-                        zIndex,
-                      }}
-                    >
-                      <div className={`w-full h-full rounded-xl shadow-2xl bg-gradient-to-br ${cardColors[index % cardColors.length]} flex flex-col items-center justify-center p-4 text-white ${isSelected ? 'ring-4 ring-white ring-offset-4' : ''}`}>
-                        {isSelected ? (
-                          <>
-                            <div className="text-4xl mb-2">✨</div>
-                            <h3 className="text-lg font-bold text-center">{recipe.name}</h3>
-                            <p className="text-xs text-white/80 text-center mt-1 line-clamp-2">{recipe.description}</p>
-                          </>
-                        ) : (
-                          <>
-                            <div className="text-5xl mb-3">🍽️</div>
-                            <div className="text-3xl font-bold">?</div>
-                          </>
-                        )}
+          {/* Card Cycling Section */}
+          <div className="relative w-full max-w-sm flex flex-col items-center">
+            
+            {/* Card Display Area */}
+            <div className="w-56 h-80 mb-6 relative flex items-center justify-center">
+              {/* Background cards to show motion blur effect when spinning */}
+              {shufflePhase === "shuffling" && (
+                <>
+                  <div className="absolute w-52 h-72 -translate-x-16 rotate-[-8deg] opacity-40">
+                    <div className="w-full h-full rounded-xl bg-gradient-to-br from-gray-400 to-gray-600" />
+                  </div>
+                  <div className="absolute w-52 h-72 translate-x-16 rotate-[8deg] opacity-40">
+                    <div className="w-full h-full rounded-xl bg-gradient-to-br from-gray-400 to-gray-600" />
+                  </div>
+                </>
+              )}
+              
+              {/* Main Card */}
+              {currentCard && (
+                <div 
+                  key={currentCard.id}
+                  className={`w-52 h-72 rounded-2xl shadow-2xl bg-gradient-to-br ${cardColors[currentCardIndex % cardColors.length]} flex flex-col items-center justify-center p-5 text-white transition-all duration-300 ${shufflePhase === "revealing" ? 'scale-110 ring-4 ring-white ring-offset-4' : ''}`}
+                >
+                  {shufflePhase === "shuffling" ? (
+                    // Show card backs during shuffle
+                    <>
+                      <div className="text-6xl mb-3">🎴</div>
+                      <div className="text-2xl font-bold">???</div>
+                    </>
+                  ) : (
+                    // Show actual card content
+                    <>
+                      <div className="text-5xl mb-3">🍽️</div>
+                      <h3 className="text-xl font-bold text-center leading-tight">{currentCard.name}</h3>
+                      <p className="text-xs text-white/80 text-center mt-2 line-clamp-2">{currentCard.description}</p>
+                      <div className="mt-auto pt-3 flex gap-2">
+                        <Badge className="bg-white/20 text-white text-xs">
+                          {Array.isArray(currentCard.category) ? currentCard.category[0] : currentCard.category}
+                        </Badge>
                       </div>
-                    </div>
-                  )
-                })
-              ) : (
-                // Empty state - show placeholder card
-                <div className="w-48 h-64 rounded-xl shadow-2xl bg-gradient-to-br from-gray-400 to-gray-600 flex flex-col items-center justify-center p-4 text-white">
-                  <div className="text-5xl mb-3">🎴</div>
-                  <div className="text-xl font-bold">Ready to Shuffle</div>
+                    </>
+                  )}
                 </div>
               )}
               
@@ -375,17 +347,22 @@ export default function RandomPage() {
             <Button
               onClick={shuffleCards}
               disabled={isSpinning || recipes.length === 0}
-              className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-14 rounded-full text-lg font-bold shadow-2xl ${isSpinning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'} bg-gradient-to-br from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600`}
+              className={`w-40 h-14 rounded-full text-lg font-bold shadow-2xl ${isSpinning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'} bg-gradient-to-br from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600`}
             >
               {isSpinning ? (
                 <span className="flex items-center gap-2">
                   <span className="animate-spin">🔄</span>
-                  Shuffling...
+                  {shufflePhase === "revealing" ? "Revealing..." : "Shuffling..."}
                 </span>
               ) : (
                 <span>🎴 Shuffle!</span>
               )}
             </Button>
+            
+            {/* Recipe count */}
+            <p className="text-sm text-muted-foreground mt-3">
+              {recipes.length} recipes to choose from
+            </p>
           </div>
 
           {/* Result Section */}
