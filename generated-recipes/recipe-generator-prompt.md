@@ -15,12 +15,12 @@ Generate one creative, unique recipe every time you run. Vary:
 id UUID PRIMARY KEY DEFAULT gen_random_uuid()
 name TEXT NOT NULL
 description TEXT
-ingredients JSONB         -- DEPRECATED, use recipe_ingredients table instead
+ingredients JSONB NOT NULL        -- Required! Use empty array '[]'::jsonb
 instructions TEXT[]
-category TEXT             -- Single value, not array (e.g., 'dinner')
-cuisine TEXT[]            -- Array (e.g., ARRAY['Italian'])
-dietary_tags TEXT[]       -- Array (e.g., ARRAY['Vegetarian'])
-difficulty TEXT           -- 'Easy', 'Medium', or 'Hard'
+category TEXT                     -- Single value, not array (e.g., 'dinner')
+cuisine TEXT[]                   -- Array (e.g., ARRAY['Italian'])
+dietary_tags TEXT[]              -- Array (e.g., ARRAY['Vegetarian'])
+difficulty TEXT                  -- 'Easy', 'Medium', or 'Hard'
 prep_time_minutes INTEGER
 cook_time_minutes INTEGER
 servings INTEGER DEFAULT 2
@@ -53,16 +53,17 @@ WITH ingredient_ids AS (
 -- Step 2: Insert recipe and get the ID
 recipe_insert AS (
   INSERT INTO recipes (
-    name, description, instructions, category, cuisine, dietary_tags, difficulty,
+    name, description, ingredients, instructions, category, cuisine, dietary_tags, difficulty,
     prep_time_minutes, cook_time_minutes, servings, image_url, created_at
   )
   VALUES (
     'Recipe Name',
     'Description here',
+    '[]'::jsonb,                    -- Required! Empty array since we use recipe_ingredients
     ARRAY['Step 1', 'Step 2'],
-    'dinner',                    -- SINGLE value, not array
-    ARRAY['Italian'],             -- Array
-    ARRAY[]::text[],            -- Array (empty or with tags)
+    'dinner',                        -- SINGLE value, not array
+    ARRAY['Italian'],                -- Array
+    ARRAY[]::text[],                 -- Array (empty or with tags)
     'Medium',
     15, 30, 4, '', NOW()
   ) RETURNING id

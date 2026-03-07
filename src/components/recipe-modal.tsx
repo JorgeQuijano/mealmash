@@ -198,18 +198,31 @@ export default function RecipeModal({
     totalCount = initialRecipe.totalCount
   } else if (isRecipeMode && pantryItems.length > 0) {
     const recipe = initialRecipe as Recipe
-    const pantryIngredientIds = new Set(
-      pantryItems.filter(p => p.ingredient_id).map(p => p.ingredient_id)
-    )
+    
+    // Create a map of ingredient_id -> pantry quantity
+    const pantryMap = new Map<string, number>()
+    pantryItems.forEach(p => {
+      if (p.ingredient_id) {
+        // Parse quantity from pantry (try to extract number)
+        const qty = parseFloat(p.quantity) || 0
+        pantryMap.set(p.ingredient_id, qty)
+      }
+    })
     
     recipe.recipe_ingredients?.forEach((ri) => {
-      if (pantryIngredientIds.has(ri.ingredient_id)) {
+      const pantryQty = pantryMap.get(ri.ingredient_id) || 0
+      const recipeQty = ri.quantity_num || 1
+      const neededQty = recipeQty - pantryQty
+      
+      if (pantryQty >= recipeQty) {
+        // Has enough - show in green
         matchedIngredients.push({
           id: ri.ingredient_id,
           name: ri.ingredients?.name || '',
           category: ri.ingredients?.category || ''
         })
       } else {
+        // Missing or partial - show in yellow/red
         missingIngredients.push({
           id: ri.ingredient_id,
           name: ri.ingredients?.name || '',
@@ -334,24 +347,47 @@ export default function RecipeModal({
               <div>
                 <h3 className="font-semibold mb-3">Ingredients</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {matchedIngredients.map((ing, i) => (
-                    <div 
-                      key={`matched-${i}`}
-                      className="flex items-center gap-2 p-2 rounded bg-green-50 text-green-700"
-                    >
-                      <span>✅</span>
-                      <span className="text-sm">{ing.name}</span>
-                    </div>
-                  ))}
-                  {missingIngredients.map((ing, i) => (
-                    <div 
-                      key={`missing-${i}`}
-                      className="flex items-center gap-2 p-2 rounded bg-red-50 text-red-700"
-                    >
-                      <span>❌</span>
-                      <span className="text-sm">{ing.name}</span>
-                    </div>
-                  ))}
+                  {/* Create a map with quantities for display */}
+                  {(() => {
+                    const pantryMap = new Map<string, { qty: number; name: string }>()
+                    pantryItems.forEach(p => {
+                      if (p.ingredient_id) {
+                        const qty = parseFloat(p.quantity) || 0
+                        pantryMap.set(p.ingredient_id, { qty, name: p.name })
+                      }
+                    })
+                    
+                    return (recipe as Recipe).recipe_ingredients?.map((ri: RecipeIngredient, i: number) => {
+                      const pantryQty = pantryMap.get(ri.ingredient_id)?.qty || 0
+                      const recipeQty = ri.quantity_num || 1
+                      const have = pantryQty
+                      const need = recipeQty
+                      
+                      let colorClass = ''
+                      let colorDot = ''
+                      if (have >= need) {
+                        colorClass = 'bg-green-50 text-green-700 border-green-200'
+                        colorDot = '🟢'
+                      } else if (have > 0) {
+                        colorClass = 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                        colorDot = '🟡'
+                      } else {
+                        colorClass = 'bg-red-50 text-red-700 border-red-200'
+                        colorDot = '🔴'
+                      }
+                      
+                      return (
+                        <div 
+                          key={`ing-${i}`}
+                          className={`flex items-center gap-2 p-2 rounded border ${colorClass}`}
+                        >
+                          <span>{colorDot}</span>
+                          <span className="text-sm flex-1">{ri.ingredients?.name}</span>
+                          <span className="text-xs font-mono">{have}/{need}</span>
+                        </div>
+                      )
+                    })
+                  })()}
                 </div>
               </div>
             )}
