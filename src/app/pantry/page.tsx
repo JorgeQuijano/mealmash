@@ -91,7 +91,11 @@ export default function PantryPage() {
       
       setUser(currentUser)
       
-      const { data } = await getUserProfile(currentUser.id)
+      const { data } = await supabase
+        .from('user_profiles')
+        .select('*, subscription_tier, subscription_status')
+        .eq('id', currentUser.id)
+        .single()
       setProfile(data)
       await loadPantryItems(currentUser.id)
       setLoading(false)
@@ -379,7 +383,7 @@ export default function PantryPage() {
             </p>
           </div>
           <Badge variant="outline" className="text-lg py-1">
-            {items.length} {limit !== -1 ? `/ ${limit}` : 'items'} {limit !== -1 && <span className="text-muted-foreground">(Free plan)</span>}
+            {items.length} {limit === -1 ? '/ Unlimited' : `/ ${limit}`} {limit !== -1 && <span className="text-muted-foreground">(Free plan)</span>}
           </Badge>
         </div>
 
