@@ -80,68 +80,7 @@ export default function DashboardPage() {
   }, [router])
 
   async function loadStats(userId: string) {
-    // Get favorites count
-    const { count: favoritesCount } = await supabase
-      .from('user_favorites')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-
-    // Get meals planned count
-    const { count: mealsPlannedCount } = await supabase
-      .from('meal_plans')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-
-    // Get shopping list count
-    const { count: shoppingListCount } = await supabase
-      .from('shopping_list')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-
-    // Get pantry items count
-    const { count: pantryItemsCount } = await supabase
-      .from('pantry_items')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-
-    setStats({
-      favorites: favoritesCount || 0,
-      mealsPlanned: mealsPlannedCount || 0,
-      shoppingList: shoppingListCount || 0,
-      pantryItems: pantryItemsCount || 0
-    })
-
-    // Get today's meals
     const today = new Date().toISOString().split('T')[0]
-    const { data: meals } = await supabase
-      .from('meal_plans')
-      .select(`
-        *,
-        recipes (
-          *,
-          recipe_ingredients (
-            ingredient_id,
-            quantity,
-            quantity_num,
-            unit,
-            ingredients (name, category)
-          )
-        )
-      `)
-      .eq('user_id', userId)
-      .eq('planned_date', today)
-      .order('meal_type', { ascending: true })
-
-    setTodaysMeals(meals || [])
-
-    // Load pantry items for recipe modal
-    const { data: pantry } = await supabase
-      .from('pantry_items')
-      .select('*')
-      .eq('user_id', userId)
-    setPantryItems(pantry || [])
-
-    // Get expiration alerts
     const todayDate = new Date()
     todayDate.setHours(0, 0, 0, 0)
     const todayStr = todayDate.toISOString().split('T')[0]
@@ -154,41 +93,82 @@ export default function DashboardPage() {
     sevenDaysLater.setDate(todayDate.getDate() + 7)
     const sevenDaysStr = sevenDaysLater.toISOString().split('T')[0]
 
-    // Get expired items (past expiration date)
-    const { data: expired } = await supabase
-      .from('pantry_items')
-      .select('*')
-      .eq('user_id', userId)
-      .not('expires_at', 'is', null)
-      .lt('expires_at', todayStr)
-      .order('expires_at', { ascending: false })
-      .limit(5)
+    // Run all queries in PARALLEL for faster loading
+    const [
+      favoritesResult,
+      mealsPlannedResult,
+      shoppingListResult,
+      pantryCountResult,
+      mealsResult,
+      pantryResult,
+      expiredResult,
+      expiringSoonResult,
+      expiringWeekResult
+    ] = await Promise.all([
+      // Query 1: Favorites count
+      supabase.from('user_favorites').select('*', { count: 'exact', head: true }).eq('user_id', userId),
+      // Query 2: Meals planned count
+      supabase.from('meal_plans').select('*', { count: 'exact', head: true }).eq('user_id', userId),
+      // Query 3: Shopping list count
+      supabase.from('shopping_list').select('*', { count: 'exact', head: true }).eq('user_id', userId),
+      // Query 4: Pantry items count
+      supabase.from('pantry_items').select('*', { count: 'exact', head: true }).eq('user_id', userId),
+      // Query 5: Today's meals (without recipe_ingredients - lazy load later)
+      supabase.from('meal_plans').select('*, recipes(*)').eq('user_id', userId).eq('planned_date', today).order('meal_type', { ascending: true }),
+      // Query 6: Pantry items
+      supabase.from('pantry_items').select('*').eq('user_id', userId),
+      // Query 7: Expired items
+      supabase.from('pantry_items').select('*').eq('user_id', userId).not('expires_at', 'is', null).lt('expires_at', todayStr).order('expires_at', { ascending: false }).limit(5),
+      // Query 8: Expiring soon (2 days)
+      supabase.from('pantry_items').select('*').eq('user_id', userId).not('expires_at', 'is', null).gte('expires_at', todayStr).lte('expires_at', twoDaysStr).order('expires_at', { ascending: true }).limit(5),
+      // Query 9: Expiring this week
+      supabase.from('pantry_items').select('*').eq('user_id', userId).not('expires_at', 'is', null).gt('expires_at', twoDaysStr).lte('expires_at', sevenDaysStr).order('expires_at', { ascending: true }).limit(5),
+    ])
 
-    // Get expiring in 2 days (urgent)
-    const { data: expiringSoon } = await supabase
-      .from('pantry_items')
-      .select('*')
-      .eq('user_id', userId)
-      .not('expires_at', 'is', null)
-      .gte('expires_at', todayStr)
-      .lte('expires_at', twoDaysStr)
-      .order('expires_at', { ascending: true })
-      .limit(5)
+    // Set stats
+    setStats({
+      favorites: favoritesResult.count || 0,
+      mealsPlanned: mealsPlannedResult.count || 0,
+      shoppingList: shoppingListResult.count || 0,
+      pantryItems: pantryCountResult.count || 0
+    })
 
-    // Get expiring in 3-7 days
-    const { data: expiringWeek } = await supabase
-      .from('pantry_items')
-      .select('*')
-      .eq('user_id', userId)
-      .not('expires_at', 'is', null)
-      .gt('expires_at', twoDaysStr)
-      .lte('expires_at', sevenDaysStr)
-      .order('expires_at', { ascending: true })
-      .limit(5)
+    // Set today's meals (without recipe_ingredients - lazy loaded)
+    setTodaysMeals(mealsResult.data || [])
 
-    setExpiredItems(expired || [])
-    setExpiringSoonItems(expiringSoon || [])
-    setExpiringWeekItems(expiringWeek || [])
+    // Set pantry items
+    setPantryItems(pantryResult.data || [])
+
+    // Set expiration alerts
+    setExpiredItems(expiredResult.data || [])
+    setExpiringSoonItems(expiringSoonResult.data || [])
+    setExpiringWeekItems(expiringWeekResult.data || [])
+  }
+
+  // Lazy load recipe ingredients when user clicks on a meal
+  async function loadRecipeIngredients(recipeId: string) {
+    const { data } = await supabase
+      .from('recipe_ingredients')
+      .select('ingredient_id, quantity, quantity_num, unit, ingredients(name, category)')
+      .eq('recipe_id', recipeId)
+    
+    return data || []
+  }
+
+  // Update selected recipe with full ingredients
+  async function handleRecipeClick(meal: any) {
+    // Already loaded, just show modal
+    if (meal.recipes?.recipe_ingredients) {
+      setSelectedRecipe(meal.recipes)
+      return
+    }
+    
+    // Lazy load ingredients
+    const ingredients = await loadRecipeIngredients(meal.recipes.id)
+    setSelectedRecipe({
+      ...meal.recipes,
+      recipe_ingredients: ingredients
+    })
   }
 
   if (loading) {
@@ -223,7 +203,7 @@ export default function DashboardPage() {
                 <Card 
                   key={meal.id} 
                   className="hover:shadow-md cursor-pointer border-primary/20"
-                  onClick={() => setSelectedRecipe(meal.recipes)}
+                  onClick={() => handleRecipeClick(meal)}
                 >
                   <CardContent className="p-2 flex items-center justify-between gap-2">
                     <p className="font-medium text-sm truncate">{meal.recipes?.name || 'Recipe'}</p>
