@@ -292,7 +292,7 @@ export default function RandomPage() {
               {/* Emoji - Smaller */}
               <div className="text-center mb-2">
                 <div className={`text-5xl transition-all duration-200 ${isSpinning ? 'animate-bounce' : ''}`}>
-                  {isSpinning ? '🎲' : selectedRecipe ? '✨' : '🎯'}
+                  {isSpinning ? '🎲' : selectedRecipe ? '' : '🎯'}
                 </div>
               </div>
               
