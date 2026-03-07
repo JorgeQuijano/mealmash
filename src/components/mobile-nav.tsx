@@ -14,7 +14,7 @@ const navItems = [
 
 export default function MobileNav() {
   const pathname = usePathname()
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<any>(undefined) // undefined = loading
   const [showMore, setShowMore] = useState(false)
 
   useEffect(() => {
@@ -23,12 +23,15 @@ export default function MobileNav() {
       if (user) {
         const { data } = await getUserProfile(user.id)
         setProfile(data)
+      } else {
+        setProfile(null) // Not logged in
       }
     }
     loadProfile()
   }, [])
 
-  const isLoggedIn = !!profile
+  // Show nav always - stable during loading
+  const isLoggedIn = profile !== null && profile !== undefined;
 
   return (
     <>

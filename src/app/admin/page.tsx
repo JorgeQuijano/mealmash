@@ -674,7 +674,7 @@ export default function AdminPage() {
             <DialogDescription>{editingRecipe ? "Update the recipe details" : "Fill in the details to add a new recipe"}</DialogDescription>
           </DialogHeader>
           <form onSubmit={editingRecipe ? handleUpdateRecipe : handleAddRecipe} className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Recipe Name</label>
                 <Input
@@ -811,7 +811,7 @@ export default function AdminPage() {
               />
             </div>
 
-            <div className="grid md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Prep Time (min)</label>
                 <Input
@@ -916,41 +916,40 @@ export default function AdminPage() {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4">
+            <div className="space-y-2">
               {recipes.map((recipe) => (
-                <Card key={recipe.id}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <h4 className="font-semibold">{recipe.name}</h4>
-                        <p className="text-sm text-muted-foreground">{recipe.description}</p>
-                        <div className="flex items-center gap-1 mt-2">
-                          {parseCategory(recipe.category).map((cat) => (
-                            <Badge key={cat} variant="outline" className="capitalize">
-                              {cat}
-                            </Badge>
-                          ))}
-                          <span className="text-xs text-muted-foreground">
-                            {recipe.prep_time_minutes + recipe.cook_time_minutes} min
-                          </span>
-                        </div>
+                <Card key={recipe.id} className="py-0">
+                  <CardContent className="p-2 flex items-center justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{recipe.name}</p>
+                      <div className="flex items-center gap-1 mt-0.5">
+                        {parseCategory(recipe.category).slice(0, 2).map((cat) => (
+                          <Badge key={cat} variant="outline" className="capitalize text-[10px] py-0 px-1">
+                            {cat}
+                          </Badge>
+                        ))}
+                        <span className="text-[10px] text-muted-foreground">
+                          {recipe.prep_time_minutes + recipe.cook_time_minutes}m
+                        </span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => startEditing(recipe)}
-                        >
-                          Edit
-                        </Button>
-                        <Button 
-                          variant="destructive" 
-                          size="sm"
-                          onClick={() => handleDeleteRecipe(recipe.id)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
+                    </div>
+                    <div className="flex gap-1">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="h-7 px-2 text-xs"
+                        onClick={() => startEditing(recipe)}
+                      >
+                        Edit
+                      </Button>
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                        className="h-7 px-2 text-xs"
+                        onClick={() => handleDeleteRecipe(recipe.id)}
+                      >
+                        Del
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
