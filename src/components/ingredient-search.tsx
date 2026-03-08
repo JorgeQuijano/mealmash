@@ -157,10 +157,12 @@ export default function IngredientSearch({ selectedIngredients, onChange }: Ingr
               results.map((ing) => (
                 <button
                   key={ing.id}
-                  onMouseDown={(e) => {
+                  type="button"
+                  onTouchStart={(e) => {
                     e.preventDefault()
                     selectIngredient(ing)
                   }}
+                  onClick={() => selectIngredient(ing)}
                   className="w-full px-3 py-2 text-left text-sm hover:bg-accent flex items-center justify-between"
                 >
                   <span>{ing.name}</span>
@@ -173,8 +175,13 @@ export default function IngredientSearch({ selectedIngredients, onChange }: Ingr
             
             {/* Create New Option */}
             <button
-              onMouseDown={(e) => {
+              type="button"
+              onTouchStart={(e) => {
                 e.preventDefault()
+                setShowNewForm(true)
+                setShowDropdown(false)
+              }}
+              onClick={() => {
                 setShowNewForm(true)
                 setShowDropdown(false)
               }}
