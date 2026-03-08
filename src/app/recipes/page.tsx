@@ -83,6 +83,7 @@ export default function RecipesPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
   const [hasActiveFilters, setHasActiveFilters] = useState(false)
+  const [isFiltering, setIsFiltering] = useState(false)
   const recipesPerPage = 20
 
   // Reset to page 1 when filters change
@@ -95,6 +96,7 @@ export default function RecipesPage() {
     
     setHasActiveFilters(filtersActive)
     setCurrentPage(1)
+    setIsFiltering(true)  // Show loading when filters change
   }, [filters])
 
   useEffect(() => {
@@ -178,6 +180,7 @@ export default function RecipesPage() {
       console.error("Error loading recipes:", error)
     }
     setLoading(false)
+    setIsFiltering(false)
   }
 
   // Batch load all data in parallel
@@ -347,14 +350,14 @@ export default function RecipesPage() {
         </div>
 
         {/* Loading */}
-        {loading && (
+        {(loading || isFiltering) && (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
           </div>
         )}
 
         {/* Recipes Grid - compact cards on mobile */}
-        {!loading && (
+        {!loading && !isFiltering && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {paginatedRecipes.map((recipe) => (
               <Card 
