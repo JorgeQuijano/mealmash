@@ -81,9 +81,13 @@ export default function IngredientSearch({ selectedIngredients, onChange }: Ingr
       category: ingredient.category
     }
     onChange([...selectedIngredients, newItem])
-    setSearch("")
-    setResults([])
-    setShowDropdown(false)
+    
+    // Small delay to allow click to register before clearing
+    setTimeout(() => {
+      setSearch("")
+      setResults([])
+      setShowDropdown(false)
+    }, 50)
   }
 
   async function createAndAddIngredient() {
