@@ -160,6 +160,11 @@ export default function IngredientSearch({ selectedIngredients, onChange }: Ingr
               results.map((ing) => (
                 <div
                   key={ing.id}
+                  onTouchEnd={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    selectIngredient(ing)
+                  }}
                   onClick={() => selectIngredient(ing)}
                   className="w-full px-3 py-2 text-left text-sm hover:bg-accent flex items-center justify-between cursor-pointer"
                 >
