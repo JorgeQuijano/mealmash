@@ -37,6 +37,7 @@ export default function IngredientSearch({ selectedIngredients, onChange }: Ingr
   const [newIngredientName, setNewIngredientName] = useState("")
   const [newIngredientCategory, setNewIngredientCategory] = useState("other")
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   // Search ingredients as user types
   useEffect(() => {
@@ -82,7 +83,10 @@ export default function IngredientSearch({ selectedIngredients, onChange }: Ingr
     }
     onChange([...selectedIngredients, newItem])
     
-    // Clear search immediately and force update
+    // Force clear input value directly
+    if (inputRef.current) {
+      inputRef.current.value = ""
+    }
     setSearch("")
     setResults([])
     setShowDropdown(false)
@@ -136,6 +140,7 @@ export default function IngredientSearch({ selectedIngredients, onChange }: Ingr
       {/* Search Input */}
       <div className="relative" ref={dropdownRef}>
         <Input
+          ref={inputRef}
           value={search}
           onChange={(e) => {
             setSearch(e.target.value)
