@@ -83,11 +83,11 @@ export default function IngredientSearch({ selectedIngredients, onChange }: Ingr
     }
     onChange([...selectedIngredients, newItem])
     
-    // Force clear input value directly
+    // Set input to show selected ingredient name (as tag)
     if (inputRef.current) {
-      inputRef.current.value = ""
+      inputRef.current.value = ingredient.name
     }
-    setSearch("")
+    setSearch(ingredient.name)
     setResults([])
     setShowDropdown(false)
   }
