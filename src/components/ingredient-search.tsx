@@ -82,12 +82,10 @@ export default function IngredientSearch({ selectedIngredients, onChange }: Ingr
     }
     onChange([...selectedIngredients, newItem])
     
-    // Small delay to allow click to register before clearing
-    setTimeout(() => {
-      setSearch("")
-      setResults([])
-      setShowDropdown(false)
-    }, 50)
+    // Clear search immediately and force update
+    setSearch("")
+    setResults([])
+    setShowDropdown(false)
   }
 
   async function createAndAddIngredient() {
@@ -155,40 +153,29 @@ export default function IngredientSearch({ selectedIngredients, onChange }: Ingr
               <div className="p-3 text-sm text-muted-foreground">Searching...</div>
             ) : results.length > 0 ? (
               results.map((ing) => (
-                <button
+                <div
                   key={ing.id}
-                  type="button"
-                  onTouchStart={(e) => {
-                    e.preventDefault()
-                    selectIngredient(ing)
-                  }}
                   onClick={() => selectIngredient(ing)}
-                  className="w-full px-3 py-2 text-left text-sm hover:bg-accent flex items-center justify-between"
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-accent flex items-center justify-between cursor-pointer"
                 >
                   <span>{ing.name}</span>
                   <span className="text-xs text-muted-foreground capitalize">{ing.category}</span>
-                </button>
+                </div>
               ))
             ) : (
               <div className="p-3 text-sm text-muted-foreground">No ingredients found</div>
             )}
             
             {/* Create New Option */}
-            <button
-              type="button"
-              onTouchStart={(e) => {
-                e.preventDefault()
-                setShowNewForm(true)
-                setShowDropdown(false)
-              }}
+            <div
               onClick={() => {
                 setShowNewForm(true)
                 setShowDropdown(false)
               }}
-              className="w-full px-3 py-2 text-left text-sm hover:bg-accent text-primary border-t"
+              className="w-full px-3 py-2 text-left text-sm hover:bg-accent text-primary border-t cursor-pointer"
             >
               + Create "{search}"
-            </button>
+            </div>
           </div>
         )}
       </div>
