@@ -459,7 +459,7 @@ export default function PantryPage() {
                   </div>
                 )}
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
                   <label className="text-xs text-muted-foreground">Category</label>
                   <select
@@ -481,15 +481,15 @@ export default function PantryPage() {
                     className="mt-1"
                   />
                 </div>
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground">Expires (optional)</label>
-                <Input
-                  type="date"
-                  value={newItem.expiresAt}
-                  onChange={(e) => setNewItem({ ...newItem, expiresAt: e.target.value })}
-                  className="mt-1"
-                />
+                <div>
+                  <label className="text-xs text-muted-foreground">Expires (optional)</label>
+                  <Input
+                    type="date"
+                    value={newItem.expiresAt}
+                    onChange={(e) => setNewItem({ ...newItem, expiresAt: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
               </div>
               {newItem.ingredientId ? (
                 <p className="text-xs text-green-600">✅ Can match with recipes</p>
