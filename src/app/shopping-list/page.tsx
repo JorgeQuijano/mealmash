@@ -527,8 +527,10 @@ export default function ShoppingListPage() {
                   className="mt-1"
                 />
               </div>
-              {newItem.ingredientId && (
-                <p className="text-xs text-green-600">✓ Linked to ingredient database</p>
+              {newItem.ingredientId ? (
+                <p className="text-xs text-green-600">✅ Can match with recipes</p>
+              ) : (
+                <p className="text-xs text-amber-600">⚠️ Won&apos;t match recipes</p>
               )}
               <Button 
                 onClick={async () => {
@@ -648,10 +650,10 @@ export default function ShoppingListPage() {
                 </Button>
               </div>
             </div>
-            {newItem.ingredientId && (
-              <p className="text-xs text-muted-foreground mt-2">
-                ✓ Linked to ingredient database
-              </p>
+            {newItem.ingredientId ? (
+              <p className="text-xs text-green-600 mt-2">✅ Can match with recipes</p>
+            ) : (
+              <p className="text-xs text-amber-600 mt-2">⚠️ Won&apos;t match recipes</p>
             )}
           </CardContent>
         </Card>
