@@ -82,11 +82,24 @@ export default function RecipesPage() {
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
+  const [hasActiveFilters, setHasActiveFilters] = useState(false)
   const recipesPerPage = 20
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    const filtersActive = 
+      filters.cuisine.length > 0 || 
+      filters.dietary.length > 0 || 
+      filters.difficulty.length > 0 ||
+      filters.timeRange !== null
+    
+    setHasActiveFilters(filtersActive)
+    setCurrentPage(1)
+  }, [filters])
 
   useEffect(() => {
     loadAllData()
-  }, [selectedCategory, currentPage])
+  }, [selectedCategory, currentPage, filters])
 
   async function loadUser() {
     const currentUser = await getUser()
@@ -112,6 +125,18 @@ export default function RecipesPage() {
     // Calculate offset
     const offset = (currentPage - 1) * recipesPerPage
     
+    // Check if advanced filters are active
+    const hasAdvancedFilters = 
+      filters.cuisine.length > 0 || 
+      filters.dietary.length > 0 || 
+      filters.difficulty.length > 0 ||
+      filters.timeRange !== null
+    
+    // If filters active, fetch more data for client-side filtering
+    // Otherwise, use standard pagination
+    const limit = hasAdvancedFilters ? 500 : recipesPerPage
+    const fetchOffset = hasAdvancedFilters ? 0 : offset
+    
     // Build query with server-side filtering
     let query = supabase
       .from("recipes")
@@ -136,10 +161,16 @@ export default function RecipesPage() {
     
     const [{ count }, { data, error }] = await Promise.all([
       countQuery,
-      query.range(offset, offset + recipesPerPage - 1)
+      query.range(fetchOffset, fetchOffset + limit - 1)
     ])
     
-    setTotalCount(count || 0)
+    // If advanced filters are active, calculate count from fetched data
+    // Otherwise use server count
+    if (hasAdvancedFilters) {
+      setTotalCount(data?.length || 0)
+    } else {
+      setTotalCount(count || 0)
+    }
     
     if (data) {
       setRecipes(data)
@@ -238,6 +269,13 @@ export default function RecipesPage() {
     return true
   })
 
+  // When filters are active, paginate client-side from filtered results
+  const paginatedRecipes = hasActiveFilters
+    ? filteredRecipes.slice((currentPage - 1) * recipesPerPage, currentPage * recipesPerPage)
+    : filteredRecipes
+
+  const displayedCount = hasActiveFilters ? filteredRecipes.length : totalCount
+
   const getCategoryColor = (category: string | string[]) => {
     const cat = Array.isArray(category) ? category[0] : category
     const colors: Record<string, string> = {
@@ -318,7 +356,7 @@ export default function RecipesPage() {
         {/* Recipes Grid - compact cards on mobile */}
         {!loading && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-            {filteredRecipes.map((recipe) => (
+            {paginatedRecipes.map((recipe) => (
               <Card 
                 key={recipe.id} 
                 className="hover:shadow-lg transition-shadow cursor-pointer h-full py-0"
@@ -367,7 +405,7 @@ export default function RecipesPage() {
         )}
 
         {/* Pagination */}
-        {totalCount > recipesPerPage && (
+        {displayedCount > recipesPerPage && (
           <div className="flex justify-center items-center gap-2 mt-8">
             <Button
               variant="outline"
@@ -378,13 +416,13 @@ export default function RecipesPage() {
               Previous
             </Button>
             <span className="text-sm text-muted-foreground">
-              Page {currentPage} of {Math.ceil(totalCount / recipesPerPage)}
+              Page {currentPage} of {Math.ceil(displayedCount / recipesPerPage)}
             </span>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage(p => p + 1)}
-              disabled={currentPage >= Math.ceil(totalCount / recipesPerPage)}
+              disabled={currentPage >= Math.ceil(displayedCount / recipesPerPage)}
             >
               Next
             </Button>
