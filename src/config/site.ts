@@ -17,7 +17,7 @@ export const siteConfig = {
     badge: "🍳 No more dinner drama",
     title: "Finally, a meal plan\nthat works for you",
     subtitle: "Spin the wheel, find recipes by ingredients you have, track your pantry, and auto-generate shopping lists. Meal planning made deliciously simple.",
-    cta: { text: "Start Free Trial", href: "#signup" },
+    cta: { text: "Start Free", href: "#signup" },
     secondaryCta: { text: "See How It Works", href: "#features" },
   },
   
@@ -50,7 +50,7 @@ export const siteConfig = {
     {
       icon: "Sparkles",
       title: "Smart Suggestions",
-      description: "AI learns your preferences and suggests meals you'll love based on your history."
+      description: "Get recipe suggestions based on your dietary preferences and cooking habits."
     },
   ],
   
@@ -60,7 +60,7 @@ export const siteConfig = {
       price: 0,
       description: "Perfect for trying things out",
       features: [
-        "Spin the wheel (5x/day)",
+        "Spin the wheel (3x/day)",
         "Basic recipe search",
         "1 pantry list",
         "Manual shopping list"
@@ -70,7 +70,7 @@ export const siteConfig = {
     },
     {
       name: "Pro",
-      price: 4,
+      price: 7,
       description: "For serious home cooks",
       features: [
         "Unlimited wheel spins",
@@ -83,27 +83,12 @@ export const siteConfig = {
       cta: "Go Pro",
       popular: true,
     },
-    {
-      name: "Family",
-      price: 9,
-      description: "The whole family covered",
-      features: [
-        "Everything in Pro",
-        "Up to 5 family members",
-        "Family favorites list",
-        "Meal prep scheduling",
-        "Priority support",
-        "Custom dietary preferences"
-      ],
-      cta: "Get Family Plan",
-      popular: false,
-    },
   ],
   
   cta: {
     title: "Ready to crush dinner decision fatigue?",
     subtitle: "Join thousands of home cooks who've simplified their meal planning.",
-    button: "Start Your Free Trial",
+    button: "Start Free",
   },
   
   footer: {
