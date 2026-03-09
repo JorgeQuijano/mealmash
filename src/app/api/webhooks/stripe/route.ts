@@ -206,7 +206,8 @@ export async function POST(req: Request) {
         const attemptCount = invoice.attempt_count;
         const amountDue = invoice.amount_due;
         const currency = invoice.currency;
-        const subscriptionId = invoice.subscription as string;
+        // subscription is an expandable field - cast to access
+        const subscriptionId = (invoice as any).subscription as string;
 
         console.log('=== PAYMENT FAILED EVENT ===');
         console.log('Invoice ID:', invoiceId);
