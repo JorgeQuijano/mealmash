@@ -8,6 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 import MobileNav from "@/components/mobile-nav"
 import { getPantryItemLimit } from "@/lib/feature-gate"
@@ -25,6 +32,7 @@ interface PantryItem {
   name: string
   category: string
   quantity: string
+  unit: string
   created_at: string
   ingredient_id?: string
   expires_at?: string | null
@@ -43,6 +51,8 @@ const CATEGORIES = [
   "Other"
 ]
 
+const UNITS = ["pieces", "cups", "tbsp", "tsp", "oz", "lb", "g", "kg", "ml", "L", "cloves", "slices", "whole", "bunch", "can", "box", "bag"]
+
 export default function PantryPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
@@ -58,6 +68,7 @@ export default function PantryPage() {
     name: "", 
     category: "Other", 
     quantity: "",
+    unit: "pieces",
     ingredientId: "" as string | undefined,
     expiresAt: ""
   })
@@ -65,10 +76,12 @@ export default function PantryPage() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [quickAddItem, setQuickAddItem] = useState<{name: string, category: string, ingredientId?: string} | null>(null)
   const [quickAddQty, setQuickAddQty] = useState("1")
+  const [quickAddUnit, setQuickAddUnit] = useState("pieces")
   const [quickAddExpires, setQuickAddExpires] = useState("")
   const [quickAddSaving, setQuickAddSaving] = useState(false)
   const [editingItem, setEditingItem] = useState<PantryItem | null>(null)
   const [editQuantity, setEditQuantity] = useState("")
+  const [editUnit, setEditUnit] = useState("pieces")
   const [editExpiresAt, setEditExpiresAt] = useState("")
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
   const [saving, setSaving] = useState(false)
@@ -183,6 +196,7 @@ export default function PantryPage() {
       name: newItem.name.trim(),
       category: newItem.category,
       quantity: newItem.quantity.trim() || "1",
+      unit: newItem.unit || "pieces",
       ingredient_id: newItem.ingredientId || null
     }
 
@@ -198,7 +212,7 @@ export default function PantryPage() {
 
     if (!error && data) {
       setItems([...data, ...items])
-      setNewItem({ name: "", category: "Other", quantity: "", ingredientId: undefined, expiresAt: "" })
+      setNewItem({ name: "", category: "Other", quantity: "", unit: "pieces", ingredientId: undefined, expiresAt: "" })
       setIngredientQuery("")
       setIngredientSuggestions([])
       setShowSuggestions(false)
@@ -226,6 +240,7 @@ export default function PantryPage() {
         name: quickAddItem.name,
         category: quickAddItem.category,
         quantity: quickAddQty || "1",
+        unit: quickAddUnit || "pieces",
         ingredient_id: quickAddItem.ingredientId || null,
         expires_at: quickAddExpires || null
       })
@@ -237,6 +252,7 @@ export default function PantryPage() {
     setQuickAddSaving(false)
     setQuickAddItem(null)
     setQuickAddQty("1")
+    setQuickAddUnit("pieces")
     setQuickAddExpires("")
   }
 
@@ -254,6 +270,7 @@ export default function PantryPage() {
   const openEditModal = (item: PantryItem) => {
     setEditingItem(item)
     setEditQuantity(item.quantity)
+    setEditUnit(item.unit || "pieces")
     setEditExpiresAt(item.expires_at || "")
   }
 
@@ -283,6 +300,7 @@ export default function PantryPage() {
         body: JSON.stringify({
           id: editingItem.id,
           quantity: editQuantity,
+          unit: editUnit,
           expires_at: editExpiresAt || null
         })
       })
@@ -474,12 +492,29 @@ export default function PantryPage() {
                 </div>
                 <div>
                   <label className="text-xs text-muted-foreground">Quantity</label>
-                  <Input
-                    placeholder="Qty"
-                    value={newItem.quantity}
-                    onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
-                    className="mt-1"
-                  />
+                  <div className="flex gap-2 mt-1">
+                    <Input
+                      placeholder="Qty"
+                      value={newItem.quantity}
+                      onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+                      className="flex-1"
+                    />
+                    <Select
+                      value={newItem.unit}
+                      onValueChange={(value) => setNewItem({ ...newItem, unit: value })}
+                    >
+                      <SelectTrigger className="w-24">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {UNITS.map((unit) => (
+                          <SelectItem key={unit} value={unit}>
+                            {unit}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
               <div>
@@ -636,6 +671,23 @@ export default function PantryPage() {
                 +
               </Button>
             </div>
+            <div className="flex justify-center mb-4">
+              <Select
+                value={editUnit}
+                onValueChange={(value) => setEditUnit(value)}
+              >
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {UNITS.map((unit) => (
+                    <SelectItem key={unit} value={unit}>
+                      {unit}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-2 mb-4">
               <label className="text-sm font-medium">Expires (optional)</label>
               <Input
@@ -665,13 +717,30 @@ export default function PantryPage() {
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium">Quantity</label>
-                <Input
-                  value={quickAddQty}
-                  onChange={(e) => setQuickAddQty(e.target.value)}
-                  className="mt-1 text-lg"
-                  type="number"
-                  min="1"
-                />
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    value={quickAddQty}
+                    onChange={(e) => setQuickAddQty(e.target.value)}
+                    className="flex-1 text-lg"
+                    type="number"
+                    min="1"
+                  />
+                  <Select
+                    value={quickAddUnit}
+                    onValueChange={(value) => setQuickAddUnit(value)}
+                  >
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {UNITS.map((unit) => (
+                        <SelectItem key={unit} value={unit}>
+                          {unit}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <div>
                 <label className="text-sm font-medium">Expires (optional)</label>
@@ -776,7 +845,7 @@ export default function PantryPage() {
                                     className="flex items-center justify-between text-xs bg-muted/50 p-1.5 rounded"
                                   >
                                     <div className="flex-1 min-w-0">
-                                      <span className="text-muted-foreground">Qty: {item.quantity}</span>
+                                      <span className="text-muted-foreground">Qty: {item.quantity} {item.unit || 'pieces'}</span>
                                       {item.expires_at && (
                                         <span className="text-orange-600 ml-1">
                                           • Exp: {new Date(item.expires_at).toLocaleDateString()}

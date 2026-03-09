@@ -68,7 +68,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { id, quantity, expires_at } = body
+    const { id, quantity, unit, expires_at } = body
 
     if (!id || quantity === undefined) {
       return NextResponse.json({ error: 'ID and quantity required' }, { status: 400 })
@@ -76,6 +76,9 @@ export async function PUT(request: NextRequest) {
 
     // Build update object
     const updateData: any = { quantity: String(quantity) }
+    if (unit !== undefined) {
+      updateData.unit = unit
+    }
     if (expires_at !== undefined) {
       updateData.expires_at = expires_at
     }
