@@ -613,13 +613,24 @@ export default function PantryPage() {
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
                 </select>
-                <Input
-                  placeholder="Qty"
-                  value={newItem.quantity}
-                  onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
-                  className="w-24"
-                  onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
-                />
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="Qty"
+                    value={newItem.quantity}
+                    onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+                    className="w-16"
+                    onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
+                  />
+                  <select
+                    value={newItem.unit}
+                    onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
+                    className="px-2 py-2 rounded-md border bg-background text-sm w-20"
+                  >
+                    {UNITS.map(unit => (
+                      <option key={unit} value={unit}>{unit}</option>
+                    ))}
+                  </select>
+                </div>
                 <Input
                   type="date"
                   placeholder="Expires"
