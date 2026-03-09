@@ -2,10 +2,40 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+// Rate limiter for checkout (3 requests per 60 seconds per user)
+const checkoutRatelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(3, "60 s"),
+  prefix: "ratelimit:checkout:",
+});
+
+// Timeout wrapper for Stripe calls (25 second timeout)
+async function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number = 25000
+): Promise<T> {
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error(`Request timeout after ${timeoutMs}ms`)), timeoutMs)
+  );
+  return Promise.race([promise, timeout]);
+}
 
 export async function POST(req: Request) {
   try {
     const { priceId } = await req.json();
+
+    // Server-side validation of price ID - critical security check
+    const validPriceIds = [
+      process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
+    ].filter(Boolean);
+
+    if (!priceId || !validPriceIds.includes(priceId)) {
+      console.log('Invalid price ID:', priceId);
+      return NextResponse.json({ error: 'Invalid price ID' }, { status: 400 });
+    }
 
     // Create server client to get user session
     const cookieStore = await cookies();
@@ -34,6 +64,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Apply rate limiting per user
+    const { success } = await checkoutRatelimit.limit(user.id);
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Too many checkout attempts. Please try again in 60 seconds.' },
+        { status: 429 }
+      );
+    }
+
     // Get user email from user_profiles
     const { data: profile } = await supabase
       .from('user_profiles')
@@ -49,10 +88,10 @@ export async function POST(req: Request) {
     let customerId = profile.stripe_customer_id;
 
     if (!customerId) {
-      const customer = await stripe.customers.create({
+      const customer = await withTimeout(stripe.customers.create({
         email: profile.email,
         metadata: { userId: user.id },
-      });
+      }));
       customerId = customer.id;
 
       await supabase
@@ -64,7 +103,7 @@ export async function POST(req: Request) {
     // Create checkout session
     const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
     
-    const session = await stripe.checkout.sessions.create({
+    const session = await withTimeout(stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
       payment_method_types: ['card'],
@@ -86,7 +125,7 @@ export async function POST(req: Request) {
         },
       },
       billing_address_collection: 'required',
-    });
+    }));
 
     return NextResponse.json({ url: session.url });
   } catch (error) {

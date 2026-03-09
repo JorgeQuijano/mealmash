@@ -6,6 +6,17 @@ import Stripe from 'stripe';
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
+// Timeout wrapper for Stripe calls (25 second timeout)
+async function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number = 25000
+): Promise<T> {
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error(`Request timeout after ${timeoutMs}ms`)), timeoutMs)
+  );
+  return Promise.race([promise, timeout]);
+}
+
 export async function POST(req: Request) {
   const body = await req.text();
   const signature = req.headers.get('stripe-signature')!;
@@ -20,6 +31,24 @@ export async function POST(req: Request) {
   }
 
   const supabase = supabaseAdmin;
+
+  // Idempotency check - prevent duplicate processing
+  const eventId = event.id;
+  const { data: existingEvent } = await supabase
+    .from('webhook_events')
+    .select('id')
+    .eq('event_id', eventId)
+    .single();
+
+  if (existingEvent) {
+    console.log('Duplicate webhook event received:', eventId);
+    return NextResponse.json({ received: true, duplicate: true });
+  }
+
+  // Mark event as processing
+  await supabase
+    .from('webhook_events')
+    .insert({ event_id: eventId, event_type: event.type });
 
   try {
     switch (event.type) {
@@ -39,7 +68,7 @@ export async function POST(req: Request) {
         }
 
         // Retrieve subscription details
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        const subscription = await withTimeout(stripe.subscriptions.retrieve(subscriptionId));
         const priceId = subscription.items.data[0].price.id;
         
         // Handle current_period_end - could be missing or in different format
@@ -54,16 +83,12 @@ export async function POST(req: Request) {
 
         // Determine tier from price ID
         const proPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID;
-        const familyPriceId = process.env.NEXT_PUBLIC_STRIPE_FAMILY_PRICE_ID;
         
         console.log('Price from Stripe:', priceId);
         console.log('Pro Price ID:', proPriceId);
-        console.log('Family Price ID:', familyPriceId);
 
         let tier: string = 'free';
-        if (priceId === familyPriceId) {
-          tier = 'family';
-        } else if (priceId === proPriceId) {
+        if (priceId === proPriceId) {
           tier = 'pro';
         }
 
@@ -212,7 +237,6 @@ async function handleSubscriptionUpdate(
 ) {
   const priceId = subscription.items.data[0].price.id;
   const proPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID;
-  const familyPriceId = process.env.NEXT_PUBLIC_STRIPE_FAMILY_PRICE_ID;
   
   console.log('Price from Stripe (update):', priceId);
   console.log('Pro Price ID (update):', proPriceId);
@@ -224,9 +248,7 @@ async function handleSubscriptionUpdate(
   }
 
   let tier = 'free';
-  if (priceId === familyPriceId) {
-    tier = 'family';
-  } else if (priceId === proPriceId) {
+  if (priceId === proPriceId) {
     tier = 'pro';
   }
 
