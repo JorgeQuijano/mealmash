@@ -150,6 +150,7 @@ export default function RecipesPage() {
           ingredients (name, category)
         )
       `, { count: 'exact' })
+      .order("name", { ascending: true })
     
     let countQuery = supabase
       .from("recipes")
