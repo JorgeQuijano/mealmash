@@ -202,19 +202,46 @@ export async function POST(req: Request) {
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice;
         const customerId = invoice.customer as string;
+        const invoiceId = invoice.id;
+        const attemptCount = invoice.attempt_count;
+        const amountDue = invoice.amount_due;
+        const currency = invoice.currency;
+        const subscriptionId = invoice.subscription as string;
+
+        console.log('=== PAYMENT FAILED EVENT ===');
+        console.log('Invoice ID:', invoiceId);
+        console.log('Customer ID:', customerId);
+        console.log('Subscription ID:', subscriptionId);
+        console.log('Attempt count:', attemptCount);
+        console.log('Amount due:', `${currency} ${amountDue / 100}`);
+        console.log('==============================');
 
         const { data: profile } = await supabase
           .from('user_profiles')
-          .select('id')
+          .select('id, email, subscription_tier, subscription_status')
           .eq('stripe_customer_id', customerId)
           .single();
 
         if (profile) {
+          console.log('Found user profile:', {
+            userId: profile.id,
+            email: profile.email,
+            currentTier: profile.subscription_tier,
+            currentStatus: profile.subscription_status
+          });
+
           await supabase
             .from('user_profiles')
             .update({ subscription_status: 'past_due' })
             .eq('id', profile.id);
-          console.log(`Payment failed for user ${profile.id}`);
+          
+          console.log(`⚠️ Payment failed for user ${profile.id} (${profile.email}) - status set to past_due`);
+          
+          // Log for debugging/failed_payment_log table (optional future enhancement)
+          console.log(`[ALERT] User ${profile.id} payment failed. Invoice: ${invoiceId}, Attempts: ${attemptCount}`);
+        } else {
+          console.error(`❌ Payment failed but no user found for customer: ${customerId}`);
+          console.error('This may indicate a orphaned subscription in Stripe');
         }
         break;
       }
@@ -223,9 +250,16 @@ export async function POST(req: Request) {
         console.log(`Unhandled event type: ${event.type}`);
     }
 
+    console.log(`✅ Webhook processed successfully: ${event.type} (${event.id})`);
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error('Webhook handler error:', error);
+    console.error('Error details:', {
+      eventType: event?.type,
+      eventId: event?.id,
+      timestamp: new Date().toISOString(),
+      stack: error instanceof Error ? error.stack : undefined
+    });
     return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 });
   }
 }
