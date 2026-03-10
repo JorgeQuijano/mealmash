@@ -518,6 +518,10 @@ export default function ShoppingListPage() {
                         <button
                           key={ingredient.id}
                           className="w-full text-left px-3 py-2 hover:bg-accent flex items-center justify-between"
+                          onTouchEnd={(e) => {
+                            e.preventDefault()
+                            selectSuggestion(ingredient)
+                          }}
                           onClick={() => selectSuggestion(ingredient)}
                         >
                           <span>{ingredient.name}</span>
@@ -655,6 +659,10 @@ export default function ShoppingListPage() {
                           <button
                             key={ingredient.id}
                             className="w-full text-left px-3 py-2 hover:bg-accent flex items-center justify-between"
+                            onTouchEnd={(e) => {
+                              e.preventDefault()
+                              selectSuggestion(ingredient)
+                            }}
                             onClick={() => selectSuggestion(ingredient)}
                           >
                             <span>{ingredient.name}</span>
