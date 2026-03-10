@@ -75,6 +75,7 @@ export default function ShoppingListPage() {
   const [ingredientSuggestions, setIngredientSuggestions] = useState<Ingredient[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [loadingSuggestions, setLoadingSuggestions] = useState(false)
+  const [isScrolling, setIsScrolling] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const suggestionsRef = useRef<HTMLDivElement>(null)
 
@@ -518,9 +519,13 @@ export default function ShoppingListPage() {
                         <button
                           key={ingredient.id}
                           className="w-full text-left px-3 py-2 hover:bg-accent flex items-center justify-between"
+                          onTouchMove={() => setIsScrolling(true)}
                           onTouchEnd={(e) => {
-                            e.preventDefault()
-                            selectSuggestion(ingredient)
+                            if (!isScrolling) {
+                              e.preventDefault()
+                              selectSuggestion(ingredient)
+                            }
+                            setIsScrolling(false)
                           }}
                           onClick={() => selectSuggestion(ingredient)}
                         >
@@ -659,9 +664,13 @@ export default function ShoppingListPage() {
                           <button
                             key={ingredient.id}
                             className="w-full text-left px-3 py-2 hover:bg-accent flex items-center justify-between"
+                            onTouchMove={() => setIsScrolling(true)}
                             onTouchEnd={(e) => {
-                              e.preventDefault()
-                              selectSuggestion(ingredient)
+                              if (!isScrolling) {
+                                e.preventDefault()
+                                selectSuggestion(ingredient)
+                              }
+                              setIsScrolling(false)
                             }}
                             onClick={() => selectSuggestion(ingredient)}
                           >
