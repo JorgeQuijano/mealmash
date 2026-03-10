@@ -529,8 +529,10 @@ function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-stone-800 mt-12 pt-8 text-center text-stone-500 text-sm">
-          © {new Date().getFullYear()} MealClaw. All rights reserved.
+        <div className="border-t border-stone-800 mt-12 pt-8 text-center">
+          <p className="text-stone-500 text-sm">
+            © {new Date().getFullYear()} - lolsito inc
+          </p>
         </div>
       </div>
     </footer>
