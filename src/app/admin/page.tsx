@@ -861,7 +861,7 @@ export default function AdminPage() {
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/*"
+                  accept="image/*,video/webm"
                   onChange={handleImageUpload}
                   disabled={uploadingImage}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
