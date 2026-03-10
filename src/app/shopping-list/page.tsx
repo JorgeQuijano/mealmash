@@ -8,8 +8,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 import MobileNav from "@/components/mobile-nav"
+
+const UNITS = ["pieces", "cups", "tbsp", "tsp", "oz", "lb", "g", "kg", "ml", "L", "cloves", "slices", "whole", "bunch", "can", "box", "bag"]
 
 interface Ingredient {
   id: string
@@ -22,6 +31,7 @@ interface ShoppingItem {
   id: string
   item_name: string
   quantity: string
+  unit: string
   is_checked: boolean
   created_at: string
   ingredient_id?: string
@@ -39,6 +49,7 @@ export default function ShoppingListPage() {
   const [newItem, setNewItem] = useState({ 
     item_name: "", 
     quantity: "",
+    unit: "pieces",
     ingredientId: undefined as string | undefined
   })
   const [adding, setAdding] = useState(false)
@@ -196,6 +207,7 @@ export default function ShoppingListPage() {
         user_id: user.id,
         item_name: newItem.item_name.trim(),
         quantity: newItem.quantity.trim() || "1",
+        unit: newItem.unit,
         is_checked: false,
         ingredient_id: newItem.ingredientId || null
       })
@@ -203,7 +215,7 @@ export default function ShoppingListPage() {
 
     if (!error && data) {
       setItems([...data, ...items])
-      setNewItem({ item_name: "", quantity: "", ingredientId: undefined })
+      setNewItem({ item_name: "", quantity: "", unit: "pieces", ingredientId: undefined })
       setIngredientQuery("")
       setIngredientSuggestions([])
       setShowSuggestions(false)
@@ -520,12 +532,29 @@ export default function ShoppingListPage() {
               </div>
               <div>
                 <label className="text-sm font-medium">Quantity</label>
-                <Input
-                  placeholder="e.g., 2"
-                  value={newItem.quantity}
-                  onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
-                  className="mt-1"
-                />
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    placeholder="e.g., 2"
+                    value={newItem.quantity}
+                    onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+                    className="flex-1"
+                  />
+                  <Select
+                    value={newItem.unit}
+                    onValueChange={(value) => setNewItem({ ...newItem, unit: value })}
+                  >
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {UNITS.map((unit) => (
+                        <SelectItem key={unit} value={unit}>
+                          {unit}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               {newItem.ingredientId ? (
                 <p className="text-xs text-green-600">✅ Can match with recipes</p>
@@ -642,9 +671,24 @@ export default function ShoppingListPage() {
                   placeholder="Qty"
                   value={newItem.quantity}
                   onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
-                  className="w-24"
+                  className="w-20"
                   onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
                 />
+                <Select
+                  value={newItem.unit}
+                  onValueChange={(value) => setNewItem({ ...newItem, unit: value })}
+                >
+                  <SelectTrigger className="w-24">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {UNITS.map((unit) => (
+                      <SelectItem key={unit} value={unit}>
+                        {unit}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Button onClick={handleAddItem} disabled={adding || !newItem.item_name.trim()}>
                   {adding ? "Adding..." : "Add"}
                 </Button>
