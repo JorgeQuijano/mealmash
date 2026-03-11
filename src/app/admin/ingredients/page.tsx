@@ -302,10 +302,11 @@ export default function IngredientsPage() {
       <main className="container mx-auto px-4 py-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
           <div>
-            <h2 className="text-2xl font-bold">Ingredient Management</h2>
-            <p className="text-muted-foreground">{ingredients.length} ingredients in library</p>
+            <h2 className="text-xl md:text-2xl font-bold">Ingredient Management</h2>
+            <p className="text-sm text-muted-foreground md:hidden">{ingredients.length} ingredients</p>
+            <p className="text-sm md:text-base text-muted-foreground hidden md:block">{ingredients.length} ingredients in library</p>
           </div>
-          <Button onClick={() => { setShowAddForm(true); resetForm(); }}>
+          <Button onClick={() => { setShowAddForm(true); resetForm(); }} className="w-full md:w-auto">
             ➕ Add Ingredient
           </Button>
         </div>
