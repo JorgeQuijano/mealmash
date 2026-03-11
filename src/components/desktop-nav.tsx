@@ -64,7 +64,7 @@ export default function DesktopNav({ currentPath = "" }: DesktopNavProps) {
               <Link
                 href="/admin"
                 className={`text-sm transition-colors hover:text-primary ${
-                  currentPath === "/admin"
+                  currentPath.startsWith("/admin")
                     ? "text-primary font-medium"
                     : "text-muted-foreground"
                 }`}
