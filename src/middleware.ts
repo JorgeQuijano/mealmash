@@ -46,12 +46,25 @@ export async function middleware(request: NextRequest) {
     '/settings'
   ]
 
+  // Public routes that don't require authentication
+  const publicPaths = [
+    '/recipe',
+    '/login',
+    '/signup',
+    '/pricing',
+    '/about'
+  ]
+
+  const isPublicPath = publicPaths.some(path => 
+    request.nextUrl.pathname.startsWith(path)
+  )
+
   const isProtectedPath = protectedPaths.some(path => 
     request.nextUrl.pathname.startsWith(path)
   )
 
-  // Redirect unauthenticated users to login
-  if (isProtectedPath && !user) {
+  // Redirect unauthenticated users to login (except for public paths)
+  if (isProtectedPath && !user && !isPublicPath) {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirect', request.nextUrl.pathname)
     return NextResponse.redirect(loginUrl)
