@@ -1,0 +1,22 @@
+# MealClaw Robots.txt
+
+User-agent: *
+Allow: /
+Allow: /recipe/
+Allow: /login
+Allow: /signup
+Allow: /pricing
+
+# Disallow admin and private routes
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /pantry
+Disallow: /shopping-list
+Disallow: /meal-plan
+Disallow: /suggestions
+Disallow: /random
+Disallow: /settings
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://mealclaw.com/sitemap.xml
