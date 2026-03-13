@@ -230,24 +230,16 @@ export default function RecipeClientPage({
 
         {/* Favorite Button */}
         <div className="mb-6">
-          <div className="flex items-center gap-4">
-            <Button
-              variant={favorited ? "default" : "outline"}
-              size="lg"
-              onClick={handleFavorite}
-              disabled={loading}
-              className={favorited ? "bg-red-500 hover:bg-red-600" : ""}
-            >
-              <span className="mr-2">{favorited ? "❤️" : "🤍"}</span>
-              {favCount > 0 ? `${favCount} saved` : "Save Recipe"}
-            </Button>
-            
-            {favCount > 0 && (
-              <span className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">{favCount}</span> {favCount === 1 ? "person has" : "people have"} saved this
-              </span>
-            )}
-          </div>
+          <Button
+            variant={favorited ? "default" : "outline"}
+            size="lg"
+            onClick={handleFavorite}
+            disabled={loading}
+            className={favorited ? "bg-red-500 hover:bg-red-600" : ""}
+          >
+            <span className="mr-2">{favorited ? "❤️" : "🤍"}</span>
+            {favCount > 0 ? `${favCount} saved` : "Save Recipe"}
+          </Button>
         </div>
 
         <Separator className="my-6" />
