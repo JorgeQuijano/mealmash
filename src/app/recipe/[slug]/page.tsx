@@ -1,10 +1,26 @@
 import { Metadata } from 'next'
-import { supabase } from "@/lib/supabase"
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 import { getImageUrl } from "@/lib/images"
 import RecipeClientPage from './recipe-client-page'
 
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const cookieStore = await cookies()
+  
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll() {},
+      },
+    }
+  )
+  
   const slug = params.slug
   
   const { data: recipe } = await supabase
@@ -54,8 +70,24 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 // Server component that fetches data and passes to client component
 export default async function PublicRecipePage({ params }: { params: { slug: string } }) {
+  const cookieStore = await cookies()
+  
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll() {},
+      },
+    }
+  )
+  
   const slug = params.slug
   
+  // Fetch recipe
   const { data: recipe } = await supabase
     .from("recipes")
     .select(`
@@ -71,6 +103,38 @@ export default async function PublicRecipePage({ params }: { params: { slug: str
     .eq("slug", slug)
     .single()
 
+  // Fetch favorite count from the view
+  let favoriteCount = 0
+  if (recipe) {
+    const { data: countData } = await supabase
+      .from('recipe_favorite_counts')
+      .select('favorite_count')
+      .eq('recipe_id', recipe.id)
+      .single()
+    
+    favoriteCount = countData?.favorite_count || 0
+  }
+
+  // Check if current user has favorited this recipe
+  const { data: { user } } = await supabase.auth.getUser()
+  let isFavorited = false
+  
+  if (user && recipe) {
+    const { data: existingFavorite } = await supabase
+      .from('user_favorites')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('recipe_id', recipe.id)
+      .single()
+    
+    isFavorited = !!existingFavorite
+  }
+
   // Pass data to client component for rendering
-  return <RecipeClientPage recipe={recipe} />
+  return <RecipeClientPage 
+    recipe={recipe} 
+    favoriteCount={favoriteCount}
+    isFavorited={isFavorited}
+    isLoggedIn={!!user}
+  />
 }

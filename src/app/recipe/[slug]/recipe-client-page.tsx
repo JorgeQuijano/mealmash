@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -53,8 +55,24 @@ function toISODuration(minutes: number): string {
   return `PT${minutes}M`
 }
 
-export default function RecipeClientPage({ recipe }: { recipe: Recipe | null }) {
+interface RecipeClientPageProps {
+  recipe: Recipe | null
+  favoriteCount?: number
+  isFavorited?: boolean
+  isLoggedIn?: boolean
+}
+
+export default function RecipeClientPage({ 
+  recipe, 
+  favoriteCount = 0, 
+  isFavorited = false,
+  isLoggedIn = false 
+}: RecipeClientPageProps) {
   const [jsonLd, setJsonLd] = useState<any>(null)
+  const [favCount, setFavCount] = useState(favoriteCount)
+  const [favorited, setFavorited] = useState(isFavorited)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   // Generate JSON-LD structured data
   useEffect(() => {
@@ -97,6 +115,41 @@ export default function RecipeClientPage({ recipe }: { recipe: Recipe | null }) 
 
     setJsonLd(structuredData)
   }, [recipe])
+
+  // Handle favorite toggle
+  const handleFavorite = async () => {
+    if (!isLoggedIn) {
+      router.push('/login?tab=signup&redirect=' + encodeURIComponent(window.location.pathname))
+      return
+    }
+
+    setLoading(true)
+    
+    if (favorited) {
+      // Remove from favorites
+      const { error } = await supabase
+        .from('user_favorites')
+        .delete()
+        .eq('recipe_id', recipe!.id)
+      
+      if (!error) {
+        setFavorited(false)
+        setFavCount(prev => Math.max(0, prev - 1))
+      }
+    } else {
+      // Add to favorites
+      const { error } = await supabase
+        .from('user_favorites')
+        .insert({ recipe_id: recipe!.id })
+      
+      if (!error) {
+        setFavorited(true)
+        setFavCount(prev => prev + 1)
+      }
+    }
+    
+    setLoading(false)
+  }
 
   if (!recipe) {
     return (
@@ -173,6 +226,26 @@ export default function RecipeClientPage({ recipe }: { recipe: Recipe | null }) 
             <span>📊 Total: {totalTime} min</span>
             <span>👥 Serves: {recipe.servings}</span>
           </div>
+        </div>
+
+        {/* Favorite Button */}
+        <div className="mb-6">
+          <Button
+            variant={favorited ? "default" : "outline"}
+            size="lg"
+            onClick={handleFavorite}
+            disabled={loading}
+            className={favorited ? "bg-red-500 hover:bg-red-600" : ""}
+          >
+            <span className="mr-2">{favorited ? "❤️" : "🤍"}</span>
+            {favCount > 0 ? `${favCount} saved` : "Save Recipe"}
+          </Button>
+          
+          {favCount > 0 && (
+            <p className="text-sm text-muted-foreground mt-2">
+              {favCount} {favCount === 1 ? "person has" : "people have"} saved this recipe
+            </p>
+          )}
         </div>
 
         <Separator className="my-6" />
