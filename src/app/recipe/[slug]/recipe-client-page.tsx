@@ -230,6 +230,7 @@ export default function RecipeClientPage({
 
         {/* Favorite Button */}
         <div className="mb-6">
+          DEBUG: favCount={favCount}, favorited={favorited ? 'yes' : 'no'}
           <Button
             variant={favorited ? "default" : "outline"}
             size="lg"
