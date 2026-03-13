@@ -212,7 +212,7 @@ export default function PublicRecipePage() {
             <p className="text-muted-foreground mb-4">
               Create a free account to save recipes, build your pantry, and get personalized meal plans.
             </p>
-            <Link href="/signup">
+            <Link href="/login?tab=signup">
               <Button className="bg-gradient-to-r from-orange-500 to-amber-500">
                 Sign Up Free
               </Button>
