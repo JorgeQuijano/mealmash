@@ -5,7 +5,8 @@ import { getImageUrl } from "@/lib/images"
 import RecipeClientPage from './recipe-client-page'
 
 // Generate dynamic metadata for SEO
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
   const cookieStore = await cookies()
   
   const supabase = createServerClient(
@@ -20,8 +21,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       },
     }
   )
-  
-  const slug = params.slug
   
   const { data: recipe } = await supabase
     .from("recipes")
@@ -69,7 +68,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 // Server component that fetches data and passes to client component
-export default async function PublicRecipePage({ params }: { params: { slug: string } }) {
+export default async function PublicRecipePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const cookieStore = await cookies()
   
   const supabase = createServerClient(
@@ -84,8 +84,6 @@ export default async function PublicRecipePage({ params }: { params: { slug: str
       },
     }
   )
-  
-  const slug = params.slug
   
   // Fetch recipe
   const { data: recipe } = await supabase
