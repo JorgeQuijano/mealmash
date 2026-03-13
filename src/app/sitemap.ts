@@ -1,20 +1,22 @@
 import { MetadataRoute } from 'next'
-import { createServerClient } from '@supabase/ssr'
 
+// Use fetch directly to avoid Supabase client issues in serverless
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+  // Fetch recipes directly via REST API
+  const response = await fetch(
+    `${supabaseUrl}/rest/v1/recipes?select=slug,updated_at&slug=not.is.null`,
     {
-      cookies: {},
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+      },
     }
   )
 
-  // Fetch all recipes with slugs (using anon key - recipes should be public readable)
-  const { data: recipes } = await supabase
-    .from('recipes')
-    .select('slug, updated_at')
-    .not('slug', 'is', null)
+  const recipes = response.ok ? await response.json() : []
 
   // Base URL
   const baseUrl = 'https://mealclaw.com'
@@ -42,7 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   // Dynamic recipe pages
-  const recipePages: MetadataRoute.Sitemap = (recipes || []).map((recipe) => ({
+  const recipePages: MetadataRoute.Sitemap = (recipes || []).map((recipe: any) => ({
     url: `${baseUrl}/recipe/${recipe.slug}`,
     lastModified: recipe.updated_at ? new Date(recipe.updated_at) : new Date(),
     changeFrequency: 'weekly' as const,
