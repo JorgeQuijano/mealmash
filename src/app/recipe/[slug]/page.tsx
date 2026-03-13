@@ -103,16 +103,15 @@ export default async function PublicRecipePage({ params }: { params: { slug: str
     .eq("slug", slug)
     .single()
 
-  // Fetch favorite count from the view
+  // Fetch favorite count directly from user_favorites
   let favoriteCount = 0
   if (recipe) {
-    const { data: countData } = await supabase
-      .from('recipe_favorite_counts')
-      .select('favorite_count')
+    const { count } = await supabase
+      .from('user_favorites')
+      .select('*', { count: 'exact', head: true })
       .eq('recipe_id', recipe.id)
-      .single()
     
-    favoriteCount = countData?.favorite_count || 0
+    favoriteCount = count || 0
   }
 
   // Check if current user has favorited this recipe
