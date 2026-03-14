@@ -51,13 +51,19 @@ export function useSubscription() {
   useEffect(() => {
     fetchSubscription();
 
-    // Listen for auth changes
-    const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange(() => {
-      fetchSubscription();
-    });
+    // Listen for auth changes (only if Supabase is configured)
+    let authSub: { unsubscribe: () => void } | undefined;
+    if (supabase?.auth) {
+      const result = supabase.auth.onAuthStateChange(() => {
+        fetchSubscription();
+      });
+      if (result?.data?.subscription) {
+        authSub = result.data.subscription;
+      }
+    }
 
     return () => {
-      authSub.unsubscribe();
+      authSub?.unsubscribe();
     };
   }, [fetchSubscription]);
 

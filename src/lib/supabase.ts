@@ -1,37 +1,83 @@
 import { createBrowserClient } from '@supabase/ssr'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { PostgrestResponse } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY
 
+// Check if Supabase is configured
+export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey)
+
+// Generic function to create a properly typed stub response
+function createStubResponse<T>(data: T[] | null): PostgrestResponse<T> {
+  return { data, error: null } as PostgrestResponse<T>
+}
+
+// Stub client for when Supabase isn't configured - preserves type inference
+const stubFilterBuilder = <T>() => ({
+  eq: () => ({ single: async () => ({ data: null as T, error: null }) }),
+  order: () => createStubResponse<T[]>([]),
+  in: () => createStubResponse<T[]>([]),
+  limit: () => createStubResponse<T[]>([]),
+  gte: () => stubFilterBuilder<T>(),
+  lte: () => stubFilterBuilder<T>(),
+})
+
+const stubQueryBuilder = {
+  select: () => stubFilterBuilder(),
+  insert: () => ({ select: () => stubFilterBuilder() }),
+  update: () => stubFilterBuilder(),
+  delete: () => stubFilterBuilder(),
+}
+
+const stubAuth = {
+  getUser: async () => ({ data: { user: null }, error: null }),
+  onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+  signInWithPassword: async () => ({ data: { user: null }, error: null }),
+  signUp: async () => ({ data: { user: null }, error: null }),
+  signOut: async () => ({}),
+}
+
+// Stub client for type preservation
+const stubClient = {
+  auth: stubAuth,
+  from: () => stubQueryBuilder,
+}
+
 // Browser client with proper cookie handling for middleware compatibility
-export const supabase = createBrowserClient(
-  supabaseUrl,
-  supabaseAnonKey,
-  {
-    cookies: {
-      getAll() {
-        if (typeof document === 'undefined') return []
-        return document.cookie.split(';').map(c => {
-          const [key, ...v] = c.trim().split('=')
-          return { name: key, value: v.join('=') }
-        })
-      },
-      setAll(cookiesToSet) {
-        if (typeof document === 'undefined') return
-        cookiesToSet.forEach(({ name, value, options }) => {
-          document.cookie = `${name}=${value}; path=${options?.path || '/'}; max-age=${options?.maxAge || 31536000}; SameSite=${options?.sameSite || 'Lax'}${options?.secure ? '; secure' : ''}`
-        })
-      },
-    },
-  }
-)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const supabase: any = isSupabaseConfigured
+  ? createBrowserClient(
+      supabaseUrl!,
+      supabaseAnonKey!,
+      {
+        cookies: {
+          getAll() {
+            if (typeof document === 'undefined') return []
+            return document.cookie.split(';').map(c => {
+              const [key, ...v] = c.trim().split('=')
+              return { name: key, value: v.join('=') }
+            })
+          },
+          setAll(cookiesToSet) {
+            if (typeof document === 'undefined') return
+            cookiesToSet.forEach(({ name, value, options }) => {
+              document.cookie = `${name}=${value}; path=${options?.path || '/'}; max-age=${options?.maxAge || 31536000}; SameSite=${options?.sameSite || 'Lax'}${options?.secure ? '; secure' : ''}`
+            })
+          },
+        },
+      }
+    )
+  : stubClient
 
 // Admin client for server-side operations (uses service role key for elevated permissions)
-export const supabaseAdmin = supabaseServiceKey 
-  ? createAdminClient(supabaseUrl, supabaseServiceKey)
-  : createAdminClient(supabaseUrl, supabaseAnonKey) // Fallback to anon key (will have limited permissions)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const supabaseAdmin: any = isSupabaseConfigured && supabaseServiceKey
+  ? createAdminClient(supabaseUrl!, supabaseServiceKey)
+  : isSupabaseConfigured 
+    ? createAdminClient(supabaseUrl!, supabaseAnonKey!)
+    : stubClient // Fallback to stub when not configured
 
 // Helper to check if user is authenticated
 export async function getUser() {

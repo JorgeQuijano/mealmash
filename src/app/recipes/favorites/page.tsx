@@ -117,7 +117,7 @@ export default function FavoritesPage() {
       return
     }
 
-    const recipeIds = favorites.map(f => f.recipe_id)
+    const recipeIds = favorites.map((f: any) => f.recipe_id)
     
     // Then fetch the actual recipes
     const { data, error } = await supabase

@@ -171,8 +171,8 @@ export default function MealPlanShoppingModal({ userId, mealPlans, onClose, onSu
         }
       }
       
-      const pantryNames = new Set(pantryItems.map(p => p.name.toLowerCase()));
-      const pantryIngredientIds = new Set(pantryItems.map(p => p.ingredient_id).filter(Boolean));
+      const pantryNames = new Set(pantryItems.map((p: any) => p.name.toLowerCase()));
+      const pantryIngredientIds = new Set(pantryItems.map((p: any) => p.ingredient_id).filter(Boolean));
       
       // Aggregate ingredients
       const aggregated = new Map<string, MissingIngredient>();
