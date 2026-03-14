@@ -170,15 +170,15 @@ export default function MealPlanPage() {
     
     if (data) {
       // Fetch recipe details for each meal plan
-      const recipeIds = [...new Set(data.map((mp: any) => mp.recipe_id))]
+      const recipeIds = [...new Set(data.map(mp => mp.recipe_id))]
       const { data: recipeData } = await supabase
         .from('recipes')
         .select('id, name, category')
         .in('id', recipeIds)
       
-      const recipeMap = new Map(recipeData?.map((r: any) => [r.id, r]) || [])
+      const recipeMap = new Map(recipeData?.map(r => [r.id, r]) || [])
       
-      const mealPlansWithRecipes = data.map((mp: any) => ({
+      const mealPlansWithRecipes = data.map(mp => ({
         ...mp,
         recipe: recipeMap.get(mp.recipe_id)
       }))

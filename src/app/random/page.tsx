@@ -127,7 +127,7 @@ export default function RandomPage() {
       // Filter for 100% match if toggle is on and user has pantry items
       if (showOnlyMatch && pantryItems.length > 0) {
         const pantryIds = new Set(pantryItems.map(p => p.ingredient_id).filter(Boolean))
-        filtered = data.filter((recipe: any) => {
+        filtered = data.filter(recipe => {
           const recipeIngIds = recipe.recipe_ingredients?.map((ri: RecipeIngredient) => ri.ingredient_id) || []
           // If recipe has no ingredients defined, include it
           if (recipeIngIds.length === 0) return true
