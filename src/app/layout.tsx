@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "react-hot-toast";
+import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -76,6 +77,18 @@ export default function RootLayout({
           {children}
           <Toaster position="top-center" />
         </ThemeProvider>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-H2M8CTS3ZY"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-H2M8CTS3ZY');
+          `}
+        </Script>
       </body>
     </html>
   );

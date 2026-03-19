@@ -152,3 +152,17 @@ BEGIN
   LIMIT 20;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Recipe Ingredients junction table (normalized many-to-many)
+CREATE TABLE IF NOT EXISTS recipe_ingredients (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
+  ingredient_id UUID REFERENCES ingredients(id),
+  quantity TEXT,
+  quantity_num INTEGER,
+  unit TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE recipe_ingredients ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Recipe ingredients are public read" ON recipe_ingredients FOR SELECT USING (true);
