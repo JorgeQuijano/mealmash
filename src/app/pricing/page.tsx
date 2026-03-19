@@ -117,7 +117,7 @@ export default function PricingPage() {
           )}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
+        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto items-stretch justify-items-center">
           {plans.map((plan) => {
             const isCurrentPlan = plan.name === 'Pro' && subscription?.tier === 'pro';
 
