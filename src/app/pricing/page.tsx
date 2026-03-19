@@ -124,7 +124,7 @@ export default function PricingPage() {
             return (
               <div
                 key={plan.name}
-                className={`relative bg-card border rounded-xl p-8 flex flex-col ${
+                className={`relative bg-card border rounded-xl p-8 flex flex-col w-full max-w-sm ${
                   plan.popular ? 'border-primary shadow-lg' : ''
                 }`}
               >
