@@ -23,10 +23,10 @@ Before generating anything, read the ingredient file:
 cat /home/jquijanoq/.openclaw/workspace/mealmash/scripts/ingredient-names.txt
 ```
 
-Keep this list in mind when selecting ingredients. The file is sorted alphabetically. Use EXACT names from the file — watch for:
+Use EXACT names from the file — watch for:
 - Plural vs singular ("Green onions" not "Green Onion", "Cloves" not "Clove")
 - Exact spelling
-- Case-sensitive matching (always Title Case)
+- Always Title Case
 
 ## Step 2: Check for Duplicates
 
@@ -48,6 +48,17 @@ Read `/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/used-recipe
 - Caribbean: 5%
 
 Avoid repeating any cuisine within the last 5 generated recipes.
+
+---
+
+## Category — Choose the Correct One
+
+The category MUST match the type of dish. Use these exact values:
+- `breakfast` — morning meals (eggs, pancakes, oatmeal, smoothies, etc.)
+- `lunch` — midday meals (sandwiches, salads, soups, bowls, etc.)
+- `dinner` — evening meals (meat dishes, pasta, stir-fry, baked dishes, etc.)
+- `snack` — appetizers, finger foods, dips, etc.
+- `dessert` — sweets, pastries, cakes, puddings, ice cream, etc.
 
 ---
 
@@ -90,7 +101,7 @@ created_at TIMESTAMPTZ DEFAULT NOW()
 |------|---------|
 | `cups` | Flour, sugar, rice, pasta, breadcrumbs, shredded cheese, milk, cream, broth, juice, salsa, beans, lentils, quinoa, oats |
 | `tbsp` | Butter, oil, olive oil, sesame oil, soy sauce, honey, mustard, mayo, hot sauce, Worcestershire, vanilla, lemon juice, lime juice, vinegar, tahini, fish sauce, teriyaki sauce |
-| `tsp` | Salt, pepper, baking soda, baking powder, cinnamon, cumin, paprika, turmeric, chili powder, garlic powder, onion powder, oregano, thyme, basil, curry powder, red pepper flake, vanilla extract |
+| `tsp` | Salt, pepper, baking soda, baking powder, cinnamon, cumin, paprika, turmeric, chili powder, garlic powder, onion powder, oregano, thyme, basil, curry powder, red pepper flake |
 | `oz` | Cheese (block), cream cheese, tofu, sliced meat, mushrooms, bacon |
 | `lb` | Meat (ground, whole cuts), whole chicken, pork, beef, lamb, fish fillet |
 | `medium` | Onion, garlic, tomato, potato, carrot, bell pepper, avocado, zucchini, eggplant, leek, parsnip, sweet potato |
@@ -106,7 +117,7 @@ created_at TIMESTAMPTZ DEFAULT NOW()
 | `inch` | Fresh ginger, fresh turmeric, lemongrass |
 | `heads` | Garlic, cabbage, cauliflower, broccoli, lettuce |
 | `cups cooked` | Cooked rice, cooked pasta, cooked quinoa, cooked noodles |
-| `grams` | Use numeric value only |
+| `gram` | Use numeric value only, no "grams" |
 
 ---
 
@@ -164,22 +175,26 @@ CROSS JOIN recipe_insert ri;
 After writing your SQL and BEFORE saving the file, you MUST verify:
 
 1. **Re-read** `/home/jquijanoq/.openclaw/workspace/mealmash/scripts/ingredient-names.txt`
-2. For EVERY ingredient you used in the recipe, confirm it appears EXACTLY in that file
-3. Check the WHERE clause — each ingredient name must be spelled exactly as it appears in the file
-4. Check the CASE statements — each `WHEN 'Name' THEN` must match the file exactly
-5. Verify no ingredient was pluralized, singularized, or spelled differently from the file
+2. For EVERY ingredient in the WHERE clause and CASE statements, confirm it appears EXACTLY in that file
+3. Verify the category matches the dish type (dessert → 'dessert', breakfast → 'breakfast', etc.)
+4. For `quantity_num`: extract the actual decimal number from the quantity string:
+   - `'2 cups'` → quantity_num: **2** (not "2 cups", just the number)
+   - `'1.5 cups'` → quantity_num: **1.5**
+   - `'3/4 cup'` → quantity_num: **0.75** (convert fractions to decimals)
+   - `'1/2 tsp'` → quantity_num: **0.5**
+   - `'2 tbsp'` → quantity_num: **2**
+5. Check that `quantity` text and `quantity_num` match exactly (same value)
+6. Verify `unit` is the singular form matching the reference table above
 
-**If ANY ingredient is not found in the file exactly as written, REPLACE it with a valid ingredient from the file before saving.**
-
-This is not optional. Recipes with invalid ingredient names will fail to insert into Supabase.
+**If ANY check fails, rewrite the problematic part before saving.**
 
 ---
 
 ## Important Rules
 
-- category: 'breakfast', 'lunch', 'dinner', 'snack', or 'dessert' (single value, no ARRAY)
-- cuisine: ARRAY['Italian'], ARRAY['Mexican'], etc. (array)
-- dietary_tags: ARRAY['Vegetarian'], ARRAY['Gluten-Free'], etc. (array, can be empty)
+- category: 'breakfast', 'lunch', 'dinner', 'snack', or 'dessert' — must match the dish
+- cuisine: ARRAY['Italian'], ARRAY['Mexican'], etc.
+- dietary_tags: ARRAY['Vegetarian'], ARRAY['Gluten-Free'], etc. (can be empty)
 - difficulty: 'Easy', 'Medium', or 'Hard'
 - Include 6-12 ingredients per recipe
 - description: 2-3 sentences, appetizing
