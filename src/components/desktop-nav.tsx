@@ -15,6 +15,7 @@ const navItems = [
   { href: "/pantry", label: "Pantry" },
   { href: "/shopping-list", label: "Shopping List" },
   { href: "/meal-plan", label: "📅 Meal Plan" },
+  { href: "/blog", label: "📝 Blog" },
   { href: "/settings", label: "⚙️ Settings" },
 ]
 

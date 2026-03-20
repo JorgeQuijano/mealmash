@@ -1,5 +1,10 @@
+import createMDX from '@next/mdx';
+
+const withMDX = createMDX({});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   async headers() {
     return [
       {
@@ -24,4 +29,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withMDX(nextConfig);
