@@ -1,0 +1,105 @@
+-- create-recipe RPC function
+-- Run this ONCE in Supabase SQL Editor: https://supabase.com/dashboard/project/owmwdsypvvaxsckflbxx/sql
+--
+-- SECURITY DEFINER: runs as schema owner, bypassing RLS.
+-- GRANT EXECUTE TO anon: callable from REST API with anon key.
+-- Content constraints prevent spam/malicious content injection.
+
+CREATE OR REPLACE FUNCTION create_recipe(
+  p_name          TEXT,
+  p_description   TEXT,
+  p_category      TEXT DEFAULT 'dinner',
+  p_cuisine       TEXT[] DEFAULT ARRAY[]::text[],
+  p_dietary_tags  TEXT[] DEFAULT ARRAY[]::text[],
+  p_difficulty    TEXT DEFAULT 'Medium',
+  p_prep_time     INTEGER DEFAULT 15,
+  p_cook_time     INTEGER DEFAULT 30,
+  p_servings      INTEGER DEFAULT 4,
+  p_image_url     TEXT DEFAULT '',
+  p_instructions   TEXT[] DEFAULT ARRAY[]::text[],
+  -- ingredient arrays (all must be same length)
+  p_ing_ids   UUID[],
+  p_ing_qtys  TEXT[],
+  p_ing_qnums NUMERIC[],
+  p_ing_units TEXT[]
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  new_recipe_id UUID;
+  i INTEGER;
+BEGIN
+  -- Validate inputs
+  IF char_length(p_name) > 200 THEN
+    RAISE EXCEPTION 'Recipe name too long (max 200 chars)';
+  END IF;
+  IF char_length(p_description) > 1500 THEN
+    RAISE EXCEPTION 'Description too long (max 1500 chars)';
+  END IF;
+  IF array_length(p_instructions, 1) > 20 THEN
+    RAISE EXCEPTION 'Too many instructions (max 20)';
+  END IF;
+  IF p_servings < 1 OR p_servings > 50 THEN
+    RAISE EXCEPTION 'Servings must be between 1 and 50';
+  END IF;
+  IF p_prep_time < 0 OR p_prep_time > 1440 THEN
+    RAISE EXCEPTION 'Prep time must be 0-1440 minutes';
+  END IF;
+  IF p_cook_time < 0 OR p_cook_time > 2880 THEN
+    RAISE EXCEPTION 'Cook time must be 0-2880 minutes';
+  END IF;
+  IF p_category NOT IN ('breakfast','lunch','dinner','snack','dessert') THEN
+    RAISE EXCEPTION 'Invalid category';
+  END IF;
+  IF p_difficulty NOT IN ('Easy','Medium','Hard') THEN
+    RAISE EXCEPTION 'Invalid difficulty';
+  END IF;
+  IF array_length(p_ing_ids,1) != array_length(p_ing_qtys,1)
+  OR array_length(p_ing_ids,1) != array_length(p_ing_qnums,1)
+  OR array_length(p_ing_ids,1) != array_length(p_ing_units,1) THEN
+    RAISE EXCEPTION 'Ingredient arrays must all be the same length';
+  END IF;
+
+  -- Insert recipe
+  INSERT INTO recipes (
+    name, description, category, cuisine, dietary_tags, difficulty,
+    prep_time_minutes, cook_time_minutes, servings, image_url,
+    ingredients, instructions
+  ) VALUES (
+    p_name,
+    p_description,
+    p_category,
+    p_cuisine,
+    p_dietary_tags,
+    p_difficulty,
+    p_prep_time,
+    p_cook_time,
+    p_servings,
+    p_image_url,
+    '[]'::jsonb,
+    p_instructions
+  )
+  RETURNING id INTO new_recipe_id;
+
+  -- Insert recipe_ingredients row by row
+  FOR i IN 1 .. array_length(p_ing_ids, 1) LOOP
+    INSERT INTO recipe_ingredients (
+      recipe_id, ingredient_id, quantity, quantity_num, unit
+    ) VALUES (
+      new_recipe_id,
+      p_ing_ids[i],
+      p_ing_qtys[i],
+      p_ing_qnums[i],
+      p_ing_units[i]
+    );
+  END LOOP;
+
+  RETURN new_recipe_id;
+END;
+$$;
+
+-- Allow anon and authenticated users to call this function
+GRANT EXECUTE ON FUNCTION create_recipe TO anon, authenticated;
