@@ -83,7 +83,7 @@ export const siteConfig = {
       description: "For home cooks getting started",
       features: [
         "Unlimited recipe search by ingredients",
-        "Pantry tracking (up to 20 items)",
+        "Pantry tracking (up to 50 items)",
         "3 dinner wheel spins per day",
         "Basic weekly meal plan",
         "Manual shopping list"
