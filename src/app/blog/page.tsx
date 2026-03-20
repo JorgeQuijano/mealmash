@@ -27,7 +27,7 @@ export default function BlogPage() {
                   {post.title}
                 </h2>
                 <p className="text-stone-500 dark:text-stone-400 text-sm mb-3">
-                  {post.date} · {post.author}
+                  {post.date}
                 </p>
                 {post.excerpt && (
                   <p className="text-stone-600 dark:text-stone-400 mb-3">{post.excerpt}</p>
