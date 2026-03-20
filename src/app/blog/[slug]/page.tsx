@@ -54,7 +54,7 @@ export default async function BlogPostPage({params}: PageProps) {
               {post.title}
             </h1>
             <p className="text-stone-500 dark:text-stone-400">
-              {post.date} · {post.author}
+              {post.date}
             </p>
             <div className="flex gap-2 mt-3">
               {post.tags?.map((tag) => (
