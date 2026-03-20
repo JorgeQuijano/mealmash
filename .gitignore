@@ -2,6 +2,11 @@
 
 # dependencies
 /node_modules
+
+# generated recipe SQL output (prompt.md is tracked)
+generated-recipes/*.sql
+generated-recipes/*.md
+!generated-recipes/recipe-generator-prompt.md
 /.pnp
 .pnp.*
 .yarn/*
@@ -40,5 +45,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# generated recipe SQL files
-generated-recipes/
+
