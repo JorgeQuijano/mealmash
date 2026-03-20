@@ -243,6 +243,54 @@ function Hero() {
   )
 }
 
+function HowItWorks() {
+  return (
+    <section id="how-it-works" className="py-24 bg-stone-50 dark:bg-stone-900">
+      <div className="container mx-auto px-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-200 mb-4 px-4 py-1.5 text-sm font-medium">
+            How It Works
+          </Badge>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-stone-800 dark:text-stone-100">
+            Three steps to dinner done
+          </h2>
+          <p className="text-xl text-stone-600 dark:text-stone-400 max-w-2xl mx-auto">
+            No complicated setup. No recipe importing. Just you, your food, and dinner.
+          </p>
+        </motion.div>
+
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {siteConfig.howItWorks.steps.map((step, index) => (
+            <motion.div
+              key={step.number}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.15 }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-amber-400 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-2xl font-bold text-white">{step.number}</span>
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-stone-800 dark:text-stone-100">
+                {step.title}
+              </h3>
+              <p className="text-stone-600 dark:text-stone-400 leading-relaxed">
+                {step.description}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Features() {
   return (
     <section id="features" className="py-24 bg-white dark:bg-black">
@@ -544,6 +592,7 @@ export default function Home() {
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
       <Header />
       <Hero />
+      <HowItWorks />
       <Features />
       <Pricing />
       <FAQ />
