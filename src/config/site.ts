@@ -10,14 +10,14 @@ export const siteConfig = {
       { label: "Features", href: "#features" },
       { label: "Pricing", href: "#pricing" },
     ],
-    cta: { label: "Start Free", href: "/login" },
+    cta: { label: "Start Cooking Better", href: "/login" },
   },
   
   hero: {
     badge: "🍳 No more 6pm panic",
     title: "Stop Staring at the Fridge at 6pm",
     subtitle: "Tell us what you have in your kitchen. We'll find delicious recipes you can make tonight — before the food goes bad. No more 'I don't know what's for dinner.'",
-    cta: { text: "Start Free", href: "/login" },
+    cta: { text: "Start Cooking Better", href: "/login" },
     secondaryCta: { text: "See How It Works", href: "#how-it-works" },
   },
   
@@ -88,7 +88,7 @@ export const siteConfig = {
         "Basic weekly meal plan",
         "Manual shopping list"
       ],
-      cta: "Start Free",
+      cta: "Start Cooking Better",
       popular: false,
     },
     {
@@ -111,7 +111,7 @@ export const siteConfig = {
   cta: {
     title: "Still staring at the fridge?",
     subtitle: "Join the home cooks who stopped wasting food and agonizing over dinner. Free to start, no credit card required.",
-    button: "Start Free",
+    button: "Start Cooking Better",
   },
   
   footer: {
