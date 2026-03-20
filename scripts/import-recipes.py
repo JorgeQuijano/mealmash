@@ -293,15 +293,21 @@ def insert_recipe(recipe: dict) -> tuple[str, bool, str]:
 
     resp, status = curl_rpc("create_recipe", params)
 
-    if status not in (200, 201):
-        return "", False, f"HTTP {status}: {resp}"
-
-    # Response is the returned UUID (or array containing UUID)
+    # status 0 with UUID response means success (RPC returned the UUID)
     rid = ""
     if isinstance(resp, list) and resp:
         rid = str(resp[0])
     elif isinstance(resp, dict):
+        # If it looks like an error object, treat as failure
+        if resp.get('message') or resp.get('error'):
+            return "", False, f"RPC error: {resp}"
         rid = str(resp.get(0, resp.get('id', '')))
+    elif isinstance(resp, str) and len(resp) > 20:
+        # UUID returned directly as string
+        rid = resp
+
+    if not rid:
+        return "", False, f"No recipe ID returned: {resp} (status={status})"
 
     return rid, True, f"{len(recipe['ingredients'])} ingredients"
 
