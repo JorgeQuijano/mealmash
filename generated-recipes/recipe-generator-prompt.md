@@ -126,7 +126,7 @@ created_at TIMESTAMPTZ DEFAULT NOW()
 ```sql
 WITH ingredient_ids AS (
   SELECT id, name FROM ingredients
-  WHERE name ILIKE ANY (ARRAY['Ingredient1', 'Ingredient2', 'Ingredient3'])
+  WHERE name ILIKE ANY (ARRAY['Beef', 'Onion', 'Garlic', 'Tomato', 'Pasta', 'Parmesan'])
 ),
 recipe_insert AS (
   INSERT INTO recipes (
@@ -134,15 +134,21 @@ recipe_insert AS (
     prep_time_minutes, cook_time_minutes, servings, image_url, created_at
   )
   VALUES (
-    'Recipe Name Here',
-    'A 2-3 sentence description of the dish.',
+    'Pasta Bolognese',
+    'A rich and hearty Italian classic with deeply savory meat sauce.',
     '[]'::jsonb,
-    ARRAY['Step 1', 'Step 2', 'Step 3'],
+    ARRAY[
+      'Brown the ground beef in a large Dutch oven over medium-high heat, breaking it up as it cooks, about 6 minutes.',
+      'Add diced onion and minced garlic to the beef. Cook until the onion is softened and translucent, about 4 minutes.',
+      'Stir in crushed tomatoes, tomato paste, and a bay leaf. Reduce heat and simmer for 20 minutes.',
+      'Cook the pasta in a large pot of salted boiling water until al dente. Reserve 1/2 cup pasta water before draining.',
+      'Toss the drained pasta with the meat sauce, adding splashes of pasta water to loosen. Finish with grated Parmesan and fresh basil.'
+    ],
     'dinner',
     ARRAY['Italian'],
     ARRAY[]::text[],
     'Medium',
-    15, 30, 4, '', NOW()
+    10, 40, 4, '', NOW()
   ) RETURNING id
 )
 INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity, quantity_num, unit)
@@ -185,6 +191,7 @@ After writing your SQL and BEFORE saving the file, you MUST verify:
    - `'2 tbsp'` → quantity_num: **2**
 5. Check that `quantity` text and `quantity_num` match exactly (same value)
 6. Verify `unit` is the singular form matching the reference table above
+7. **Instructions MUST be cooking steps** — each entry in the ARRAY must be a complete action verb sentence (e.g. "Brown the ground beef in a skillet", "Add diced onion and cook until softened"). They must NOT be ingredient names or single words. If an instruction looks like an ingredient name ("Chorizo", "Refried Beans"), REPLACE IT with a proper cooking step.
 
 **If ANY check fails, rewrite the problematic part before saving.**
 
@@ -198,5 +205,5 @@ After writing your SQL and BEFORE saving the file, you MUST verify:
 - difficulty: 'Easy', 'Medium', or 'Hard'
 - Include 6-12 ingredients per recipe
 - description: 2-3 sentences, appetizing
-- instructions: 4-10 clear, practical steps
+- instructions: 4-10 clear, practical steps. Each step must be a complete cooking action (verb + what to do). NEVER put ingredient names in the instructions ARRAY.
 - After saving, append the recipe name to `used-recipes.txt`
