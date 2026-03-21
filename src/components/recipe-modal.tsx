@@ -120,11 +120,16 @@ export default function RecipeModal({
   const [checkingFavorite, setCheckingFavorite] = useState(false)
   const [updatingFavorite, setUpdatingFavorite] = useState(false)
   const [allVersions, setAllVersions] = useState<Recipe[]>([])
-  const initialRecipeId = isSuggestedRecipe(initialRecipe)
-    ? (initialRecipe as SuggestedRecipe).recipe.id
-    : (initialRecipe as Recipe).id
-  const [selectedVersionId, setSelectedVersionId] = useState<string>(initialRecipeId)
+  const [selectedVersionId, setSelectedVersionId] = useState<string>('')
   const [loadingVersions, setLoadingVersions] = useState(false)
+
+  // Sync selectedVersionId when initialRecipe changes (new recipe opened)
+  useEffect(() => {
+    const id = isSuggestedRecipe(initialRecipe)
+      ? (initialRecipe as SuggestedRecipe).recipe.id
+      : (initialRecipe as Recipe).id
+    setSelectedVersionId(id)
+  }, [initialRecipe])
 
   // Resolve the active recipe (handles version switching)
   const activeRecipe = (allVersions.find(v => v.id === selectedVersionId)
@@ -135,12 +140,15 @@ export default function RecipeModal({
     const vgId = isSuggestedRecipe(initialRecipe)
       ? (initialRecipe as SuggestedRecipe).recipe.version_group_id
       : (initialRecipe as Recipe).version_group_id
-    if (!vgId) return
+    if (!vgId) {
+      setAllVersions([])
+      return
+    }
 
     setLoadingVersions(true)
     supabase
       .from('recipes')
-      .select(`*, recipe_favorite_counts(favorite_count)`)
+      .select(`*, recipe_ingredients(ingredient_id, quantity, quantity_num, unit, ingredients(name, category)), recipe_favorite_counts(favorite_count)`)
       .eq('version_group_id', vgId)
       .order('version_number')
       .then(({ data, error }) => {
@@ -155,7 +163,7 @@ export default function RecipeModal({
         })
         setAllVersions(data)
       })
-  }, [])
+  }, [initialRecipe])
 
   // Check if recipe is already favorited
   useEffect(() => {

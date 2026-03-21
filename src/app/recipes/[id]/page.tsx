@@ -132,6 +132,8 @@ export default function RecipeDetailPage() {
         recipe_ingredients (
           ingredient_id,
           quantity,
+          quantity_num,
+          unit,
           ingredients (name, category)
         )
       `)

@@ -147,6 +147,8 @@ export default function RecipesPage() {
         recipe_ingredients (
           ingredient_id,
           quantity,
+          quantity_num,
+          unit,
           ingredients (name, category)
         )
       `, { count: 'exact' })
