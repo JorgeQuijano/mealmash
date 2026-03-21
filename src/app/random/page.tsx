@@ -33,6 +33,10 @@ type Recipe = {
   servings: number
   image_url: string
   recipe_ingredients?: RecipeIngredient[]
+  version_group_id?: string
+  version_number?: number
+  recipe_favorite_counts?: { favorite_count: number }[]
+  created_at?: string
 }
 
 const categories = ["all", "breakfast", "lunch", "dinner", "snack", "dessert"]
@@ -109,7 +113,8 @@ export default function RandomPage() {
         ingredient_id,
         quantity,
         ingredients (name, category)
-      )
+      ),
+      recipe_favorite_counts (favorite_count)
     `)
     // Fetch all and filter in JS for array category support
     const { data, error } = await query
@@ -136,7 +141,30 @@ export default function RandomPage() {
         })
       }
       
-      setRecipes(filtered)
+      // Group by version_group_id: keep only the best version (most favorited, tie-break: latest created)
+      const versionMap = new Map<string, typeof filtered[0]>()
+      for (const r of filtered) {
+        const key = r.version_group_id || r.id  // recipes without version_group_id are their own group
+        const existing = versionMap.get(key)
+        if (!existing) {
+          versionMap.set(key, r)
+        } else {
+          // Compare favorite counts
+          const aLikes = r.recipe_favorite_counts?.[0]?.favorite_count ?? 0
+          const bLikes = existing.recipe_favorite_counts?.[0]?.favorite_count ?? 0
+          if (bLikes < aLikes) {
+            versionMap.set(key, r)
+          } else if (bLikes === aLikes) {
+            // Tie-break: newer
+            if (new Date(r.created_at).getTime() > new Date(existing.created_at).getTime()) {
+              versionMap.set(key, r)
+            }
+          }
+        }
+      }
+      const uniqueByVersion = Array.from(versionMap.values())
+      
+      setRecipes(uniqueByVersion)
     }
     setLoading(false)
   }

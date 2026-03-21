@@ -40,6 +40,10 @@ type PantryItem = {
   user_id: string
 }
 
+type RecipeFavoriteCount = {
+  favorite_count: number
+}
+
 type Recipe = {
   id: string
   name: string
@@ -51,6 +55,9 @@ type Recipe = {
   servings: number
   image_url: string
   recipe_ingredients?: RecipeIngredient[]
+  version_group_id?: string
+  version_number?: number
+  recipe_favorite_counts?: RecipeFavoriteCount[]
 }
 
 type User = {
@@ -112,15 +119,48 @@ export default function RecipeModal({
   const [isFavorite, setIsFavorite] = useState(false)
   const [checkingFavorite, setCheckingFavorite] = useState(false)
   const [updatingFavorite, setUpdatingFavorite] = useState(false)
-
-  // Get the actual recipe ID
-  const recipeId = isSuggestedRecipe(initialRecipe) 
-    ? initialRecipe.recipe.id 
+  const [allVersions, setAllVersions] = useState<Recipe[]>([])
+  const initialRecipeId = isSuggestedRecipe(initialRecipe)
+    ? (initialRecipe as SuggestedRecipe).recipe.id
     : (initialRecipe as Recipe).id
+  const [selectedVersionId, setSelectedVersionId] = useState<string>(initialRecipeId)
+  const [loadingVersions, setLoadingVersions] = useState(false)
+
+  // Resolve the active recipe (handles version switching)
+  const activeRecipe = (allVersions.find(v => v.id === selectedVersionId)
+    || (isSuggestedRecipe(initialRecipe) ? (initialRecipe as SuggestedRecipe).recipe : initialRecipe as Recipe)) as Recipe
+
+  // Fetch all versions when version_group_id is present
+  useEffect(() => {
+    const vgId = isSuggestedRecipe(initialRecipe)
+      ? (initialRecipe as SuggestedRecipe).recipe.version_group_id
+      : (initialRecipe as Recipe).version_group_id
+    if (!vgId) return
+
+    setLoadingVersions(true)
+    supabase
+      .from('recipes')
+      .select(`*, recipe_favorite_counts(favorite_count)`)
+      .eq('version_group_id', vgId)
+      .order('version_number')
+      .then(({ data, error }) => {
+        if (!error && data) {
+          // Sort: most favorited first, then latest created
+          data.sort((a, b) => {
+            const aLikes = a.recipe_favorite_counts?.[0]?.favorite_count ?? 0
+            const bLikes = b.recipe_favorite_counts?.[0]?.favorite_count ?? 0
+            if (bLikes !== aLikes) return bLikes - aLikes
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          })
+          setAllVersions(data)
+        }
+        setLoadingVersions(false)
+      })
+  }, [])
 
   // Check if recipe is already favorited
   useEffect(() => {
-    if (!user || !recipeId) return
+    if (!user || !activeRecipe.id) return
 
     const checkFavorite = async () => {
       setCheckingFavorite(true)
@@ -129,7 +169,7 @@ export default function RecipeModal({
           .from('user_favorites')
           .select('*')
           .eq('user_id', user.id)
-          .eq('recipe_id', recipeId)
+          .eq('recipe_id', activeRecipe.id)
           .single()
         
         if (data) {
@@ -143,11 +183,11 @@ export default function RecipeModal({
     }
 
     checkFavorite()
-  }, [user, recipeId])
+  }, [user, selectedVersionId])
 
   // Toggle favorite
   const handleToggleFavorite = async () => {
-    if (!user || !recipeId) return
+    if (!user || !activeRecipe.id) return
 
     setUpdatingFavorite(true)
     try {
@@ -157,7 +197,7 @@ export default function RecipeModal({
           .from('user_favorites')
           .delete()
           .eq('user_id', user.id)
-          .eq('recipe_id', recipeId)
+          .eq('recipe_id', activeRecipe.id)
         
         if (!error) {
           setIsFavorite(false)
@@ -168,7 +208,7 @@ export default function RecipeModal({
           .from('user_favorites')
           .insert({
             user_id: user.id,
-            recipe_id: recipeId
+            recipe_id: activeRecipe.id
           })
         
         if (!error) {
@@ -197,8 +237,6 @@ export default function RecipeModal({
     matchedCount = initialRecipe.matchedCount
     totalCount = initialRecipe.totalCount
   } else if (isRecipeMode && pantryItems.length > 0) {
-    const recipe = initialRecipe as Recipe
-    
     // Create a map of ingredient_id -> pantry quantity
     const pantryMap = new Map<string, number>()
     pantryItems.forEach(p => {
@@ -209,7 +247,7 @@ export default function RecipeModal({
       }
     })
     
-    recipe.recipe_ingredients?.forEach((ri) => {
+    activeRecipe.recipe_ingredients?.forEach((ri: RecipeIngredient) => {
       const pantryQty = pantryMap.get(ri.ingredient_id) || 0
       const recipeQty = ri.quantity_num || 1
       const neededQty = recipeQty - pantryQty
@@ -232,10 +270,11 @@ export default function RecipeModal({
     })
     
     matchedCount = matchedIngredients.length
-    totalCount = recipe.recipe_ingredients?.length || 0
+    totalCount = activeRecipe.recipe_ingredients?.length || 0
   }
 
-  const recipe = isSuggestedRecipe(initialRecipe) ? initialRecipe.recipe : initialRecipe
+  // recipe variable kept for backwards compatibility with any remaining references
+  const recipe = activeRecipe
 
   const handleAddToShoppingList = async () => {
     if (missingIngredients.length === 0) return
@@ -296,8 +335,36 @@ export default function RecipeModal({
           <CardHeader className="flex-shrink-0">
             <div className="flex items-start justify-between">
               <div>
-                <CardTitle className="text-2xl">{recipe.name}</CardTitle>
-                <CardDescription className="mt-2">{recipe.description}</CardDescription>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <CardTitle className="text-2xl">{activeRecipe.name}</CardTitle>
+                  {activeRecipe.version_number && activeRecipe.version_number > 1 && (
+                    <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300">
+                      v{activeRecipe.version_number}
+                    </Badge>
+                  )}
+                </div>
+                <CardDescription className="mt-2">{activeRecipe.description}</CardDescription>
+                {allVersions.length > 1 && (
+                  <div className="flex items-center gap-2 mt-2 flex-wrap">
+                    <span className="text-xs text-muted-foreground">Versions:</span>
+                    {allVersions.map((v) => (
+                      <button
+                        key={v.id}
+                        onClick={() => setSelectedVersionId(v.id)}
+                        className={`text-xs px-2 py-0.5 rounded border transition-colors ${
+                          v.id === selectedVersionId
+                            ? 'bg-primary text-primary-foreground border-primary'
+                            : 'bg-background hover:bg-muted border-muted-foreground/30'
+                        }`}
+                      >
+                        v{v.version_number}
+                        {(v.recipe_favorite_counts?.[0]?.favorite_count ?? 0) > 0 && (
+                          <span className="ml-1">❤️ {v.recipe_favorite_counts?.[0]?.favorite_count}</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               <Button variant="ghost" size="sm" onClick={onClose}>✕</Button>
             </div>
@@ -331,15 +398,15 @@ export default function RecipeModal({
             {/* Category, Times, Servings */}
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex gap-1">
-                {parseCategory(recipe.category).map((cat) => (
+                {parseCategory(activeRecipe.category).map((cat) => (
                   <Badge key={cat} className={getCategoryColor(cat)}>
                     {cat}
                   </Badge>
                 ))}
               </div>
-              <span className="text-sm">⏱️ Prep: {recipe.prep_time_minutes} min</span>
-              <span className="text-sm">🍳 Cook: {recipe.cook_time_minutes} min</span>
-              <span className="text-sm">👥 {recipe.servings} servings</span>
+              <span className="text-sm">⏱️ Prep: {activeRecipe.prep_time_minutes} min</span>
+              <span className="text-sm">🍳 Cook: {activeRecipe.cook_time_minutes} min</span>
+              <span className="text-sm">👥 {activeRecipe.servings} servings</span>
             </div>
 
             {/* Ingredients Grid (if logged in) */}
@@ -428,7 +495,7 @@ export default function RecipeModal({
             <div>
               <h3 className="font-semibold mb-2">Instructions</h3>
               <ol className="list-decimal list-inside space-y-2">
-                {recipe.instructions?.map((step, i) => (
+                {activeRecipe.instructions?.map((step, i) => (
                   <li key={i} className="text-muted-foreground">{step}</li>
                 ))}
               </ol>
