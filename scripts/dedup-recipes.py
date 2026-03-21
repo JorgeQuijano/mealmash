@@ -28,7 +28,8 @@ from collections import defaultdict
 SUPABASE_URL = "https://owmwdsypvvaxsckflbxx.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bXdkc3lwdnZheHNja2ZsYnh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyMTQ1ODUsImV4cCI6MjA4Nzc5MDU4NX0.7u9LN7jrFDDsytduRLt0kUkzeoaZZkHefbN065o-auU"
 
-DUPLICATE_THRESHOLD = 0.75
+DUPLICATE_THRESHOLD = 1.0       # Only block exact duplicate (name+ingredients identical)
+VERSION_LINK_THRESHOLD = 0.8   # Score >= 0.8 → link to same version group
 NAME_WEIGHT = 0.4
 INGREDIENT_WEIGHT = 0.6
 
@@ -50,7 +51,7 @@ def fetch_existing_recipes():
     for offset in [0, 1000, 2000]:
         result = subprocess.run([
             'curl', '-s',
-            f'{SUPABASE_URL}/rest/v1/recipes?select=id,name,category,cuisine&limit=1000&offset={offset}',
+            f'{SUPABASE_URL}/rest/v1/recipes?select=id,name,category,cuisine,version_group_id&limit=1000&offset={offset}',
             '-H', f'apikey: {SUPABASE_KEY}',
             '-H', f'Authorization: Bearer {SUPABASE_KEY}'
         ], capture_output=True, text=True)
@@ -115,6 +116,7 @@ def fetch_existing_recipes():
             'ingredients': ingredient_map.get(r['id'], set()),
             'cuisine': r.get('cuisine', []),
             'category': r.get('category', ''),
+            'version_group_id': r.get('version_group_id'),
         }
         existing.append(entry)
 
@@ -134,6 +136,7 @@ def load_existing_recipes(force_refresh=False):
                 for r in cached:
                     r['ingredients'] = set(r['ingredients'])
                     r['normalized_name'] = normalize_name(r['name'])
+                    r['version_group_id'] = r.get('version_group_id')
                 return cached
 
     print("Fetching existing recipes from Supabase...", file=sys.stderr)
@@ -148,6 +151,7 @@ def load_existing_recipes(force_refresh=False):
             'ingredients': list(r['ingredients']),
             'cuisine': r['cuisine'],
             'category': r['category'],
+            'version_group_id': r.get('version_group_id'),
         })
     with open(EXISTING_RECIPES_CACHE, 'w') as f:
         json.dump(cache_data, f)
@@ -231,6 +235,7 @@ def combined_similarity(new_recipe: dict, existing_recipe: dict) -> dict:
         'duplicate': score >= DUPLICATE_THRESHOLD,
         'existing_name': existing_recipe['name'],
         'existing_id': existing_recipe['id'],
+        'version_group_id': existing_recipe.get('version_group_id'),
     }
 
 
@@ -258,12 +263,19 @@ def parse_recipe_sql(filepath: str) -> dict:
     cuisine_match = re.search(r"ARRAY\['([^']+)'\]", content)
     cuisine = cuisine_match.group(1) if cuisine_match else 'Unknown'
     
-    # Ingredients from WHERE clause
-    where_match = re.search(r"WHERE name ILIKE ANY \(ARRAY\[(.*?)\]\)", content, re.DOTALL)
-    if where_match:
-        ingredients = [ing.strip() for ing in re.findall(r"'([^']+)'", where_match.group(1))]
+    # Ingredients from WHERE clause — try both old format (ILIKE ANY) and new format (IN inside CTE)
+    ingredients = []
+    # New format: WITH ingredient_ids AS (... WHERE name IN ('Lamb', 'Garlic', ...))
+    cte_match = re.search(r"WHERE name IN \((.*?)\)", content, re.DOTALL)
+    if cte_match:
+        ingredients = [ing.strip() for ing in re.findall(r"'([^']+)'", cte_match.group(1))]
     else:
-        ingredients = []
+        # Old format: WHERE name ILIKE ANY (ARRAY[...])
+        where_match = re.search(r"WHERE name ILIKE ANY \(ARRAY\[(.*?)\]\)", content, re.DOTALL)
+        if where_match:
+            ingredients = [ing.strip() for ing in re.findall(r"'([^']+)'", where_match.group(1))]
+        else:
+            ingredients = []
     
     return {
         'name': name,
@@ -314,19 +326,76 @@ def check_recipe_against_existing(new_recipe: dict, existing_recipes: list) -> d
         'duplicate': False,
         'existing_name': None,
         'existing_id': None,
+        'version_group_id': None,   # set when score >= VERSION_LINK_THRESHOLD
     }
     
     for existing in existing_recipes:
         result = combined_similarity(new_recipe, existing)
         if result['score'] > best['score']:
             best = result
+        # Track the best version_group_id among matches above threshold
+        if (result['score'] >= VERSION_LINK_THRESHOLD
+                and result['version_group_id']
+                and best.get('linked_version_group_id') is None):
+            best['linked_version_group_id'] = result['version_group_id']
+    
+    # If the best score itself qualifies, use its version_group_id
+    if best['score'] >= VERSION_LINK_THRESHOLD and best['version_group_id']:
+        best['linked_version_group_id'] = best['version_group_id']
     
     return best
 
 
+def checkIntraBatchDuplicates(filepaths: list, existing_recipes: list) -> dict:
+    """
+    Check all recipes within the same batch against each other.
+    Returns dict of filepath -> (other_fname, score, other_name) to discard.
+    If two recipes in the same batch are duplicates, only discard the one
+    with lower name similarity to existing DB (less established).
+    """
+    recipes = []
+    for filepath in filepaths:
+        try:
+            recipe = parse_recipe_sql(filepath)
+            recipe['filepath'] = filepath
+            recipes.append(recipe)
+        except Exception:
+            pass
+    
+    # Precompute DB name similarity for tiebreaking
+    db_name_sim = {}
+    for r in recipes:
+        best = 0.0
+        for existing in existing_recipes:
+            sim = jaccard_similarity(r['normalized_name'], existing['normalized_name'])
+            if sim > best:
+                best = sim
+        fname = os.path.basename(r['filepath'])
+        db_name_sim[fname] = best
+    
+    discard = {}  # fname to discard -> (other_fname, score, other_name)
+    
+    for i, r_a in enumerate(recipes):
+        for r_b in recipes[i+1:]:
+            s_name = jaccard_similarity(r_a['normalized_name'], r_b['normalized_name'])
+            s_ing = jaccard_similarity(r_a['ingredients'], r_b['ingredients'])
+            score = NAME_WEIGHT * s_name + INGREDIENT_WEIGHT * s_ing
+            if score >= DUPLICATE_THRESHOLD:
+                fname_a = os.path.basename(r_a['filepath'])
+                fname_b = os.path.basename(r_b['filepath'])
+                # Keep the one with higher DB name similarity
+                if db_name_sim[fname_a] >= db_name_sim[fname_b]:
+                    discard[fname_a] = (fname_b, score, r_b['name'])
+                else:
+                    discard[fname_b] = (fname_a, score, r_a['name'])
+    
+    return discard
+
+
 def dedup_files(filepaths: list, existing_recipes: list, dry_run: bool = False) -> dict:
     """
-    Deduplicate a list of recipe SQL files against existing recipes.
+    Deduplicate a list of recipe SQL files against existing recipes AND
+    within the same batch.
     
     Returns dict:
       - keep: list of files to keep
@@ -340,9 +409,19 @@ def dedup_files(filepaths: list, existing_recipes: list, dry_run: bool = False) 
         'details': {},
     }
     
+    # First: intra-batch check
+    print("\n─── Intra-batch dedup ───")
+    intra_dupes = checkIntraBatchDuplicates(filepaths, existing_recipes)
+    if intra_dupes:
+        for fname, (other_fname, score, other_name) in intra_dupes.items():
+            print(f"  ❌ {fname} is duplicate of {other_name} ({score:.3f}) → DISCARD")
+    else:
+        print("  No intra-batch duplicates found.")
+    
     for filepath in sorted(filepaths):
         fname = os.path.basename(filepath)
-        print(f"\nChecking: {fname}")
+        print(f"\n─── DB dedup ───")
+        print(f"Checking: {fname}")
         
         try:
             recipe = parse_recipe_sql(filepath)
@@ -366,6 +445,13 @@ def dedup_files(filepaths: list, existing_recipes: list, dry_run: bool = False) 
         if match['shared_words']:
             print(f"  Shared words:        {match['shared_words']}")
         
+        # Also flag if this file was flagged as intra-batch duplicate
+        is_intra_dup = fname in intra_dupes
+        
+        # Determine version grouping (link if score >= VERSION_LINK_THRESHOLD)
+        linked_vg = match.get('linked_version_group_id')
+        is_linked = match['score'] >= VERSION_LINK_THRESHOLD and linked_vg
+        
         results['details'][fname] = {
             'recipe': recipe['name'],
             'ingredients': list(recipe['ingredients']),
@@ -374,24 +460,64 @@ def dedup_files(filepaths: list, existing_recipes: list, dry_run: bool = False) 
             'ingredient_score': match['ingredient_score'],
             'existing_name': match['existing_name'],
             'existing_id': match['existing_id'],
-            'duplicate': match['duplicate'],
+            'duplicate': match['duplicate'] or is_intra_dup,
+            'intra_batch_duplicate': is_intra_dup,
+            'version_group_id': linked_vg if is_linked else None,
+            'is_new_version_group': not is_linked,
         }
         
         if match['duplicate']:
-            print(f"  → ❌ DISCARD (score {match['score']} >= {DUPLICATE_THRESHOLD})")
+            # Exact duplicate (score == 1.0) → discard
+            print(f"  → ❌ DISCARD (exact duplicate, score {match['score']} == {DUPLICATE_THRESHOLD})")
             results['discard'].append({
                 'file': fname,
                 'filepath': filepath,
-                'reason': f"Duplicate of '{match['existing_name']}' (score: {match['score']:.3f})",
+                'reason': f"Exact duplicate of '{match['existing_name']}' (score: {match['score']:.3f})",
                 'match': match,
             })
-        else:
-            print(f"  → ✅ KEEP (score {match['score']} < {DUPLICATE_THRESHOLD})")
+        elif is_intra_dup:
+            # Intra-batch similar → keep and link to the DB match of the recipe it's similar to
+            other_fname, score, other_name = intra_dupes[fname]
+            # Find the DB match for the other recipe in this batch
+            other_match_vg = None
+            other_details = results['details'].get(other_fname, {})
+            if other_details.get('version_group_id'):
+                other_match_vg = other_details['version_group_id']
+            elif other_details.get('is_new_version_group'):
+                # Other recipe is new group — use a placeholder, we'll assign same new UUID
+                other_match_vg = 'SAME_BATCH_NEW'
+            print(f"  → ✅ KEEP + LINK (intra-batch similar to '{other_name}', score {score:.3f})")
             results['keep'].append({
                 'file': fname,
                 'filepath': filepath,
                 'recipe': recipe['name'],
                 'score': match['score'],
+                'version_group_id': other_match_vg if other_match_vg else linked_vg,
+                'linked_to': other_name,
+                'same_batch_link': True,
+            })
+        elif is_linked:
+            # Similar to existing DB recipe → keep and link to its version group
+            print(f"  → ✅ KEEP + LINK (score {match['score']} >= {VERSION_LINK_THRESHOLD})")
+            print(f"     → Version group: {linked_vg}")
+            results['keep'].append({
+                'file': fname,
+                'filepath': filepath,
+                'recipe': recipe['name'],
+                'score': match['score'],
+                'version_group_id': linked_vg,
+                'linked_to': match['existing_name'],
+            })
+        else:
+            # New recipe, new version group
+            print(f"  → ✅ KEEP (new version group, score {match['score']} < {VERSION_LINK_THRESHOLD})")
+            results['keep'].append({
+                'file': fname,
+                'filepath': filepath,
+                'recipe': recipe['name'],
+                'score': match['score'],
+                'version_group_id': None,  # import script generates new UUID
+                'is_new': True,
             })
     
     return results

@@ -116,10 +116,18 @@ def parse_recipe_sql(filepath: str) -> dict:
     name = name_m.group(1) if name_m else Path(filepath).stem
 
     # ── VALUES block ───────────────────────────────────────────────
-    vb_m = re.search(r"VALUES\s*\((.*?)\s+\)\s+RETURNING", content, re.DOTALL)
-    if not vb_m:
-        raise ValueError(f"Cannot find VALUES block in {filepath}")
-    vb = vb_m.group(1)
+    # VALUES content ends at ')' just before RETURNING
+    ret_m = re.search(r'\) RETURNING', content)
+    if not ret_m:
+        raise ValueError(f"Cannot find closing ') RETURNING' in {filepath}")
+    # Find '(' that starts the VALUES list (after 'VALUES')
+    vals_open = content.find('VALUES', ret_m.start())
+    if vals_open == -1:
+        vals_open = content.rfind('VALUES', 0, ret_m.start())
+    open_paren = content.find('(', vals_open)
+    if open_paren == -1 or open_paren >= ret_m.start():
+        raise ValueError(f"Cannot find opening '(' for VALUES in {filepath}")
+    vb = content[open_paren + 1:ret_m.start()].strip()
 
     # ── Extract all quoted strings (handles '' escapes) ─────────────
     strings = []
@@ -183,10 +191,16 @@ def parse_recipe_sql(filepath: str) -> dict:
     servings = servings or 4
 
     # ── Ingredient names from WHERE clause ─────────────────────────
-    where_m = re.search(r"WHERE name ILIKE ANY \(ARRAY\[(.*?)\]\)", content, re.DOTALL)
+    # Match either: WHERE name ILIKE ANY (ARRAY['a','b']) or WHERE name IN ('a','b',...)
     ing_names = []
-    if where_m:
-        ing_names = [n.strip() for n in re.findall(r"'([^']+)'", where_m.group(1))]
+    for pat in [
+        r"WHERE name\s+IN\s*\(([^)]+)\)",
+        r"WHERE name\s+ILIKE\s+ANY\s*\(\s*ARRAY\[([^\]]+)\]\s*\)",
+    ]:
+        m = re.search(pat, content, re.DOTALL)
+        if m:
+            ing_names = [n.strip() for n in re.findall(r"'([^']+)'", m.group(1))]
+            break
 
     # ── Parse recipe_ingredients CASE blocks ──────────────────────
     qty_map, qnum_map, unit_map = {}, {}, {}
@@ -289,6 +303,7 @@ def insert_recipe(recipe: dict) -> tuple[str, bool, str]:
         "p_ing_qtys":     ing_qtys,
         "p_ing_qnums":    ing_qnums,
         "p_ing_units":     ing_units,
+        "p_version_group_id": recipe.get('version_group_id'),  # None = new group (UUID generated in DB)
     }
 
     resp, status = curl_rpc("create_recipe", params)
@@ -361,6 +376,35 @@ def main():
         'failed': [],
     }
 
+    # Load dedup results to get version_group_id per file
+    dedup_results = {}
+    batch_prefix = None
+    for fp in filepaths:
+        fname = os.path.basename(fp)
+        # Find matching dedup results file
+        stem = os.path.basename(fp).rsplit('.sql', 1)[0]  # e.g. recipe-2026-03-21-00-07-1
+        # Try to find the batch dedup results
+        m = re.search(r'recipe-(\d{4}-\d{2}-\d{2}-\d{2}-\d{2})', fname)
+        if m and batch_prefix is None:
+            batch_prefix = m.group(1)
+            dedup_path = GENERATED_DIR / f"dedup-results-recipe-{batch_prefix}.json"
+            if dedup_path.exists():
+                with open(dedup_path) as f:
+                    dedup_data = json.load(f)
+                    for kentry in dedup_data.get('keep', []):
+                        dedup_results[kentry['file']] = kentry
+
+    # For SAME_BATCH_NEW sentinels, assign a shared new UUID
+    same_batch_new_uuid = None
+    for fp in filepaths:
+        fname = os.path.basename(fp)
+        dentry = dedup_results.get(fname, {})
+        if dentry.get('same_batch_link') and dentry.get('version_group_id') == 'SAME_BATCH_NEW':
+            if same_batch_new_uuid is None:
+                import uuid
+                same_batch_new_uuid = str(uuid.uuid4())
+            dentry['version_group_id'] = same_batch_new_uuid
+
     for fp in filepaths:
         fname = os.path.basename(fp)
         print(f"{'='*60}\n  {fname}")
@@ -389,6 +433,12 @@ def main():
                 print(f"     {ing['name']}: {ing['qty']} ({ing['qnum']} {ing['unit']})")
             results['succeeded'].append({'file': fname, 'dry_run': True})
             continue
+
+        # Attach version_group_id from dedup results
+        dentry = dedup_results.get(fname, {})
+        recipe['version_group_id'] = dentry.get('version_group_id')
+        if recipe['version_group_id']:
+            print(f"  🔗 Version group: {recipe['version_group_id']}")
 
         rid, ok, msg = insert_recipe(recipe)
         if ok:
