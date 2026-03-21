@@ -164,16 +164,20 @@ export default function RecipeModal({
     const checkFavorite = async () => {
       setCheckingFavorite(true)
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('user_favorites')
-          .select('*')
+          .select('user_id')
           .eq('user_id', user.id)
           .eq('recipe_id', activeRecipe.id)
-          .single()
+          .limit(1)
         
-        setIsFavorite(!!data)
+        // Treat 406, network errors, or malformed responses as "not favorited"
+        if (error || !data) {
+          setIsFavorite(false)
+        } else {
+          setIsFavorite(Array.isArray(data) && data.length > 0)
+        }
       } catch (_err) {
-        // 406 (auth/reload race) or empty result — treat as not favorited
         setIsFavorite(false)
       } finally {
         setCheckingFavorite(false)
