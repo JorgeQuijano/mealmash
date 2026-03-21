@@ -144,39 +144,37 @@ export default function RecipeModal({
       .eq('version_group_id', vgId)
       .order('version_number')
       .then(({ data, error }) => {
-        if (!error && data) {
-          // Sort: most favorited first, then latest created
-          data.sort((a, b) => {
-            const aLikes = a.recipe_favorite_counts?.[0]?.favorite_count ?? 0
-            const bLikes = b.recipe_favorite_counts?.[0]?.favorite_count ?? 0
-            if (bLikes !== aLikes) return bLikes - aLikes
-            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          })
-          setAllVersions(data)
-        }
         setLoadingVersions(false)
+        if (error || !data || data.length === 0) return
+        // Sort: most favorited first, then latest created
+        data.sort((a, b) => {
+          const aLikes = a.recipe_favorite_counts?.[0]?.favorite_count ?? 0
+          const bLikes = b.recipe_favorite_counts?.[0]?.favorite_count ?? 0
+          if (bLikes !== aLikes) return bLikes - aLikes
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        })
+        setAllVersions(data)
       })
   }, [])
 
   // Check if recipe is already favorited
   useEffect(() => {
-    if (!user || !activeRecipe.id) return
+    if (!user || !activeRecipe?.id) return
 
     const checkFavorite = async () => {
       setCheckingFavorite(true)
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('user_favorites')
           .select('*')
           .eq('user_id', user.id)
           .eq('recipe_id', activeRecipe.id)
           .single()
         
-        if (data) {
-          setIsFavorite(true)
-        }
-      } catch (err) {
-        console.error('Error checking favorite:', err)
+        setIsFavorite(!!data)
+      } catch (_err) {
+        // 406 (auth/reload race) or empty result — treat as not favorited
+        setIsFavorite(false)
       } finally {
         setCheckingFavorite(false)
       }
@@ -247,7 +245,7 @@ export default function RecipeModal({
       }
     })
     
-    activeRecipe.recipe_ingredients?.forEach((ri: RecipeIngredient) => {
+    activeRecipe?.recipe_ingredients?.forEach((ri: RecipeIngredient) => {
       const pantryQty = pantryMap.get(ri.ingredient_id) || 0
       const recipeQty = ri.quantity_num || 1
       const neededQty = recipeQty - pantryQty
