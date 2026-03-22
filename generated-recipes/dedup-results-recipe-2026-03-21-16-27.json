@@ -1,0 +1,177 @@
+{
+  "total": 5,
+  "keep": [
+    {
+      "file": "recipe-2026-03-21-16-27-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-16-27-1.sql",
+      "recipe": "Herb Crusted Scallops with Lemon Garlic Butter",
+      "score": 0.36,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-16-27-2.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-16-27-2.sql",
+      "recipe": "Moroccan Lamb Tagine with Apricots and Almonds",
+      "score": 0.38,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-16-27-3.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-16-27-3.sql",
+      "recipe": "Korean Doenjang Braised Pork Belly",
+      "score": 0.375,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-16-27-4.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-16-27-4.sql",
+      "recipe": "Tuscan White Bean and Kale Soup",
+      "score": 0.243,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-16-27-5.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-16-27-5.sql",
+      "recipe": "Chipotle Chicken Thighs with Sweet Potato Mash",
+      "score": 0.176,
+      "version_group_id": null,
+      "is_new": true
+    }
+  ],
+  "discard": [],
+  "details": {
+    "recipe-2026-03-21-16-27-1.sql": {
+      "recipe": "Herb Crusted Scallops with Lemon Garlic Butter",
+      "ingredients": [
+        "Lemon",
+        "Bay Scallops",
+        "Fresh Parsley",
+        "Olive Oil",
+        "Garlic",
+        "Fresh Thyme",
+        "Black Pepper",
+        "White Wine Vinegar",
+        "Butter",
+        "Panko"
+      ],
+      "score": 0.36,
+      "name_score": 0.5,
+      "ingredient_score": 0.267,
+      "existing_name": "Pan-Seared Sea Scallops with Lemon Garlic Butter",
+      "existing_id": "26f04296-6642-4bea-88eb-c35f03e3da43",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-16-27-2.sql": {
+      "recipe": "Moroccan Lamb Tagine with Apricots and Almonds",
+      "ingredients": [
+        "Vegetable Stock",
+        "Onion",
+        "Almond",
+        "Couscous",
+        "Garlic",
+        "Lamb Shoulder",
+        "Paprika",
+        "Coriander Seed",
+        "Honey",
+        "Dried Apricots",
+        "Ginger",
+        "Cinnamon",
+        "Olive Oil",
+        "Cumin"
+      ],
+      "score": 0.38,
+      "name_score": 0.2,
+      "ingredient_score": 0.5,
+      "existing_name": "Middle Eastern Lamb Tagine with Preserved Lemon and Olives",
+      "existing_id": "824e14cf-620c-4b0e-a643-466f80db4f06",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-16-27-3.sql": {
+      "recipe": "Korean Doenjang Braised Pork Belly",
+      "ingredients": [
+        "Mirin",
+        "Sesame Oil",
+        "Soy Sauce",
+        "Brown Sugar",
+        "Green onions",
+        "Garlic",
+        "Doenjang",
+        "Pork Belly",
+        "Ginger",
+        "Rice",
+        "Asian Pear"
+      ],
+      "score": 0.375,
+      "name_score": 0.375,
+      "ingredient_score": 0.375,
+      "existing_name": "Korean Kimchi and Pork Belly Breakfast Skillet",
+      "existing_id": "42212ab2-1d0b-4223-a321-3868eedebac7",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-16-27-4.sql": {
+      "recipe": "Tuscan White Bean and Kale Soup",
+      "ingredients": [
+        "Celery",
+        "Vegetable Stock",
+        "Onion",
+        "Parmesan",
+        "Garlic",
+        "Kale",
+        "Crushed Tomatoes",
+        "Bay Leaf",
+        "Rosemary",
+        "Black Pepper",
+        "Carrot",
+        "Cannellini Beans",
+        "Olive Oil"
+      ],
+      "score": 0.243,
+      "name_score": 0.167,
+      "ingredient_score": 0.294,
+      "existing_name": "Tomato Soup",
+      "existing_id": "51d49a92-7910-43a0-ac90-eae3510144ac",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-16-27-5.sql": {
+      "recipe": "Chipotle Chicken Thighs with Sweet Potato Mash",
+      "ingredients": [
+        "Black Beans",
+        "Chipotles in Adobo",
+        "Sweet Potato",
+        "Lime",
+        "Garlic",
+        "Chicken Thigh",
+        "Sour Cream",
+        "Honey",
+        "Cumin",
+        "Olive Oil",
+        "Cilantro"
+      ],
+      "score": 0.176,
+      "name_score": 0.0,
+      "ingredient_score": 0.294,
+      "existing_name": "Huevos Rancheros Bowl",
+      "existing_id": "4bab914d-34d6-4dc0-b7d1-4ca71d14f2b1",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    }
+  }
+}

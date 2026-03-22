@@ -1,4 +1,4 @@
--- create_recipe RPC function (updated with version grouping)
+-- create_recipe RPC function (updated with auto-slug generation)
 -- Run this in Supabase SQL Editor after running version-recipes.sql
 -- SECURITY DEFINER bypasses RLS; GRANT EXECUTE to anon for REST API access.
 
@@ -30,6 +30,9 @@ DECLARE
   vg_id            UUID;
   next_version     INTEGER;
   i                INTEGER;
+  slug_base        TEXT;
+  slug_candidate   TEXT;
+  slug_suffix      INTEGER := 0;
 BEGIN
   -- Validate inputs
   IF char_length(p_name) > 200 THEN
@@ -74,11 +77,22 @@ BEGIN
     FROM recipes WHERE version_group_id = vg_id;
   END IF;
 
+  -- Generate slug: lowercase, hyphenated, unique
+  slug_base := lower(regexp_replace(regexp_replace(p_name, '[^a-zA-Z0-9\s-]', '', 'g'), '\s+', '-', 'g'));
+  slug_base := trim(both '-' from regexp_replace(slug_base, '-+', '-', 'g'));
+  slug_candidate := slug_base;
+
+  -- Ensure uniqueness: append -1, -2, etc. if slug already exists
+  WHILE EXISTS (SELECT 1 FROM recipes WHERE slug = slug_candidate) LOOP
+    slug_suffix := slug_suffix + 1;
+    slug_candidate := slug_base || '-' || slug_suffix;
+  END LOOP;
+
   -- Insert recipe
   INSERT INTO recipes (
     name, description, category, cuisine, dietary_tags, difficulty,
     prep_time_minutes, cook_time_minutes, servings, image_url,
-    ingredients, instructions, version_group_id, version_number
+    ingredients, instructions, version_group_id, version_number, slug
   ) VALUES (
     p_name,
     p_description,
@@ -93,7 +107,8 @@ BEGIN
     '[]'::jsonb,
     p_instructions,
     vg_id,
-    next_version
+    next_version,
+    slug_candidate
   )
   RETURNING id INTO new_recipe_id;
 

@@ -1,0 +1,169 @@
+{
+  "total": 5,
+  "keep": [
+    {
+      "file": "recipe-2026-03-21-18-00-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-18-00-1.sql",
+      "recipe": "Herb-Crusted Rack of Lamb with Mint Chimichurri",
+      "score": 0.237,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-18-00-2.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-18-00-2.sql",
+      "recipe": "Maple Glazed Salmon with Roasted Root Vegetables",
+      "score": 0.249,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-18-00-3.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-18-00-3.sql",
+      "recipe": "Tuscan White Bean and Kale Soup",
+      "score": 0.4,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-18-00-4.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-18-00-4.sql",
+      "recipe": "Honey Lemon Garlic Shrimp Pasta",
+      "score": 0.413,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-18-00-5.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-18-00-5.sql",
+      "recipe": "Chipotle Pulled Pork with Jicama Slaw",
+      "score": 0.145,
+      "version_group_id": null,
+      "is_new": true
+    }
+  ],
+  "discard": [],
+  "details": {
+    "recipe-2026-03-21-18-00-1.sql": {
+      "recipe": "Herb-Crusted Rack of Lamb with Mint Chimichurri",
+      "ingredients": [
+        "Rosemary",
+        "Black Pepper",
+        "Bread Crumbs",
+        "Mustard",
+        "Thyme",
+        "Mint",
+        "Garlic",
+        "Lamb",
+        "Lemon",
+        "Extra Virgin Olive Oil"
+      ],
+      "score": 0.237,
+      "name_score": 0.125,
+      "ingredient_score": 0.312,
+      "existing_name": "French Herb-Crusted Pork Tenderloin",
+      "existing_id": "fb9dcb59-9e7a-4ec9-a5b8-1821747f6d29",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-18-00-2.sql": {
+      "recipe": "Maple Glazed Salmon with Roasted Root Vegetables",
+      "ingredients": [
+        "Maple Syrup",
+        "Rutabaga",
+        "Sweet Potato",
+        "Olive Oil",
+        "Garlic",
+        "Thyme",
+        "Butter",
+        "Carrot",
+        "Lemon",
+        "Salmon"
+      ],
+      "score": 0.249,
+      "name_score": 0.182,
+      "ingredient_score": 0.294,
+      "existing_name": "Honey Glazed Pork Tenderloin with Apple Maple Compote",
+      "existing_id": "ce55318d-6f3d-486c-8cd2-5477bcccc4aa",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-18-00-3.sql": {
+      "recipe": "Tuscan White Bean and Kale Soup",
+      "ingredients": [
+        "Celery",
+        "Onion",
+        "Cannellini Beans",
+        "Parmesan",
+        "Crushed Tomatoes",
+        "Garlic",
+        "Chicken Stock",
+        "Italian Seasoning",
+        "Kale",
+        "Extra Virgin Olive Oil"
+      ],
+      "score": 0.4,
+      "name_score": 1.0,
+      "ingredient_score": 0.0,
+      "existing_name": "Tuscan White Bean and Kale Soup",
+      "existing_id": "de222c20-fefa-493c-9f10-6e1847836a28",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-18-00-4.sql": {
+      "recipe": "Honey Lemon Garlic Shrimp Pasta",
+      "ingredients": [
+        "Red Pepper Flake",
+        "Parmesan",
+        "Shrimp",
+        "Pasta",
+        "Garlic",
+        "Basil",
+        "Lemon",
+        "Butter",
+        "Extra Virgin Olive Oil",
+        "Honey"
+      ],
+      "score": 0.413,
+      "name_score": 0.333,
+      "ingredient_score": 0.467,
+      "existing_name": "Creamy Garlic Basil Shrimp Pasta with Sun-Dried Tomatoes",
+      "existing_id": "b9ceff9c-209f-4f41-ac99-1cb7bb23a476",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-18-00-5.sql": {
+      "recipe": "Chipotle Pulled Pork with Jicama Slaw",
+      "ingredients": [
+        "Lime",
+        "Pork Shoulder",
+        "Cabbage",
+        "Cilantro",
+        "Garlic",
+        "Apple Cider Vinegar",
+        "Cumin",
+        "Jicama",
+        "Carrot",
+        "Chipotles in Adobo",
+        "Honey"
+      ],
+      "score": 0.145,
+      "name_score": 0.077,
+      "ingredient_score": 0.19,
+      "existing_name": "B\u00fan Th\u1ecbt N\u01b0\u1edbng (Vietnamese Grilled Pork & Lemongrass Rice Bowl)",
+      "existing_id": "e04f4a08-5ccb-4344-baa3-a8db309e8bbd",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    }
+  }
+}

@@ -1,0 +1,232 @@
+[
+  {
+    "timestamp": "2026-03-21T14:39:13.585914+00:00",
+    "total": 1,
+    "succeeded": [
+      {
+        "id": "b9ceff9c-209f-4f41-ac99-1cb7bb23a476",
+        "name": "Creamy Garlic Basil Shrimp Pasta with Sun-Dried Tomatoes",
+        "storage_path": "b9ceff9c-209f-4f41-ac99-1cb7bb23a476.jpg"
+      }
+    ],
+    "failed": [],
+    "skipped": []
+  },
+  {
+    "timestamp": "2026-03-21T14:39:46.264605+00:00",
+    "total": 9,
+    "succeeded": [
+      {
+        "id": "ce55318d-6f3d-486c-8cd2-5477bcccc4aa",
+        "name": "Honey Glazed Pork Tenderloin with Apple Maple Compote",
+        "storage_path": "ce55318d-6f3d-486c-8cd2-5477bcccc4aa.jpg"
+      },
+      {
+        "id": "d16e175d-d7ef-4cb3-9e63-39d443fcb427",
+        "name": "Pan-Seared Salmon with Lemon Dill Sauce and Wild Rice",
+        "storage_path": "d16e175d-d7ef-4cb3-9e63-39d443fcb427.jpg"
+      },
+      {
+        "id": "68f7bede-0c2a-44c5-9c08-0b9d0d45471a",
+        "name": "Thai Red Curry Braised Lamb with Jasmine Rice",
+        "storage_path": "68f7bede-0c2a-44c5-9c08-0b9d0d45471a.jpg"
+      },
+      {
+        "id": "d3f40889-b2e1-4471-b0c6-28adddc97686",
+        "name": "Lemon Herb Roasted Chicken with Garlic Butter Asparagus",
+        "storage_path": "d3f40889-b2e1-4471-b0c6-28adddc97686.jpg"
+      },
+      {
+        "id": "8767b3b4-b7f2-475c-a8d2-cb4b3cb73dbd",
+        "name": "Classic Roman Carbonara",
+        "storage_path": "8767b3b4-b7f2-475c-a8d2-cb4b3cb73dbd.jpg"
+      },
+      {
+        "id": "76b0ce8b-f04e-46e0-b79c-be99f89f0335",
+        "name": "Japanese Teriyaki Chicken Bowl",
+        "storage_path": "76b0ce8b-f04e-46e0-b79c-be99f89f0335.jpg"
+      },
+      {
+        "id": "f83b5784-cd76-4ee0-acc2-fb008e1088ff",
+        "name": "Thai Coconut Curry Mussels",
+        "storage_path": "f83b5784-cd76-4ee0-acc2-fb008e1088ff.jpg"
+      },
+      {
+        "id": "b8a20333-e9b2-41b1-9895-c2679049a5b5",
+        "name": "Sicilian Swordfish with Cherry Tomato Caper Sauce",
+        "storage_path": "b8a20333-e9b2-41b1-9895-c2679049a5b5.jpg"
+      },
+      {
+        "id": "26f04296-6642-4bea-88eb-c35f03e3da43",
+        "name": "Pan-Seared Sea Scallops with Lemon Garlic Butter",
+        "storage_path": "26f04296-6642-4bea-88eb-c35f03e3da43.jpg"
+      }
+    ],
+    "failed": [],
+    "skipped": []
+  },
+  {
+    "timestamp": "2026-03-21T14:47:50.620449+00:00",
+    "total": 1,
+    "succeeded": [
+      {
+        "id": "5493fa74-a4d6-47dd-988c-d1ea57797d6e",
+        "name": "Greek Lamb Souvlaki Plate",
+        "storage_path": "5493fa74-a4d6-47dd-988c-d1ea57797d6e.jpg"
+      }
+    ],
+    "failed": [],
+    "skipped": []
+  },
+  {
+    "timestamp": "2026-03-21T15:15:54.798414+00:00",
+    "total": 5,
+    "succeeded": [
+      {
+        "id": "8006373e-bbda-40e5-8908-6cb5abb0deda",
+        "name": "French Duck Confit with Cannellini Beans",
+        "storage_path": "8006373e-bbda-40e5-8908-6cb5abb0deda.jpg"
+      },
+      {
+        "id": "5f32a723-d836-4086-acfb-012ab9604604",
+        "name": "Brazilian Coconut Shrimp Moqueca",
+        "storage_path": "5f32a723-d836-4086-acfb-012ab9604604.jpg"
+      },
+      {
+        "id": "c90bc736-cca5-4de2-8c74-73c193ce6951",
+        "name": "Japanese Miso Glazed Black Cod",
+        "storage_path": "c90bc736-cca5-4de2-8c74-73c193ce6951.jpg"
+      },
+      {
+        "id": "b1d09414-33ea-405c-bb9d-109d0cf0e5c4",
+        "name": "Korean Gochujang Glazed Pork Belly Bowl",
+        "storage_path": "b1d09414-33ea-405c-bb9d-109d0cf0e5c4.jpg"
+      },
+      {
+        "id": "824e14cf-620c-4b0e-a643-466f80db4f06",
+        "name": "Middle Eastern Lamb Tagine with Preserved Lemon and Olives",
+        "storage_path": "824e14cf-620c-4b0e-a643-466f80db4f06.jpg"
+      }
+    ],
+    "failed": [],
+    "skipped": []
+  },
+  {
+    "timestamp": "2026-03-21T16:32:31.998300+00:00",
+    "total": 5,
+    "succeeded": [
+      {
+        "id": "c963454a-4928-4c8c-b2a6-b00521601f05",
+        "name": "Chipotle Chicken Thighs with Sweet Potato Mash",
+        "storage_path": "c963454a-4928-4c8c-b2a6-b00521601f05.jpg"
+      },
+      {
+        "id": "de222c20-fefa-493c-9f10-6e1847836a28",
+        "name": "Tuscan White Bean and Kale Soup",
+        "storage_path": "de222c20-fefa-493c-9f10-6e1847836a28.jpg"
+      },
+      {
+        "id": "6f88ca94-226c-4a92-bd3e-a9410bd87936",
+        "name": "Moroccan Lamb Tagine with Apricots and Almonds",
+        "storage_path": "6f88ca94-226c-4a92-bd3e-a9410bd87936.jpg"
+      }
+    ],
+    "failed": [
+      {
+        "id": "d8adaee5-06de-48f8-a4c9-228527515ad1",
+        "name": "Korean Doenjang Braised Pork Belly",
+        "error": "generation_failed"
+      },
+      {
+        "id": "bef880fa-3a28-41bb-aec2-8b49470e9d6d",
+        "name": "Herb Crusted Scallops with Lemon Garlic Butter",
+        "error": "generation_failed"
+      }
+    ],
+    "skipped": []
+  },
+  {
+    "timestamp": "2026-03-21T16:35:09.080141+00:00",
+    "total": 2,
+    "succeeded": [
+      {
+        "id": "d8adaee5-06de-48f8-a4c9-228527515ad1",
+        "name": "Korean Doenjang Braised Pork Belly",
+        "storage_path": "d8adaee5-06de-48f8-a4c9-228527515ad1.jpg"
+      },
+      {
+        "id": "bef880fa-3a28-41bb-aec2-8b49470e9d6d",
+        "name": "Herb Crusted Scallops with Lemon Garlic Butter",
+        "storage_path": "bef880fa-3a28-41bb-aec2-8b49470e9d6d.jpg"
+      }
+    ],
+    "failed": [],
+    "skipped": []
+  },
+  {
+    "timestamp": "2026-03-21T18:04:59.002811+00:00",
+    "total": 5,
+    "succeeded": [
+      {
+        "id": "e88cd245-3083-4036-91a5-c59a0cd8787f",
+        "name": "Chipotle Pulled Pork with Jicama Slaw",
+        "storage_path": "e88cd245-3083-4036-91a5-c59a0cd8787f.jpg"
+      },
+      {
+        "id": "77f800c7-1446-4f6f-89d3-47e7b20d63f4",
+        "name": "Honey Lemon Garlic Shrimp Pasta",
+        "storage_path": "77f800c7-1446-4f6f-89d3-47e7b20d63f4.jpg"
+      },
+      {
+        "id": "9f4f1972-810c-421e-ad28-7f2f17591c9f",
+        "name": "Tuscan White Bean and Kale Soup",
+        "storage_path": "9f4f1972-810c-421e-ad28-7f2f17591c9f.jpg"
+      },
+      {
+        "id": "9b8914b6-aad3-4041-8cde-945889bb23da",
+        "name": "Maple Glazed Salmon with Roasted Root Vegetables",
+        "storage_path": "9b8914b6-aad3-4041-8cde-945889bb23da.jpg"
+      },
+      {
+        "id": "aa5ea9a4-6134-4770-b0eb-1d2f0cbd0d21",
+        "name": "Herb-Crusted Rack of Lamb with Mint Chimichurri",
+        "storage_path": "aa5ea9a4-6134-4770-b0eb-1d2f0cbd0d21.jpg"
+      }
+    ],
+    "failed": [],
+    "skipped": []
+  },
+  {
+    "timestamp": "2026-03-21T23:23:42.512642+00:00",
+    "total": 5,
+    "succeeded": [
+      {
+        "id": "02e8fcad-7a0c-4952-a61f-372a6b57ddf8",
+        "name": "Baked Cod with Lemon Herb Breadcrumb Topping",
+        "storage_path": "02e8fcad-7a0c-4952-a61f-372a6b57ddf8.jpg"
+      },
+      {
+        "id": "8dadb486-16ab-4f20-a19e-167e456454f8",
+        "name": "Korean Gochujang Glazed Pork Bowl",
+        "storage_path": "8dadb486-16ab-4f20-a19e-167e456454f8.jpg"
+      },
+      {
+        "id": "ebffaad1-a307-444f-8c28-f03ca0d2ff7a",
+        "name": "Red Lentil Coconut Curry Soup",
+        "storage_path": "ebffaad1-a307-444f-8c28-f03ca0d2ff7a.jpg"
+      },
+      {
+        "id": "27bbb7bc-abbb-41f8-a08f-7b16ebd73d5c",
+        "name": "Mediterranean Garlic Shrimp with Crusty Bread",
+        "storage_path": "27bbb7bc-abbb-41f8-a08f-7b16ebd73d5c.jpg"
+      },
+      {
+        "id": "d8c822c4-c313-42f0-ae25-58f0854dc480",
+        "name": "Seared Lamb Chops with Garlic Herb Butter",
+        "storage_path": "d8c822c4-c313-42f0-ae25-58f0854dc480.jpg"
+      }
+    ],
+    "failed": [],
+    "skipped": []
+  }
+]

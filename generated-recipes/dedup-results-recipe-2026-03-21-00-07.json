@@ -1,0 +1,142 @@
+{
+  "total": 5,
+  "keep": [
+    {
+      "file": "recipe-2026-03-21-00-07-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-1.sql",
+      "recipe": "Pan-Seared Sea Scallops with Lemon Garlic Butter",
+      "score": 0.505
+    },
+    {
+      "file": "recipe-2026-03-21-00-07-2.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-2.sql",
+      "recipe": "Sicilian Swordfish with Cherry Tomato Caper Sauce",
+      "score": 0.229
+    },
+    {
+      "file": "recipe-2026-03-21-00-07-3.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-3.sql",
+      "recipe": "Thai Coconut Curry Mussels",
+      "score": 0.34
+    },
+    {
+      "file": "recipe-2026-03-21-00-07-4.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-4.sql",
+      "recipe": "Japanese Teriyaki Chicken Bowl",
+      "score": 0.576
+    },
+    {
+      "file": "recipe-2026-03-21-00-07-5.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-5.sql",
+      "recipe": "Classic Roman Carbonara",
+      "score": 0.2
+    }
+  ],
+  "discard": [],
+  "details": {
+    "recipe-2026-03-21-00-07-1.sql": {
+      "recipe": "Pan-Seared Sea Scallops with Lemon Garlic Butter",
+      "ingredients": [
+        "Garlic",
+        "White Pepper",
+        "Butter",
+        "Sea Scallops",
+        "Salt",
+        "Lemon Juice",
+        "Olive Oil",
+        "Chicken Stock",
+        "Fresh Parsley"
+      ],
+      "score": 0.505,
+      "name_score": 0.571,
+      "ingredient_score": 0.462,
+      "existing_name": "Seared Scallops with Lemon Garlic Butter",
+      "existing_id": "b93fea86-035b-421c-ae2a-95945db210b5",
+      "duplicate": false,
+      "intra_batch_duplicate": false
+    },
+    "recipe-2026-03-21-00-07-2.sql": {
+      "recipe": "Sicilian Swordfish with Cherry Tomato Caper Sauce",
+      "ingredients": [
+        "Garlic",
+        "Cherry tomatoes",
+        "Salt",
+        "Red Wine Vinegar",
+        "Olive Oil",
+        "Capers",
+        "Black Pepper",
+        "Fresh Basil",
+        "Swordfish"
+      ],
+      "score": 0.229,
+      "name_score": 0.143,
+      "ingredient_score": 0.286,
+      "existing_name": "Tomato Soup",
+      "existing_id": "51d49a92-7910-43a0-ac90-eae3510144ac",
+      "duplicate": false,
+      "intra_batch_duplicate": false
+    },
+    "recipe-2026-03-21-00-07-3.sql": {
+      "recipe": "Thai Coconut Curry Mussels",
+      "ingredients": [
+        "Brown Sugar",
+        "Lime Juice",
+        "Garlic",
+        "Red Curry Paste",
+        "Coconut Milk",
+        "Fresh Cilantro",
+        "Fish Sauce",
+        "Coconut Oil",
+        "Mussels"
+      ],
+      "score": 0.34,
+      "name_score": 0.6,
+      "ingredient_score": 0.167,
+      "existing_name": "Thai Coconut Salmon Curry",
+      "existing_id": "19d74c63-8f55-4007-8465-fca4753af4a6",
+      "duplicate": false,
+      "intra_batch_duplicate": false
+    },
+    "recipe-2026-03-21-00-07-4.sql": {
+      "recipe": "Japanese Teriyaki Chicken Bowl",
+      "ingredients": [
+        "Ginger",
+        "Garlic",
+        "Dark Soy Sauce",
+        "Rice",
+        "Salt",
+        "Sweet Soy Sauce",
+        "Vegetable Oil",
+        "Chicken Thigh",
+        "Baby Bok Choy",
+        "Black Pepper"
+      ],
+      "score": 0.576,
+      "name_score": 1.0,
+      "ingredient_score": 0.294,
+      "existing_name": "Japanese Teriyaki Chicken Bowl",
+      "existing_id": "e6889a32-bead-433d-82be-c647ccf3b1af",
+      "duplicate": false,
+      "intra_batch_duplicate": false
+    },
+    "recipe-2026-03-21-00-07-5.sql": {
+      "recipe": "Classic Roman Carbonara",
+      "ingredients": [
+        "Egg Yolk",
+        "Pecorino Romano",
+        "Guanciale",
+        "Whole Egg",
+        "Salt",
+        "Pasta",
+        "Black Pepper"
+      ],
+      "score": 0.2,
+      "name_score": 0.2,
+      "ingredient_score": 0.2,
+      "existing_name": "Classic Scrambled Eggs",
+      "existing_id": "26fa751a-b093-46dd-95fe-338d16c73b4f",
+      "duplicate": false,
+      "intra_batch_duplicate": false
+    }
+  }
+}

@@ -1,209 +1,53 @@
-# Recipe Generator Agent - Instructions
+# Recipe Generator Prompt
 
-You are a recipe generator that creates new recipes in SQL format for Supabase.
+You are a recipe generator. Generate ONE unique recipe per run.
 
-## Your Goal
-Generate one creative, unique recipe every time you run.
+## Rules
+1. Read /home/jquijanoq/.openclaw/workspace/mealmash/scripts/ingredient-names.txt — ONLY use ingredients from this exact list
+2. Read /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/used-recipes.txt — do NOT generate a recipe name that appears in that file
+3. Recipe must have 6-12 ingredients (ALL from the ingredient file above)
+4. Recipe must have 4-10 cooking INSTRUCTIONS — these must be action verb sentences describing cooking steps, NOT ingredient names
 
----
+VALID INSTRUCTIONS examples (these are COOKING STEPS with action verbs):
+- "Season chicken thighs with salt, pepper, and smoked paprika. Let sit at room temperature for 10 minutes."
+- "Heat olive oil in a large skillet over medium-high heat until shimmering."
+- "Sear the chicken thighs skin-side down for 5-6 minutes until golden and crispy."
+- "Flip and cook another 4 minutes. Finish in a 400F oven for 10 minutes."
+- "Rest for 5 minutes before slicing against the grain."
 
-## CRITICAL: Ingredient Sourcing Rule
+INVALID instructions (these are just INGREDIENT NAMES — never do this):
+- ARRAY['Chicken Thigh', 'Olive Oil', 'Salt', 'Paprika', 'Lemon'] ← WRONG
 
-**You must ONLY use ingredients from the local file:**
-`/home/jquijanoq/.openclaw/workspace/mealmash/scripts/ingredient-names.txt`
+## Cuisine options (pick one randomly weighted toward under-represented cuisines)
+- American, Asian (Chinese/Japanese/Korean/Thai/Vietnamese), BBQ, Brazilian, British, Caribbean, Chinese, Colombian, French, German, Greek, Indian, Italian, Japanese, Latin American (Peruvian/Argentinian/Mexican), Lebanese, Mediterranean, Mexican, Middle Eastern, Moroccan, Other, Peruvian, Portuguese, Spanish, Thai, Turkish, Vietnamese
 
-This file contains the EXACT 1,279 ingredient names that exist in the Supabase database. Read this file and pick ingredients ONLY from it. Do NOT guess, infer, or use ingredient names that are not in this file exactly as written. If you use an ingredient not in this file, the SQL will fail to insert and the recipe will be useless.
+## Category (pick one)
+- breakfast, lunch, dinner, snack, dessert
 
----
+## Dietary tags (optional, pick 0-3)
+- gluten-free, dairy-free, vegetarian, vegan, nut-free, low-carb, high-protein, spicy
 
-## Step 1: Read the Ingredient List
+## Output format
+Save as SQL file to: /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-YYYY-MM-DD-HH-MM-N.sql
 
-Before generating anything, read the ingredient file:
-```
-cat /home/jquijanoq/.openclaw/workspace/mealmash/scripts/ingredient-names.txt
-```
-
-Use EXACT names from the file — watch for:
-- Plural vs singular ("Green onions" not "Green Onion", "Cloves" not "Clove")
-- Exact spelling
-- Always Title Case
-
-## Step 2: Check for Duplicates
-
-Read `/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/used-recipes.txt` to see which recipe names already exist. Generate a DIFFERENT name — do NOT create a recipe that appears in that file.
-
----
-
-## Cuisine Selection (weighted random)
-
-- Italian: 15%
-- Mexican: 15%
-- American: 12%
-- Asian (Korean, Japanese, Thai, Vietnamese, Chinese): 15%
-- Mediterranean (Greek, Spanish, Turkish): 12%
-- French: 8%
-- Indian: 5%
-- Latin American (Brazilian, Peruvian, Argentinian, Colombian): 8%
-- Middle Eastern: 5%
-- Caribbean: 5%
-
-Avoid repeating any cuisine within the last 5 generated recipes.
-
----
-
-## Category — Choose the Correct One
-
-The category MUST match the type of dish. Use these exact values:
-- `breakfast` — morning meals (eggs, pancakes, oatmeal, smoothies, etc.)
-- `lunch` — midday meals (sandwiches, salads, soups, bowls, etc.)
-- `dinner` — evening meals (meat dishes, pasta, stir-fry, baked dishes, etc.)
-- `snack` — appetizers, finger foods, dips, etc.
-- `dessert` — sweets, pastries, cakes, puddings, ice cream, etc.
-
----
-
-## Database Schema
-
-### recipes table
+File format:
 ```sql
-id UUID PRIMARY KEY DEFAULT gen_random_uuid()
-name TEXT NOT NULL
-description TEXT
-ingredients JSONB NOT NULL DEFAULT '[]'::jsonb
-instructions TEXT[]
-category TEXT
-cuisine TEXT[]
-dietary_tags TEXT[]
-difficulty TEXT
-prep_time_minutes INTEGER
-cook_time_minutes INTEGER
-servings INTEGER DEFAULT 2
-image_url TEXT
-created_at TIMESTAMPTZ DEFAULT NOW()
-```
-
-### recipe_ingredients table
-```sql
-id UUID PRIMARY KEY DEFAULT gen_random_uuid()
-recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE
-ingredient_id UUID REFERENCES ingredients(id)
-quantity TEXT
-quantity_num INTEGER
-unit TEXT
-created_at TIMESTAMPTZ DEFAULT NOW()
-```
-
----
-
-## Units Reference Table
-
-| Unit | Use for |
-|------|---------|
-| `cups` | Flour, sugar, rice, pasta, breadcrumbs, shredded cheese, milk, cream, broth, juice, salsa, beans, lentils, quinoa, oats |
-| `tbsp` | Butter, oil, olive oil, sesame oil, soy sauce, honey, mustard, mayo, hot sauce, Worcestershire, vanilla, lemon juice, lime juice, vinegar, tahini, fish sauce, teriyaki sauce |
-| `tsp` | Salt, pepper, baking soda, baking powder, cinnamon, cumin, paprika, turmeric, chili powder, garlic powder, onion powder, oregano, thyme, basil, curry powder, red pepper flake |
-| `oz` | Cheese (block), cream cheese, tofu, sliced meat, mushrooms, bacon |
-| `lb` | Meat (ground, whole cuts), whole chicken, pork, beef, lamb, fish fillet |
-| `medium` | Onion, garlic, tomato, potato, carrot, bell pepper, avocado, zucchini, eggplant, leek, parsnip, sweet potato |
-| `large` | Egg, onion, avocado, potato |
-| `small` | Onion, garlic, cucumber, zucchini, eggplant, lime, lemon |
-| `cloves` | Garlic, shallot |
-| `stalks` | Celery, green onion, scallion, leek, asparagus |
-| `slices` | Bacon, ham, cheese, bread, tortilla, salami, prosciutto |
-| `strips` | Grilled chicken breast, baked tofu, stir-fry beef |
-| `pieces` | Chicken thighs, drumsticks, wings, meatballs, peeled shrimp, pineapple chunks, mango chunks |
-| `cans` | Coconut milk, diced tomatoes, crushed tomatoes, beans, corn, tuna, chickpeas |
-| `bunch` | Cilantro, parsley, mint, basil, green onion, spinach, arugula, chives |
-| `inch` | Fresh ginger, fresh turmeric, lemongrass |
-| `heads` | Garlic, cabbage, cauliflower, broccoli, lettuce |
-| `cups cooked` | Cooked rice, cooked pasta, cooked quinoa, cooked noodles |
-| `gram` | Use numeric value only, no "grams" |
-
----
-
-## Correct SQL Format
-
-```sql
-WITH ingredient_ids AS (
-  SELECT id, name FROM ingredients
-  WHERE name ILIKE ANY (ARRAY['Beef', 'Onion', 'Garlic', 'Tomato', 'Pasta', 'Parmesan'])
-),
-recipe_insert AS (
-  INSERT INTO recipes (
-    name, description, ingredients, instructions, category, cuisine, dietary_tags, difficulty,
-    prep_time_minutes, cook_time_minutes, servings, image_url, created_at
-  )
-  VALUES (
-    'Pasta Bolognese',
-    'A rich and hearty Italian classic with deeply savory meat sauce.',
-    '[]'::jsonb,
-    ARRAY[
-      'Brown the ground beef in a large Dutch oven over medium-high heat, breaking it up as it cooks, about 6 minutes.',
-      'Add diced onion and minced garlic to the beef. Cook until the onion is softened and translucent, about 4 minutes.',
-      'Stir in crushed tomatoes, tomato paste, and a bay leaf. Reduce heat and simmer for 20 minutes.',
-      'Cook the pasta in a large pot of salted boiling water until al dente. Reserve 1/2 cup pasta water before draining.',
-      'Toss the drained pasta with the meat sauce, adding splashes of pasta water to loosen. Finish with grated Parmesan and fresh basil.'
-    ],
-    'dinner',
-    ARRAY['Italian'],
-    ARRAY[]::text[],
-    'Medium',
-    10, 40, 4, '', NOW()
-  ) RETURNING id
-)
-INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity, quantity_num, unit)
+INSERT INTO recipes (name, description, ingredients, instructions, category, cuisine, dietary_tags, difficulty, prep_time_minutes, cook_time_minutes, servings, image_url)
 SELECT
-  ri.id,
-  i.id,
-  CASE i.name
-    WHEN 'Beef' THEN '1 lb'
-    WHEN 'Onion' THEN '1 medium'
-    WHEN 'Garlic' THEN '3 cloves'
-  END,
-  CASE i.name
-    WHEN 'Beef' THEN 1
-    WHEN 'Onion' THEN 1
-    WHEN 'Garlic' THEN 3
-  END,
-  CASE i.name
-    WHEN 'Beef' THEN 'lb'
-    WHEN 'Onion' THEN 'medium'
-    WHEN 'Garlic' THEN 'cloves'
-  END
-FROM ingredient_ids i
-CROSS JOIN recipe_insert ri;
+  'RECIPE NAME'::text,
+  'Description text'::text,
+  '[{"ingredient_id": "UUID", "quantity": "1 cup", ...}]'::jsonb,
+  ARRAY['Step 1 instruction with action verb', 'Step 2 instruction with action verb', ...]::text[],
+  'dinner'::text,
+  ARRAY['Cuisine']::text[],
+  ARRAY['dietary_tag']::text[],
+  'medium'::text,
+  15::integer,
+  30::integer,
+  4::integer,
+  NULL::text;
 ```
 
----
+Get ingredient UUIDs from /home/jquijanoq/.openclaw/workspace/mealmash/scripts/ingredient-names.txt — match exact names.
 
-## STRICT Validation — DO THIS BEFORE SAVING
-
-After writing your SQL and BEFORE saving the file, you MUST verify:
-
-1. **Re-read** `/home/jquijanoq/.openclaw/workspace/mealmash/scripts/ingredient-names.txt`
-2. For EVERY ingredient in the WHERE clause and CASE statements, confirm it appears EXACTLY in that file
-3. Verify the category matches the dish type (dessert → 'dessert', breakfast → 'breakfast', etc.)
-4. For `quantity_num`: extract the actual decimal number from the quantity string:
-   - `'2 cups'` → quantity_num: **2** (not "2 cups", just the number)
-   - `'1.5 cups'` → quantity_num: **1.5**
-   - `'3/4 cup'` → quantity_num: **0.75** (convert fractions to decimals)
-   - `'1/2 tsp'` → quantity_num: **0.5**
-   - `'2 tbsp'` → quantity_num: **2**
-5. Check that `quantity` text and `quantity_num` match exactly (same value)
-6. Verify `unit` is the singular form matching the reference table above
-7. **Instructions MUST be cooking steps** — each entry in the ARRAY must be a complete action verb sentence (e.g. "Brown the ground beef in a skillet", "Add diced onion and cook until softened"). They must NOT be ingredient names or single words. If an instruction looks like an ingredient name ("Chorizo", "Refried Beans"), REPLACE IT with a proper cooking step.
-
-**If ANY check fails, rewrite the problematic part before saving.**
-
----
-
-## Important Rules
-
-- category: 'breakfast', 'lunch', 'dinner', 'snack', or 'dessert' — must match the dish
-- cuisine: ARRAY['Italian'], ARRAY['Mexican'], etc.
-- dietary_tags: ARRAY['Vegetarian'], ARRAY['Gluten-Free'], etc. (can be empty)
-- difficulty: 'Easy', 'Medium', or 'Hard'
-- Include 6-12 ingredients per recipe
-- description: 2-3 sentences, appetizing
-- instructions: 4-10 clear, practical steps. Each step must be a complete cooking action (verb + what to do). NEVER put ingredient names in the instructions ARRAY.
-- After saving, append the recipe name to `used-recipes.txt`
+After saving the SQL file, append the recipe name to /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/used-recipes.txt

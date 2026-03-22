@@ -1,0 +1,128 @@
+{
+  "total": 4,
+  "keep": [
+    {
+      "file": "recipe-2026-03-20-21-55-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-21-55-1.sql",
+      "recipe": "Homestyle Chana Masala",
+      "score": 0.298
+    },
+    {
+      "file": "recipe-2026-03-20-21-55-2.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-21-55-2.sql",
+      "recipe": "Vietnamese Lemongrass Tofu Rice Bowl",
+      "score": 0.331
+    },
+    {
+      "file": "recipe-2026-03-20-21-55-4.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-21-55-4.sql",
+      "recipe": "Middle Eastern Lamb Kufta Bowls with Tzatziki and Rice",
+      "score": 0.28
+    },
+    {
+      "file": "recipe-2026-03-20-21-55-5.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-21-55-5.sql",
+      "recipe": "Sichuan Mapo Tofu",
+      "score": 0.167
+    }
+  ],
+  "discard": [],
+  "details": {
+    "recipe-2026-03-20-21-55-1.sql": {
+      "recipe": "Homestyle Chana Masala",
+      "ingredients": [
+        "Coriander Seed",
+        "Cumin",
+        "Canned Chickpeas",
+        "Lemon",
+        "Butter",
+        "Garlic",
+        "Onion",
+        "Paprika",
+        "Turmeric",
+        "Chili Powder",
+        "Garam Masala",
+        "Fresh Cilantro",
+        "Tomato Paste",
+        "Salt"
+      ],
+      "score": 0.298,
+      "name_score": 0.2,
+      "ingredient_score": 0.364,
+      "existing_name": "Chicken Tikka Masala",
+      "existing_id": "7e891425-95d5-4b43-ac6f-f965c1348264",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-21-55-2.sql": {
+      "recipe": "Vietnamese Lemongrass Tofu Rice Bowl",
+      "ingredients": [
+        "Fish Sauce",
+        "Bok Choy",
+        "Soy Sauce",
+        "Jasmine Rice",
+        "Green onions",
+        "Garlic",
+        "Thai Chile",
+        "Carrot",
+        "Cilantro",
+        "Lemongrass",
+        "Sesame Oil",
+        "Firm Tofu",
+        "Lime"
+      ],
+      "score": 0.331,
+      "name_score": 0.4,
+      "ingredient_score": 0.286,
+      "existing_name": "B\u00fan Th\u1ecbt N\u01b0\u1edbng (Vietnamese Grilled Pork & Lemongrass Rice Bowl)",
+      "existing_id": "e04f4a08-5ccb-4344-baa3-a8db309e8bbd",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-21-55-4.sql": {
+      "recipe": "Middle Eastern Lamb Kufta Bowls with Tzatziki and Rice",
+      "ingredients": [
+        "Greek Yogurt",
+        "Cumin",
+        "Ground Lamb",
+        "Rice",
+        "Lemon Juice",
+        "Garlic",
+        "Onion",
+        "Black Pepper",
+        "Olive Oil",
+        "Salt",
+        "Cucumber",
+        "Parsley"
+      ],
+      "score": 0.28,
+      "name_score": 0.1,
+      "ingredient_score": 0.4,
+      "existing_name": "Greek Lamb Souvlaki Plate",
+      "existing_id": "5493fa74-a4d6-47dd-988c-d1ea57797d6e",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-21-55-5.sql": {
+      "recipe": "Sichuan Mapo Tofu",
+      "ingredients": [
+        "Corn Starch",
+        "Ground Beef",
+        "Soy Sauce",
+        "Ginger",
+        "Green onions",
+        "Garlic",
+        "Chili Crisp",
+        "Sesame Oil",
+        "Chicken Stock",
+        "Sichuan Peppercorn",
+        "Firm Tofu",
+        "Scallion",
+        "Soy Bean Paste"
+      ],
+      "score": 0.167,
+      "name_score": 0.0,
+      "ingredient_score": 0.278,
+      "existing_name": "Chicken Stir Fry",
+      "existing_id": "6ce53d23-595d-4743-87f7-ba72cf53854d",
+      "duplicate": false
+    }
+  }
+}

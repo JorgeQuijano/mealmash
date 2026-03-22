@@ -1,0 +1,144 @@
+{
+  "total": 5,
+  "keep": [
+    {
+      "file": "recipe-2026-03-20-18-04-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-18-04-1.sql",
+      "recipe": "Italian Cioppino Seafood Stew",
+      "score": 0.158
+    },
+    {
+      "file": "recipe-2026-03-20-18-04-2.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-18-04-2.sql",
+      "recipe": "Mexican Chorizo and Black Bean Sope Bowl",
+      "score": 0.239
+    },
+    {
+      "file": "recipe-2026-03-20-18-04-3.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-18-04-3.sql",
+      "recipe": "Korean Soft Tofu Stew (Sundubu-jjigae)",
+      "score": 0.292
+    },
+    {
+      "file": "recipe-2026-03-20-18-04-4.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-18-04-4.sql",
+      "recipe": "Greek Chicken Orzo Salad",
+      "score": 0.25
+    },
+    {
+      "file": "recipe-2026-03-20-18-04-5.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-18-04-5.sql",
+      "recipe": "French Lamb Chops with Roasted Root Vegetables",
+      "score": 0.201
+    }
+  ],
+  "discard": [],
+  "details": {
+    "recipe-2026-03-20-18-04-1.sql": {
+      "recipe": "Italian Cioppino Seafood Stew",
+      "ingredients": [
+        "Mussels",
+        "Olive Oil",
+        "Canned Tomatoes",
+        "Fish Stock",
+        "Yellow onion",
+        "Garlic",
+        "Shrimp",
+        "Fresh Oregano",
+        "White Wine",
+        "Little Neck Clams"
+      ],
+      "score": 0.158,
+      "name_score": 0.0,
+      "ingredient_score": 0.263,
+      "existing_name": "Spanish Paella Marinera",
+      "existing_id": "bce77601-6c5b-43f0-b31b-c6d594a17290",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-18-04-2.sql": {
+      "recipe": "Mexican Chorizo and Black Bean Sope Bowl",
+      "ingredients": [
+        "Chorizo",
+        "Corn Tortilla",
+        "Chipotle",
+        "Lime",
+        "Cilantro",
+        "Refried Beans",
+        "Cotija",
+        "Avocado"
+      ],
+      "score": 0.239,
+      "name_score": 0.222,
+      "ingredient_score": 0.25,
+      "existing_name": "Mexican Molletes with Chorizo and Spicy Avocado",
+      "existing_id": "36d69f38-8458-4ae2-92de-50122038e3ee",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-18-04-3.sql": {
+      "recipe": "Korean Soft Tofu Stew (Sundubu-jjigae)",
+      "ingredients": [
+        "Firm Tofu",
+        "Green onions",
+        "Zucchini",
+        "Chicken Stock",
+        "Egg",
+        "Garlic",
+        "Soy Sauce",
+        "Gochujang",
+        "Korean Pear",
+        "Sesame Oil"
+      ],
+      "score": 0.292,
+      "name_score": 0.167,
+      "ingredient_score": 0.375,
+      "existing_name": "Korean Bibimbap",
+      "existing_id": "cf7b2336-0875-4fe3-a7e5-0cb8da227761",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-18-04-4.sql": {
+      "recipe": "Greek Chicken Orzo Salad",
+      "ingredients": [
+        "Feta Cheese",
+        "Extra Virgin Olive Oil",
+        "Cucumber",
+        "Chicken Thigh",
+        "Fresh Parsley",
+        "Salt",
+        "Lemon Juice",
+        "Orzo",
+        "Kalamata Olives",
+        "Garlic",
+        "Black Pepper",
+        "Fresh Oregano",
+        "Cherry tomatoes",
+        "Red onion"
+      ],
+      "score": 0.25,
+      "name_score": 0.4,
+      "ingredient_score": 0.15,
+      "existing_name": "Chicken Caesar Salad",
+      "existing_id": "b6835f3b-c3f0-4c6c-b8f6-3d9fae3788cb",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-18-04-5.sql": {
+      "recipe": "French Lamb Chops with Roasted Root Vegetables",
+      "ingredients": [
+        "Shallots",
+        "Fresh Thyme",
+        "Onion",
+        "Olive Oil",
+        "Potato",
+        "Lamb Chops",
+        "Garlic",
+        "Tomato Paste",
+        "Carrot"
+      ],
+      "score": 0.201,
+      "name_score": 0.222,
+      "ingredient_score": 0.188,
+      "existing_name": "Tuscan Herb Chicken with Roasted Vegetables",
+      "existing_id": "8896ba63-c9dd-46c9-8210-608756fe9096",
+      "duplicate": false
+    }
+  }
+}

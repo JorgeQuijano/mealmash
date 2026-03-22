@@ -1,0 +1,466 @@
+[
+  {
+    "timestamp": "2026-03-20T18:58:16.452823+00:00",
+    "total": 1,
+    "succeeded": [],
+    "failed": [
+      {
+        "file": "recipe-2026-03-20-18-04-2.sql",
+        "error": "HTTP 0: {'code': '42501', 'details': None, 'hint': None, 'message': 'new row violates row-level security policy for table \"recipes\"'}"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-03-20T19:30:00.866949+00:00",
+    "total": 1,
+    "succeeded": [],
+    "failed": [
+      {
+        "file": "recipe-2026-03-20-18-04-2.sql",
+        "error": "HTTP 0: f8d6662c-9d52-4aa3-b3ad-a969a0aa9999"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-03-20T19:30:53.836508+00:00",
+    "total": 1,
+    "succeeded": [
+      {
+        "file": "recipe-2026-03-20-18-04-4.sql",
+        "recipe_id": "a117803e-11f7-4ce9-9b8b-604a68651efd",
+        "recipe_name": "Greek Chicken Orzo Salad"
+      }
+    ],
+    "failed": []
+  },
+  {
+    "timestamp": "2026-03-20T21:40:38.926523+00:00",
+    "total": 3,
+    "succeeded": [
+      {
+        "file": "recipe-2026-03-20-21-27-1.sql",
+        "recipe_id": "7b719d3f-1d9f-41f3-b730-088196f6fdd0",
+        "recipe_name": "Caribbean Grilled Lobster Tail with Coconut Rice and Mango Salsa"
+      },
+      {
+        "file": "recipe-2026-03-20-21-27-4.sql",
+        "recipe_id": "21bae856-2122-46cc-980d-b6a30d45d93c",
+        "recipe_name": "Greek Lamb Pastitsio with Cinnamon Bechamel"
+      },
+      {
+        "file": "recipe-2026-03-20-21-27-5.sql",
+        "recipe_id": "23f4ef7a-6a93-4e22-bbb7-a689c7a810bd",
+        "recipe_name": "Indian Lamb Biryani Bowl"
+      }
+    ],
+    "failed": []
+  },
+  {
+    "timestamp": "2026-03-20T21:59:45.789302+00:00",
+    "total": 4,
+    "succeeded": [
+      {
+        "file": "recipe-2026-03-20-21-55-1.sql",
+        "recipe_id": "9af57f61-98ab-4987-84c2-6b93470ce383",
+        "recipe_name": "Homestyle Chana Masala"
+      },
+      {
+        "file": "recipe-2026-03-20-21-55-2.sql",
+        "recipe_id": "be53f5bd-2da8-4817-b804-9cfa05c8da77",
+        "recipe_name": "Vietnamese Lemongrass Tofu Rice Bowl"
+      },
+      {
+        "file": "recipe-2026-03-20-21-55-4.sql",
+        "recipe_id": "106b3307-0231-4752-8c9a-01d1a02450d6",
+        "recipe_name": "Middle Eastern Lamb Kufta Bowls with Tzatziki and Rice"
+      },
+      {
+        "file": "recipe-2026-03-20-21-55-5.sql",
+        "recipe_id": "39f711f3-c97a-4dad-a9f4-d0e963ae58d3",
+        "recipe_name": "Sichuan Mapo Tofu"
+      }
+    ],
+    "failed": []
+  },
+  {
+    "timestamp": "2026-03-20T22:54:06.752805+00:00",
+    "total": 4,
+    "succeeded": [
+      {
+        "file": "recipe-2026-03-20-22-45-1.sql",
+        "recipe_id": "2bf2d2d6-8b68-470c-a91e-3cea87e7f25c",
+        "recipe_name": "Greek Lamb Souvlaki Bowl with Lemon Herb Rice"
+      },
+      {
+        "file": "recipe-2026-03-20-22-45-2.sql",
+        "recipe_id": "93723e7e-850e-49b0-9a28-ae6daad717fe",
+        "recipe_name": "Mediterranean Grilled Octopus with Lemon Herb Potatoes"
+      },
+      {
+        "file": "recipe-2026-03-20-22-45-3.sql",
+        "recipe_id": "f2d327df-9fa2-4bbb-b33e-b8990ec34765",
+        "recipe_name": "Middle Eastern Lamb Kofta Bowl with Tahini"
+      },
+      {
+        "file": "recipe-2026-03-20-22-45-5.sql",
+        "recipe_id": "4ffbc34a-917d-4a73-96e1-638aeb53648a",
+        "recipe_name": "Lamb Vindaloo"
+      }
+    ],
+    "failed": []
+  },
+  {
+    "timestamp": "2026-03-20T23:05:41.166255+00:00",
+    "total": 3,
+    "succeeded": [
+      {
+        "file": "recipe-2026-03-20-22-59-1.sql",
+        "recipe_id": "fbaa4c1c-0c08-4fc1-ad7d-a33006941245",
+        "recipe_name": "Thai Coconut Curry Mussels"
+      },
+      {
+        "file": "recipe-2026-03-20-22-59-3.sql",
+        "recipe_id": "e8dddfc7-6265-491f-b30b-f20077b7ffb4",
+        "recipe_name": "Japanese Ginger Pork Bowl (Shogayaki)"
+      },
+      {
+        "file": "recipe-2026-03-20-22-59-4.sql",
+        "recipe_id": "18cc4a71-02a9-4dcf-907f-ae8851a9ef76",
+        "recipe_name": "Mediterranean Stuffed Chicken Breasts with Sun-Dried Tomato, Feta, and Spinach"
+      }
+    ],
+    "failed": []
+  },
+  {
+    "timestamp": "2026-03-20T23:43:03.305616+00:00",
+    "total": 5,
+    "succeeded": [],
+    "failed": [
+      {
+        "file": "recipe-2026-03-20-23-42-1.sql",
+        "error": "RPC error: {'code': '22004', 'details': None, 'hint': None, 'message': 'upper bound of FOR loop cannot be null'}"
+      },
+      {
+        "file": "recipe-2026-03-20-23-42-2.sql",
+        "error": "RPC error: {'code': '22004', 'details': None, 'hint': None, 'message': 'upper bound of FOR loop cannot be null'}"
+      },
+      {
+        "file": "recipe-2026-03-20-23-42-3.sql",
+        "error": "RPC error: {'code': '22004', 'details': None, 'hint': None, 'message': 'upper bound of FOR loop cannot be null'}"
+      },
+      {
+        "file": "recipe-2026-03-20-23-42-4.sql",
+        "error": "RPC error: {'code': '22004', 'details': None, 'hint': None, 'message': 'upper bound of FOR loop cannot be null'}"
+      },
+      {
+        "file": "recipe-2026-03-20-23-42-5.sql",
+        "error": "RPC error: {'code': '22004', 'details': None, 'hint': None, 'message': 'upper bound of FOR loop cannot be null'}"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-03-20T23:43:56.392230+00:00",
+    "total": 5,
+    "succeeded": [
+      {
+        "file": "recipe-2026-03-20-23-42-1.sql",
+        "recipe_id": "b93fea86-035b-421c-ae2a-95945db210b5",
+        "recipe_name": "Seared Scallops with Lemon Garlic Butter"
+      },
+      {
+        "file": "recipe-2026-03-20-23-42-2.sql",
+        "recipe_id": "e6889a32-bead-433d-82be-c647ccf3b1af",
+        "recipe_name": "Japanese Teriyaki Chicken Bowl"
+      },
+      {
+        "file": "recipe-2026-03-20-23-42-3.sql",
+        "recipe_id": "688e3b80-b778-4ed3-895a-62d1d9f3f06a",
+        "recipe_name": "Italian Seafood Stew with Tomatoes and Herbs"
+      },
+      {
+        "file": "recipe-2026-03-20-23-42-4.sql",
+        "recipe_id": "d1d04ff7-fcb7-45c6-a8fd-a302631cf9ae",
+        "recipe_name": "Greek Lamb Souvlaki Bowl with Tzatziki"
+      },
+      {
+        "file": "recipe-2026-03-20-23-42-5.sql",
+        "recipe_id": "f4e321ac-87ee-4850-920d-0df96a130232",
+        "recipe_name": "Peruvian Shrimp and Sweet Potato Chowder"
+      }
+    ],
+    "failed": []
+  },
+  {
+    "timestamp": "2026-03-21T00:12:59.320546+00:00",
+    "total": 5,
+    "succeeded": [],
+    "failed": [
+      {
+        "file": "recipe-2026-03-21-00-07-1.sql",
+        "error": "Cannot find VALUES block in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-1.sql"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-2.sql",
+        "error": "Cannot find VALUES block in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-2.sql"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-3.sql",
+        "error": "Cannot find VALUES block in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-3.sql"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-4.sql",
+        "error": "Cannot find VALUES block in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-4.sql"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-5.sql",
+        "error": "Cannot find VALUES block in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-5.sql"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-03-21T00:14:25.668896+00:00",
+    "total": 5,
+    "succeeded": [],
+    "failed": [
+      {
+        "file": "recipe-2026-03-21-00-07-1.sql",
+        "error": "Cannot find VALUES block in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-1.sql"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-2.sql",
+        "error": "Cannot find VALUES block in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-2.sql"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-3.sql",
+        "error": "Cannot find VALUES block in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-3.sql"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-4.sql",
+        "error": "Cannot find VALUES block in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-4.sql"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-5.sql",
+        "error": "Cannot find VALUES block in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-5.sql"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-03-21T00:15:45.792000+00:00",
+    "total": 5,
+    "succeeded": [],
+    "failed": [
+      {
+        "file": "recipe-2026-03-21-00-07-1.sql",
+        "error": "Cannot find RETURNING after VALUES in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-1.sql"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-2.sql",
+        "error": "Cannot find RETURNING after VALUES in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-2.sql"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-3.sql",
+        "error": "Cannot find RETURNING after VALUES in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-3.sql"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-4.sql",
+        "error": "Cannot find RETURNING after VALUES in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-4.sql"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-5.sql",
+        "error": "Cannot find RETURNING after VALUES in /home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-00-07-5.sql"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-03-21T00:18:28.265450+00:00",
+    "total": 5,
+    "succeeded": [
+      {
+        "file": "recipe-2026-03-21-00-07-1.sql",
+        "recipe_id": "26f04296-6642-4bea-88eb-c35f03e3da43",
+        "recipe_name": "Pan-Seared Sea Scallops with Lemon Garlic Butter"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-2.sql",
+        "recipe_id": "b8a20333-e9b2-41b1-9895-c2679049a5b5",
+        "recipe_name": "Sicilian Swordfish with Cherry Tomato Caper Sauce"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-3.sql",
+        "recipe_id": "f83b5784-cd76-4ee0-acc2-fb008e1088ff",
+        "recipe_name": "Thai Coconut Curry Mussels"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-4.sql",
+        "recipe_id": "76b0ce8b-f04e-46e0-b79c-be99f89f0335",
+        "recipe_name": "Japanese Teriyaki Chicken Bowl"
+      },
+      {
+        "file": "recipe-2026-03-21-00-07-5.sql",
+        "recipe_id": "8767b3b4-b7f2-475c-a8d2-cb4b3cb73dbd",
+        "recipe_name": "Classic Roman Carbonara"
+      }
+    ],
+    "failed": []
+  },
+  {
+    "timestamp": "2026-03-21T08:05:45.087356+00:00",
+    "total": 5,
+    "succeeded": [
+      {
+        "file": "recipe-2026-03-21-08-00-1.sql",
+        "recipe_id": "d3f40889-b2e1-4471-b0c6-28adddc97686",
+        "recipe_name": "Lemon Herb Roasted Chicken with Garlic Butter Asparagus"
+      },
+      {
+        "file": "recipe-2026-03-21-08-00-2.sql",
+        "recipe_id": "68f7bede-0c2a-44c5-9c08-0b9d0d45471a",
+        "recipe_name": "Thai Red Curry Braised Lamb with Jasmine Rice"
+      },
+      {
+        "file": "recipe-2026-03-21-08-00-3.sql",
+        "recipe_id": "d16e175d-d7ef-4cb3-9e63-39d443fcb427",
+        "recipe_name": "Pan-Seared Salmon with Lemon Dill Sauce and Wild Rice"
+      },
+      {
+        "file": "recipe-2026-03-21-08-00-4.sql",
+        "recipe_id": "ce55318d-6f3d-486c-8cd2-5477bcccc4aa",
+        "recipe_name": "Honey Glazed Pork Tenderloin with Apple Maple Compote"
+      },
+      {
+        "file": "recipe-2026-03-21-08-00-5.sql",
+        "recipe_id": "b9ceff9c-209f-4f41-ac99-1cb7bb23a476",
+        "recipe_name": "Creamy Garlic Basil Shrimp Pasta with Sun-Dried Tomatoes"
+      }
+    ],
+    "failed": []
+  },
+  {
+    "timestamp": "2026-03-21T15:15:43.342819+00:00",
+    "total": 5,
+    "succeeded": [
+      {
+        "file": "recipe-2026-03-21-15-10-1.sql",
+        "recipe_id": "824e14cf-620c-4b0e-a643-466f80db4f06",
+        "recipe_name": "Middle Eastern Lamb Tagine with Preserved Lemon and Olives"
+      },
+      {
+        "file": "recipe-2026-03-21-15-10-2.sql",
+        "recipe_id": "b1d09414-33ea-405c-bb9d-109d0cf0e5c4",
+        "recipe_name": "Korean Gochujang Glazed Pork Belly Bowl"
+      },
+      {
+        "file": "recipe-2026-03-21-15-10-3.sql",
+        "recipe_id": "c90bc736-cca5-4de2-8c74-73c193ce6951",
+        "recipe_name": "Japanese Miso Glazed Black Cod"
+      },
+      {
+        "file": "recipe-2026-03-21-15-10-4.sql",
+        "recipe_id": "5f32a723-d836-4086-acfb-012ab9604604",
+        "recipe_name": "Brazilian Coconut Shrimp Moqueca"
+      },
+      {
+        "file": "recipe-2026-03-21-15-10-5.sql",
+        "recipe_id": "8006373e-bbda-40e5-8908-6cb5abb0deda",
+        "recipe_name": "French Duck Confit with Cannellini Beans"
+      }
+    ],
+    "failed": []
+  },
+  {
+    "timestamp": "2026-03-21T16:32:27.567248+00:00",
+    "total": 5,
+    "succeeded": [
+      {
+        "file": "recipe-2026-03-21-16-27-1.sql",
+        "recipe_id": "bef880fa-3a28-41bb-aec2-8b49470e9d6d",
+        "recipe_name": "Herb Crusted Scallops with Lemon Garlic Butter"
+      },
+      {
+        "file": "recipe-2026-03-21-16-27-2.sql",
+        "recipe_id": "6f88ca94-226c-4a92-bd3e-a9410bd87936",
+        "recipe_name": "Moroccan Lamb Tagine with Apricots and Almonds"
+      },
+      {
+        "file": "recipe-2026-03-21-16-27-3.sql",
+        "recipe_id": "d8adaee5-06de-48f8-a4c9-228527515ad1",
+        "recipe_name": "Korean Doenjang Braised Pork Belly"
+      },
+      {
+        "file": "recipe-2026-03-21-16-27-4.sql",
+        "recipe_id": "de222c20-fefa-493c-9f10-6e1847836a28",
+        "recipe_name": "Tuscan White Bean and Kale Soup"
+      },
+      {
+        "file": "recipe-2026-03-21-16-27-5.sql",
+        "recipe_id": "c963454a-4928-4c8c-b2a6-b00521601f05",
+        "recipe_name": "Chipotle Chicken Thighs with Sweet Potato Mash"
+      }
+    ],
+    "failed": []
+  },
+  {
+    "timestamp": "2026-03-21T18:04:53.753023+00:00",
+    "total": 5,
+    "succeeded": [
+      {
+        "file": "recipe-2026-03-21-18-00-1.sql",
+        "recipe_id": "aa5ea9a4-6134-4770-b0eb-1d2f0cbd0d21",
+        "recipe_name": "Herb-Crusted Rack of Lamb with Mint Chimichurri"
+      },
+      {
+        "file": "recipe-2026-03-21-18-00-2.sql",
+        "recipe_id": "9b8914b6-aad3-4041-8cde-945889bb23da",
+        "recipe_name": "Maple Glazed Salmon with Roasted Root Vegetables"
+      },
+      {
+        "file": "recipe-2026-03-21-18-00-3.sql",
+        "recipe_id": "9f4f1972-810c-421e-ad28-7f2f17591c9f",
+        "recipe_name": "Tuscan White Bean and Kale Soup"
+      },
+      {
+        "file": "recipe-2026-03-21-18-00-4.sql",
+        "recipe_id": "77f800c7-1446-4f6f-89d3-47e7b20d63f4",
+        "recipe_name": "Honey Lemon Garlic Shrimp Pasta"
+      },
+      {
+        "file": "recipe-2026-03-21-18-00-5.sql",
+        "recipe_id": "e88cd245-3083-4036-91a5-c59a0cd8787f",
+        "recipe_name": "Chipotle Pulled Pork with Jicama Slaw"
+      }
+    ],
+    "failed": []
+  },
+  {
+    "timestamp": "2026-03-21T23:23:37.974886+00:00",
+    "total": 5,
+    "succeeded": [
+      {
+        "file": "recipe-2026-03-21-23-20-1.sql",
+        "recipe_id": "d8c822c4-c313-42f0-ae25-58f0854dc480",
+        "recipe_name": "Seared Lamb Chops with Garlic Herb Butter"
+      },
+      {
+        "file": "recipe-2026-03-21-23-20-2.sql",
+        "recipe_id": "27bbb7bc-abbb-41f8-a08f-7b16ebd73d5c",
+        "recipe_name": "Mediterranean Garlic Shrimp with Crusty Bread"
+      },
+      {
+        "file": "recipe-2026-03-21-23-20-3.sql",
+        "recipe_id": "ebffaad1-a307-444f-8c28-f03ca0d2ff7a",
+        "recipe_name": "Red Lentil Coconut Curry Soup"
+      },
+      {
+        "file": "recipe-2026-03-21-23-20-4.sql",
+        "recipe_id": "8dadb486-16ab-4f20-a19e-167e456454f8",
+        "recipe_name": "Korean Gochujang Glazed Pork Bowl"
+      },
+      {
+        "file": "recipe-2026-03-21-23-20-5.sql",
+        "recipe_id": "02e8fcad-7a0c-4952-a61f-372a6b57ddf8",
+        "recipe_name": "Baked Cod with Lemon Herb Breadcrumb Topping"
+      }
+    ],
+    "failed": []
+  }
+]

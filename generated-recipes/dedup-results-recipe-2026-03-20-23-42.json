@@ -1,0 +1,219 @@
+{
+  "total": 5,
+  "keep": [],
+  "discard": [
+    {
+      "file": "recipe-2026-03-20-23-42-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-23-42-1.sql",
+      "reason": "Duplicate of DB recipe 'Seared Scallops with Lemon Garlic Butter' (score: 1.000)",
+      "match": {
+        "score": 1.0,
+        "name_score": 1.0,
+        "ingredient_score": 1.0,
+        "shared_words": [
+          "garlic",
+          "butter",
+          "lemon",
+          "scallops",
+          "seared"
+        ],
+        "duplicate": true,
+        "existing_name": "Seared Scallops with Lemon Garlic Butter",
+        "existing_id": "b93fea86-035b-421c-ae2a-95945db210b5"
+      }
+    },
+    {
+      "file": "recipe-2026-03-20-23-42-2.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-23-42-2.sql",
+      "reason": "Duplicate of DB recipe 'Japanese Teriyaki Chicken Bowl' (score: 1.000)",
+      "match": {
+        "score": 1.0,
+        "name_score": 1.0,
+        "ingredient_score": 1.0,
+        "shared_words": [
+          "teriyaki",
+          "japanese",
+          "bowl",
+          "chicken"
+        ],
+        "duplicate": true,
+        "existing_name": "Japanese Teriyaki Chicken Bowl",
+        "existing_id": "e6889a32-bead-433d-82be-c647ccf3b1af"
+      }
+    },
+    {
+      "file": "recipe-2026-03-20-23-42-3.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-23-42-3.sql",
+      "reason": "Duplicate of DB recipe 'Italian Seafood Stew with Tomatoes and Herbs' (score: 1.000)",
+      "match": {
+        "score": 1.0,
+        "name_score": 1.0,
+        "ingredient_score": 1.0,
+        "shared_words": [
+          "stew",
+          "seafood",
+          "italian",
+          "herbs",
+          "tomatoes"
+        ],
+        "duplicate": true,
+        "existing_name": "Italian Seafood Stew with Tomatoes and Herbs",
+        "existing_id": "688e3b80-b778-4ed3-895a-62d1d9f3f06a"
+      }
+    },
+    {
+      "file": "recipe-2026-03-20-23-42-4.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-23-42-4.sql",
+      "reason": "Duplicate of DB recipe 'Greek Lamb Souvlaki Bowl with Tzatziki' (score: 1.000)",
+      "match": {
+        "score": 1.0,
+        "name_score": 1.0,
+        "ingredient_score": 1.0,
+        "shared_words": [
+          "bowl",
+          "souvlaki",
+          "lamb",
+          "greek",
+          "tzatziki"
+        ],
+        "duplicate": true,
+        "existing_name": "Greek Lamb Souvlaki Bowl with Tzatziki",
+        "existing_id": "d1d04ff7-fcb7-45c6-a8fd-a302631cf9ae"
+      }
+    },
+    {
+      "file": "recipe-2026-03-20-23-42-5.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-23-42-5.sql",
+      "reason": "Duplicate of DB recipe 'Peruvian Shrimp and Sweet Potato Chowder' (score: 1.000)",
+      "match": {
+        "score": 1.0,
+        "name_score": 1.0,
+        "ingredient_score": 1.0,
+        "shared_words": [
+          "chowder",
+          "potato",
+          "peruvian",
+          "sweet",
+          "shrimp"
+        ],
+        "duplicate": true,
+        "existing_name": "Peruvian Shrimp and Sweet Potato Chowder",
+        "existing_id": "f4e321ac-87ee-4850-920d-0df96a130232"
+      }
+    }
+  ],
+  "details": {
+    "recipe-2026-03-20-23-42-1.sql": {
+      "recipe": "Seared Scallops with Lemon Garlic Butter",
+      "ingredients": [
+        "Lemon",
+        "Salt",
+        "Sea Scallops",
+        "Parsley",
+        "Olive Oil",
+        "Garlic",
+        "Fish Stock",
+        "Butter",
+        "Lemon Juice",
+        "Black Pepper"
+      ],
+      "score": 1.0,
+      "name_score": 1.0,
+      "ingredient_score": 1.0,
+      "existing_name": "Seared Scallops with Lemon Garlic Butter",
+      "existing_id": "b93fea86-035b-421c-ae2a-95945db210b5",
+      "duplicate": true,
+      "intra_batch_duplicate": false
+    },
+    "recipe-2026-03-20-23-42-2.sql": {
+      "recipe": "Japanese Teriyaki Chicken Bowl",
+      "ingredients": [
+        "Rice",
+        "Honey",
+        "Sesame Seed",
+        "Mirin",
+        "Baby Bok Choy",
+        "Carrot",
+        "Chicken Thigh",
+        "Soy Sauce",
+        "Ginger",
+        "Garlic",
+        "Sesame Oil",
+        "Green onions"
+      ],
+      "score": 1.0,
+      "name_score": 1.0,
+      "ingredient_score": 1.0,
+      "existing_name": "Japanese Teriyaki Chicken Bowl",
+      "existing_id": "e6889a32-bead-433d-82be-c647ccf3b1af",
+      "duplicate": true,
+      "intra_batch_duplicate": false
+    },
+    "recipe-2026-03-20-23-42-3.sql": {
+      "recipe": "Italian Seafood Stew with Tomatoes and Herbs",
+      "ingredients": [
+        "Manila Clams",
+        "Red Pepper Flake",
+        "Basil",
+        "Olive Oil",
+        "Garlic",
+        "Fish Stock",
+        "Tomato Paste",
+        "Shrimp",
+        "Mussels",
+        "Onion"
+      ],
+      "score": 1.0,
+      "name_score": 1.0,
+      "ingredient_score": 1.0,
+      "existing_name": "Italian Seafood Stew with Tomatoes and Herbs",
+      "existing_id": "688e3b80-b778-4ed3-895a-62d1d9f3f06a",
+      "duplicate": true,
+      "intra_batch_duplicate": false
+    },
+    "recipe-2026-03-20-23-42-4.sql": {
+      "recipe": "Greek Lamb Souvlaki Bowl with Tzatziki",
+      "ingredients": [
+        "Lemon",
+        "Rice",
+        "Yogurt",
+        "Red onion",
+        "Olive Oil",
+        "Garlic",
+        "Cucumber",
+        "Cherry tomatoes",
+        "Lamb",
+        "Oregano"
+      ],
+      "score": 1.0,
+      "name_score": 1.0,
+      "ingredient_score": 1.0,
+      "existing_name": "Greek Lamb Souvlaki Bowl with Tzatziki",
+      "existing_id": "d1d04ff7-fcb7-45c6-a8fd-a302631cf9ae",
+      "duplicate": true,
+      "intra_batch_duplicate": false
+    },
+    "recipe-2026-03-20-23-42-5.sql": {
+      "recipe": "Peruvian Shrimp and Sweet Potato Chowder",
+      "ingredients": [
+        "Coconut Milk",
+        "Lime",
+        "Olive Oil",
+        "Garlic",
+        "Fish Stock",
+        "Cilantro",
+        "Shrimp",
+        "Ajwain",
+        "Sweet Potato",
+        "Onion"
+      ],
+      "score": 1.0,
+      "name_score": 1.0,
+      "ingredient_score": 1.0,
+      "existing_name": "Peruvian Shrimp and Sweet Potato Chowder",
+      "existing_id": "f4e321ac-87ee-4850-920d-0df96a130232",
+      "duplicate": true,
+      "intra_batch_duplicate": false
+    }
+  }
+}

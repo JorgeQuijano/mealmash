@@ -65,7 +65,7 @@ def fetch_ingredients_from_api():
     return all_names
 
 
-def extract_from_sql(filepath):
+def extract_from_sql(filepath, valid_ingredients):
     """Extract key data from a recipe SQL file."""
     with open(filepath) as f:
         content = f.read()
@@ -89,15 +89,35 @@ def extract_from_sql(filepath):
         issues.append(f"Invalid cuisine: '{cuisine}'")
     
     # Ingredients from WHERE clause
-    where_match = re.search(r"WHERE name ILIKE ANY \(ARRAY\[(.*?)\]\)", content, re.DOTALL)
+    where_match = re.search(r"WHERE name\s+IN\s*\(([^)]+)\)", content, re.DOTALL)
     if not where_match:
         issues.append("Could not find WHERE clause")
-        return recipe_name, category, [], issues
+        return recipe_name, category, [], [], issues
     
     ingredients = re.findall(r"'([^']+)'", where_match.group(1))
     ingredients = [ing.strip() for ing in ingredients]
     
-    return recipe_name, category, ingredients, issues
+    # Extract instructions
+    instr_match = re.search(r"ARRAY\[(.*?)\]::text\[\]", content, re.DOTALL)
+    instructions = []
+    if instr_match:
+        # Extract each quoted string from the ARRAY[...]
+        instr_content = instr_match.group(1)
+        instructions = re.findall(r"'([^']+(?:'[^']*')*)'", instr_content)
+        instructions = [instr.strip() for instr in instructions if instr.strip()]
+    
+    # Validate instructions: flag if instruction is also a valid ingredient name
+    bad_instructions = []
+    valid_lower = set(k.lower() for k in valid_ingredients)
+    for step in instructions:
+        step_lower = step.lower().strip()
+        words = step_lower.split()
+        # If instruction is 3 or fewer words and the full text matches a valid ingredient, flag it
+        if len(words) <= 3 and step_lower in valid_lower:
+            bad_instructions.append(step)
+            issues.append(f"Invalid instruction (looks like ingredient name, not cooking step): '{step}'")
+    
+    return recipe_name, category, ingredients, instructions, issues
 
 
 def audit_files(filepaths, valid_ingredients):
@@ -106,31 +126,44 @@ def audit_files(filepaths, valid_ingredients):
         "total": len(filepaths),
         "valid": [],
         "invalid": [],
-        "summary": {"ingredients_ok": 0, "ingredients_bad": 0, "files_checked": 0}
+        "summary": {"ingredients_ok": 0, "ingredients_bad": 0, "instructions_bad": 0, "files_checked": 0}
     }
     
     for filepath in sorted(filepaths):
         fname = os.path.basename(filepath)
-        recipe_name, category, ingredients, issues = extract_from_sql(filepath)
+        recipe_name, category, ingredients, instructions, issues = extract_from_sql(filepath, valid_ingredients)
         
         # Check ingredients against valid list
         bad_ingredients = [ing for ing in ingredients if ing not in valid_ingredients]
         
-        status = "✅ VALID" if not bad_ingredients and not issues else "❌ INVALID"
+        # Collect bad instructions (extracted inside extract_from_sql, passed via issues)
+        bad_instructions = [i for i in issues if i.startswith("Invalid instruction")]
+        
+        status = "✅ VALID" if not bad_ingredients and not bad_instructions and not [i for i in issues if not i.startswith("Invalid instruction")] else "❌ INVALID"
         
         print(f"\n{'='*60}")
         print(f"  {fname}")
         print(f"  Recipe: {recipe_name}")
         print(f"  Category: {category or 'MISSING'}")
         print(f"  Ingredients: {len(ingredients)}")
+        print(f"  Instructions: {len(instructions)}")
+        
+        if instructions:
+            print(f"  Sample instructions:")
+            for s in instructions[:3]:
+                print(f"    - {s[:70]}{'...' if len(s) > 70 else ''}")
         
         if bad_ingredients:
             for ing in bad_ingredients:
                 print(f"    ❌ '{ing}' — NOT in database")
-                issues.append(f"Unknown ingredient: {ing}")
         
-        if issues:
-            for issue in issues:
+        if bad_instructions:
+            for bi in bad_instructions:
+                print(f"    ❌ {bi}")
+        
+        other_issues = [i for i in issues if not i.startswith("Invalid instruction")]
+        if other_issues:
+            for issue in other_issues:
                 print(f"    ⚠️  {issue}")
         
         print(f"  → {status}")
@@ -140,9 +173,11 @@ def audit_files(filepaths, valid_ingredients):
             "recipe": recipe_name,
             "category": category,
             "ingredients_count": len(ingredients),
+            "instructions_count": len(instructions),
             "bad_ingredients": bad_ingredients,
+            "bad_instructions": bad_instructions,
             "issues": issues,
-            "valid": len(bad_ingredients) == 0 and len(issues) == 0
+            "valid": len(bad_ingredients) == 0 and len(bad_instructions) == 0 and len(other_issues) == 0
         }
         
         if entry["valid"]:
@@ -155,6 +190,8 @@ def audit_files(filepaths, valid_ingredients):
             results["summary"]["ingredients_bad"] += 1
         else:
             results["summary"]["ingredients_ok"] += 1
+        if bad_instructions:
+            results["summary"]["instructions_bad"] += 1
     
     return results
 
@@ -208,9 +245,13 @@ def main():
     
     print(f"\n{'='*60}")
     print(f"SUMMARY")
-    print(f"  Files checked: {results['summary']['files_checked']}")
-    print(f"  ✅ Valid:   {len(results['valid'])}")
-    print(f"  ❌ Invalid: {len(results['invalid'])}")
+    print(f"  Files checked:        {results['summary']['files_checked']}")
+    print(f"  ✅ Valid:              {len(results['valid'])}")
+    print(f"  ❌ Invalid:            {len(results['invalid'])}")
+    if results['summary']['ingredients_bad']:
+        print(f"  ❌ Bad ingredients:   {results['summary']['ingredients_bad']}")
+    if results['summary']['instructions_bad']:
+        print(f"  ❌ Bad instructions:  {results['summary']['instructions_bad']}")
     
     if results["invalid"]:
         print(f"\n⚠️  {len(results['invalid'])} file(s) have issues and should NOT be imported:")
@@ -218,6 +259,8 @@ def main():
             print(f"  - {entry['file']}: {entry['recipe']}")
             for bad in entry["bad_ingredients"]:
                 print(f"      bad ingredient: {bad}")
+            for bi in entry.get("bad_instructions", []):
+                print(f"      bad instruction: {bi}")
         sys.exit(1)
     else:
         print(f"\n✅ All {len(results['valid'])} recipes are valid and ready to import!")

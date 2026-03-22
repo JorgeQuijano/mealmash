@@ -1,0 +1,178 @@
+{
+  "total": 5,
+  "keep": [
+    {
+      "file": "recipe-2026-03-21-08-00-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-08-00-1.sql",
+      "recipe": "Lemon Herb Roasted Chicken with Garlic Butter Asparagus",
+      "score": 0.375,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-08-00-2.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-08-00-2.sql",
+      "recipe": "Thai Red Curry Braised Lamb with Jasmine Rice",
+      "score": 0.31,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-08-00-3.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-08-00-3.sql",
+      "recipe": "Pan-Seared Salmon with Lemon Dill Sauce and Wild Rice",
+      "score": 0.257,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-08-00-4.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-08-00-4.sql",
+      "recipe": "Honey Glazed Pork Tenderloin with Apple Maple Compote",
+      "score": 0.351,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-08-00-5.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-08-00-5.sql",
+      "recipe": "Creamy Garlic Basil Shrimp Pasta with Sun-Dried Tomatoes",
+      "score": 0.432,
+      "version_group_id": null,
+      "is_new": true
+    }
+  ],
+  "discard": [],
+  "details": {
+    "recipe-2026-03-21-08-00-1.sql": {
+      "recipe": "Lemon Herb Roasted Chicken with Garlic Butter Asparagus",
+      "ingredients": [
+        "Chicken Stock",
+        "Olive Oil",
+        "Thyme",
+        "Black Pepper",
+        "Salt",
+        "Butter",
+        "Garlic",
+        "Capers",
+        "Chicken Thigh",
+        "Lemon",
+        "Asparagus",
+        "Rosemary"
+      ],
+      "score": 0.375,
+      "name_score": 0.375,
+      "ingredient_score": 0.375,
+      "existing_name": "Garlic Butter Chicken Pasta",
+      "existing_id": "b97a5a41-ed41-4a91-9e92-4d4d93b6c813",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-08-00-2.sql": {
+      "recipe": "Thai Red Curry Braised Lamb with Jasmine Rice",
+      "ingredients": [
+        "Lamb Shoulder",
+        "Fish Sauce",
+        "Coconut Milk",
+        "Salt",
+        "Red Curry Paste",
+        "Brown Sugar",
+        "Thai Basil",
+        "Bell Pepper",
+        "Garlic",
+        "Lime",
+        "Jasmine Rice",
+        "Vegetable Oil"
+      ],
+      "score": 0.31,
+      "name_score": 0.333,
+      "ingredient_score": 0.294,
+      "existing_name": "Coconut Curry Shrimp with Jasmine Rice",
+      "existing_id": "f690c158-6eca-478e-a6cb-b6c288b5e87d",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-08-00-3.sql": {
+      "recipe": "Pan-Seared Salmon with Lemon Dill Sauce and Wild Rice",
+      "ingredients": [
+        "Olive Oil",
+        "Black Pepper",
+        "Salmon",
+        "Dill",
+        "Salt",
+        "Brown Rice",
+        "Wild Rice",
+        "Butter",
+        "Almond",
+        "Heavy Cream",
+        "Garlic",
+        "Lemon"
+      ],
+      "score": 0.257,
+      "name_score": 0.0,
+      "ingredient_score": 0.429,
+      "existing_name": "Spanish Garlic Shrimp",
+      "existing_id": "a533fbf1-ba10-48df-87c3-fb6d4871a56d",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-08-00-4.sql": {
+      "recipe": "Honey Glazed Pork Tenderloin with Apple Maple Compote",
+      "ingredients": [
+        "Olive Oil",
+        "Pork Tenderloin",
+        "Thyme",
+        "Pecan",
+        "Black Pepper",
+        "Salt",
+        "Mustard",
+        "Butter",
+        "Apple",
+        "Honey",
+        "Maple Syrup",
+        "Garlic"
+      ],
+      "score": 0.351,
+      "name_score": 0.222,
+      "ingredient_score": 0.438,
+      "existing_name": "French Herb-Crusted Pork Tenderloin",
+      "existing_id": "fb9dcb59-9e7a-4ec9-a5b8-1821747f6d29",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-08-00-5.sql": {
+      "recipe": "Creamy Garlic Basil Shrimp Pasta with Sun-Dried Tomatoes",
+      "ingredients": [
+        "Olive Oil",
+        "Red Pepper Flake",
+        "Shrimp",
+        "Black Pepper",
+        "Parmesan",
+        "Basil",
+        "Sun-Dried Tomatoes",
+        "Salt",
+        "Butter",
+        "Heavy Cream",
+        "Garlic",
+        "Pasta"
+      ],
+      "score": 0.432,
+      "name_score": 0.222,
+      "ingredient_score": 0.571,
+      "existing_name": "Garlic Butter Chicken Pasta",
+      "existing_id": "b97a5a41-ed41-4a91-9e92-4d4d93b6c813",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    }
+  }
+}

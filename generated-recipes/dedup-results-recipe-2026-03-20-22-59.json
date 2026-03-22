@@ -1,0 +1,84 @@
+{
+  "total": 3,
+  "keep": [
+    {
+      "file": "recipe-2026-03-20-22-59-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-22-59-1.sql",
+      "recipe": "Thai Coconut Curry Mussels",
+      "score": 0.497
+    },
+    {
+      "file": "recipe-2026-03-20-22-59-3.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-22-59-3.sql",
+      "recipe": "Japanese Ginger Pork Bowl (Shogayaki)",
+      "score": 0.314
+    },
+    {
+      "file": "recipe-2026-03-20-22-59-4.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-22-59-4.sql",
+      "recipe": "Mediterranean Stuffed Chicken Breasts with Sun-Dried Tomato, Feta, and Spinach",
+      "score": 0.281
+    }
+  ],
+  "discard": [],
+  "details": {
+    "recipe-2026-03-20-22-59-1.sql": {
+      "recipe": "Thai Coconut Curry Mussels",
+      "ingredients": [
+        "Fish Sauce",
+        "Red Curry Paste",
+        "Cilantro",
+        "Lime",
+        "Garlic",
+        "Ginger",
+        "Mussel",
+        "Coconut Milk"
+      ],
+      "score": 0.497,
+      "name_score": 0.6,
+      "ingredient_score": 0.429,
+      "existing_name": "Thai Coconut Salmon Curry",
+      "existing_id": "19d74c63-8f55-4007-8465-fca4753af4a6",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-22-59-3.sql": {
+      "recipe": "Japanese Ginger Pork Bowl (Shogayaki)",
+      "ingredients": [
+        "Pork Tenderloin",
+        "Cabbage",
+        "Mirin",
+        "Sesame Oil",
+        "Garlic",
+        "Ginger",
+        "Soy Sauce",
+        "Green onions",
+        "Rice"
+      ],
+      "score": 0.314,
+      "name_score": 0.286,
+      "ingredient_score": 0.333,
+      "existing_name": "Japanese Tamagoyaki Breakfast Bowl",
+      "existing_id": "f14fb64c-2194-482d-9604-680a9e01ec93",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-22-59-4.sql": {
+      "recipe": "Mediterranean Stuffed Chicken Breasts with Sun-Dried Tomato, Feta, and Spinach",
+      "ingredients": [
+        "Spinach",
+        "Feta",
+        "Lemon",
+        "Sun-Dried Tomatoes",
+        "Garlic",
+        "Oregano",
+        "Olive Oil",
+        "Chicken Breast"
+      ],
+      "score": 0.281,
+      "name_score": 0.273,
+      "ingredient_score": 0.286,
+      "existing_name": "Mediterranean Baked Eggs with Spinach, Feta, and Tomatoes",
+      "existing_id": "ff3805bf-b8aa-46f0-a762-3f3d5de0369b",
+      "duplicate": false
+    }
+  }
+}

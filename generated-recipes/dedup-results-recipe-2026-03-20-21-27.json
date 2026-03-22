@@ -1,0 +1,97 @@
+{
+  "total": 3,
+  "keep": [
+    {
+      "file": "recipe-2026-03-20-21-27-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-21-27-1.sql",
+      "recipe": "Caribbean Grilled Lobster Tail with Coconut Rice and Mango Salsa",
+      "score": 0.179
+    },
+    {
+      "file": "recipe-2026-03-20-21-27-4.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-21-27-4.sql",
+      "recipe": "Greek Lamb Pastitsio with Cinnamon Bechamel",
+      "score": 0.225
+    },
+    {
+      "file": "recipe-2026-03-20-21-27-5.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-21-27-5.sql",
+      "recipe": "Indian Lamb Biryani Bowl",
+      "score": 0.261
+    }
+  ],
+  "discard": [],
+  "details": {
+    "recipe-2026-03-20-21-27-1.sql": {
+      "recipe": "Caribbean Grilled Lobster Tail with Coconut Rice and Mango Salsa",
+      "ingredients": [
+        "Garlic",
+        "Green onions",
+        "Butter",
+        "Cilantro",
+        "Papaya",
+        "Lime Juice",
+        "Lobster Tail",
+        "Coconut Milk",
+        "Mango",
+        "Rice"
+      ],
+      "score": 0.179,
+      "name_score": 0.182,
+      "ingredient_score": 0.176,
+      "existing_name": "Coconut Curry Shrimp with Jasmine Rice",
+      "existing_id": "f690c158-6eca-478e-a6cb-b6c288b5e87d",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-21-27-4.sql": {
+      "recipe": "Greek Lamb Pastitsio with Cinnamon Bechamel",
+      "ingredients": [
+        "Parmesan",
+        "Garlic",
+        "Tomato",
+        "Butter",
+        "Nutmeg",
+        "Cinnamon",
+        "All-Purpose Flour",
+        "Pasta",
+        "Milk",
+        "Lamb",
+        "Onion"
+      ],
+      "score": 0.225,
+      "name_score": 0.0,
+      "ingredient_score": 0.375,
+      "existing_name": "Pasta alla Vodka",
+      "existing_id": "87255deb-8c47-42f8-8e78-532219117e03",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-21-27-5.sql": {
+      "recipe": "Indian Lamb Biryani Bowl",
+      "ingredients": [
+        "Basmati Rice",
+        "Ginger",
+        "Saffron Threads",
+        "Garlic",
+        "Tomato",
+        "Cumin",
+        "Cashew",
+        "Bay Leaves",
+        "Cilantro",
+        "Turmeric",
+        "Saffron",
+        "Garam Masala",
+        "Salt",
+        "Yogurt",
+        "Lamb",
+        "Chili Powder",
+        "Onion"
+      ],
+      "score": 0.261,
+      "name_score": 0.0,
+      "ingredient_score": 0.435,
+      "existing_name": "Chicken Tikka Masala",
+      "existing_id": "7e891425-95d5-4b43-ac6f-f965c1348264",
+      "duplicate": false
+    }
+  }
+}

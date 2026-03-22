@@ -1,0 +1,186 @@
+{
+  "total": 5,
+  "keep": [
+    {
+      "file": "recipe-2026-03-21-15-10-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-15-10-1.sql",
+      "recipe": "Middle Eastern Lamb Tagine with Preserved Lemon and Olives",
+      "score": 0.217,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-15-10-2.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-15-10-2.sql",
+      "recipe": "Korean Gochujang Glazed Pork Belly Bowl",
+      "score": 0.283,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-15-10-3.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-15-10-3.sql",
+      "recipe": "Japanese Miso Glazed Black Cod",
+      "score": 0.117,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-15-10-4.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-15-10-4.sql",
+      "recipe": "Brazilian Coconut Shrimp Moqueca",
+      "score": 0.326,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-15-10-5.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-15-10-5.sql",
+      "recipe": "French Duck Confit with Cannellini Beans",
+      "score": 0.313,
+      "version_group_id": null,
+      "is_new": true
+    }
+  ],
+  "discard": [],
+  "details": {
+    "recipe-2026-03-21-15-10-1.sql": {
+      "recipe": "Middle Eastern Lamb Tagine with Preserved Lemon and Olives",
+      "ingredients": [
+        "Couscous",
+        "Almond",
+        "Garlic",
+        "Lamb Shoulder",
+        "Onion",
+        "Cumin",
+        "Olive Oil",
+        "Preserved Lemon",
+        "Ginger",
+        "Turmeric",
+        "Coriander Seed",
+        "Cinnamon",
+        "Fresh Cilantro",
+        "Kalamata Olives",
+        "Saffron",
+        "Beef Stock"
+      ],
+      "score": 0.217,
+      "name_score": 0.222,
+      "ingredient_score": 0.214,
+      "existing_name": "Middle Eastern Shawarma Bowl",
+      "existing_id": "bce5b8cf-43cc-458c-b0da-cf6d69cbeda0",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-15-10-2.sql": {
+      "recipe": "Korean Gochujang Glazed Pork Belly Bowl",
+      "ingredients": [
+        "Sesame Oil",
+        "Rice Vinegar",
+        "Egg",
+        "Gochujang",
+        "Black Pepper",
+        "Soy Sauce",
+        "Jasmine Rice",
+        "Cucumber",
+        "Butter",
+        "Salt",
+        "Honey",
+        "Sesame Seed",
+        "Pork Belly",
+        "Green onions"
+      ],
+      "score": 0.283,
+      "name_score": 0.333,
+      "ingredient_score": 0.25,
+      "existing_name": "Korean Kimchi and Pork Belly Breakfast Skillet",
+      "existing_id": "42212ab2-1d0b-4223-a321-3868eedebac7",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-15-10-3.sql": {
+      "recipe": "Japanese Miso Glazed Black Cod",
+      "ingredients": [
+        "Sugar",
+        "Cod",
+        "Mirin",
+        "Sake",
+        "Ginger",
+        "Jasmine Rice",
+        "Salt",
+        "White Miso",
+        "Edamame",
+        "Green onions"
+      ],
+      "score": 0.117,
+      "name_score": 0.125,
+      "ingredient_score": 0.111,
+      "existing_name": "Japanese Teriyaki Chicken Bowl",
+      "existing_id": "76b0ce8b-f04e-46e0-b79c-be99f89f0335",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-15-10-4.sql": {
+      "recipe": "Brazilian Coconut Shrimp Moqueca",
+      "ingredients": [
+        "Coconut Milk",
+        "Garlic",
+        "Onion",
+        "Paprika",
+        "Shrimp",
+        "Coconut Oil",
+        "Salt",
+        "Bell Pepper",
+        "Jasmine Rice",
+        "Lime Juice",
+        "Cilantro",
+        "Cayenne",
+        "Tomato"
+      ],
+      "score": 0.326,
+      "name_score": 0.286,
+      "ingredient_score": 0.353,
+      "existing_name": "Coconut Curry Shrimp with Jasmine Rice",
+      "existing_id": "f690c158-6eca-478e-a6cb-b6c288b5e87d",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-15-10-5.sql": {
+      "recipe": "French Duck Confit with Cannellini Beans",
+      "ingredients": [
+        "Arugula",
+        "Garlic",
+        "Vegetable Stock",
+        "Celery",
+        "Duck",
+        "Onion",
+        "Duck Fat",
+        "Lemon Juice",
+        "Olive Oil",
+        "Carrot",
+        "Black Pepper",
+        "Salt",
+        "Cannellini Beans",
+        "Bay Leaf",
+        "Fresh Thyme"
+      ],
+      "score": 0.313,
+      "name_score": 0.333,
+      "ingredient_score": 0.3,
+      "existing_name": "Classic Duck Confit",
+      "existing_id": "acd543dd-c30f-42f8-8663-bf45a5a38fcf",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    }
+  }
+}

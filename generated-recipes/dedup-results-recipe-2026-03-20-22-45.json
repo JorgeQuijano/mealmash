@@ -1,0 +1,136 @@
+{
+  "total": 4,
+  "keep": [
+    {
+      "file": "recipe-2026-03-20-22-45-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-22-45-1.sql",
+      "recipe": "Greek Lamb Souvlaki Bowl with Lemon Herb Rice",
+      "score": 0.493
+    },
+    {
+      "file": "recipe-2026-03-20-22-45-2.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-22-45-2.sql",
+      "recipe": "Mediterranean Grilled Octopus with Lemon Herb Potatoes",
+      "score": 0.24
+    },
+    {
+      "file": "recipe-2026-03-20-22-45-3.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-22-45-3.sql",
+      "recipe": "Middle Eastern Lamb Kofta Bowl with Tahini",
+      "score": 0.458
+    },
+    {
+      "file": "recipe-2026-03-20-22-45-5.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-20-22-45-5.sql",
+      "recipe": "Lamb Vindaloo",
+      "score": 0.24
+    }
+  ],
+  "discard": [],
+  "details": {
+    "recipe-2026-03-20-22-45-1.sql": {
+      "recipe": "Greek Lamb Souvlaki Bowl with Lemon Herb Rice",
+      "ingredients": [
+        "Greek Yogurt",
+        "Olive Oil",
+        "Lamb",
+        "Garlic",
+        "Black Pepper",
+        "Butter",
+        "Bell Pepper",
+        "Oregano",
+        "Chicken Stock",
+        "Jasmine Rice",
+        "Onion",
+        "Tomato",
+        "Salt",
+        "Cucumber",
+        "Lemon",
+        "Cumin",
+        "Lemon Juice"
+      ],
+      "score": 0.493,
+      "name_score": 0.375,
+      "ingredient_score": 0.571,
+      "existing_name": "Greek Lamb Souvlaki Plate",
+      "existing_id": "5493fa74-a4d6-47dd-988c-d1ea57797d6e",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-22-45-2.sql": {
+      "recipe": "Mediterranean Grilled Octopus with Lemon Herb Potatoes",
+      "ingredients": [
+        "Parsley",
+        "Red Pepper Flake",
+        "Garlic",
+        "Bay Leaf",
+        "Potato",
+        "Oregano",
+        "Thyme",
+        "Lemon Juice",
+        "Lemon",
+        "Extra Virgin Olive Oil",
+        "Octopus"
+      ],
+      "score": 0.24,
+      "name_score": 0.1,
+      "ingredient_score": 0.333,
+      "existing_name": "Mediterranean Chickpea & Feta Salad Bowl",
+      "existing_id": "a09affad-ebae-4892-adf8-676f09603a12",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-22-45-3.sql": {
+      "recipe": "Middle Eastern Lamb Kofta Bowl with Tahini",
+      "ingredients": [
+        "Greek Yogurt",
+        "Parsley",
+        "Tahini",
+        "Lamb",
+        "Garlic",
+        "Turmeric",
+        "Cinnamon",
+        "Paprika",
+        "Black Pepper",
+        "Basmati Rice",
+        "Tomato",
+        "Onion",
+        "Salt",
+        "Cucumber",
+        "Cumin",
+        "Lemon Juice"
+      ],
+      "score": 0.458,
+      "name_score": 0.429,
+      "ingredient_score": 0.478,
+      "existing_name": "Middle Eastern Shawarma Bowl",
+      "existing_id": "bce5b8cf-43cc-458c-b0da-cf6d69cbeda0",
+      "duplicate": false
+    },
+    "recipe-2026-03-20-22-45-5.sql": {
+      "recipe": "Lamb Vindaloo",
+      "ingredients": [
+        "Red Pepper Flake",
+        "Lamb",
+        "Turmeric",
+        "Bay Leaf",
+        "Potato",
+        "Cilantro",
+        "Onion",
+        "Ginger",
+        "Tomato",
+        "Salt",
+        "Chili Powder",
+        "Vegetable Oil",
+        "Rice Vinegar",
+        "Garam Masala",
+        "Cumin",
+        "Garlic"
+      ],
+      "score": 0.24,
+      "name_score": 0.0,
+      "ingredient_score": 0.4,
+      "existing_name": "Palak Paneer",
+      "existing_id": "331c7b52-1d0a-48ad-89f4-ffbbd8f238f3",
+      "duplicate": false
+    }
+  }
+}

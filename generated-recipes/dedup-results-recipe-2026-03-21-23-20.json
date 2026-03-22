@@ -1,0 +1,169 @@
+{
+  "total": 5,
+  "keep": [
+    {
+      "file": "recipe-2026-03-21-23-20-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-23-20-1.sql",
+      "recipe": "Seared Lamb Chops with Garlic Herb Butter",
+      "score": 0.456,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-23-20-2.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-23-20-2.sql",
+      "recipe": "Mediterranean Garlic Shrimp with Crusty Bread",
+      "score": 0.433,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-23-20-3.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-23-20-3.sql",
+      "recipe": "Red Lentil Coconut Curry Soup",
+      "score": 0.34,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-23-20-4.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-23-20-4.sql",
+      "recipe": "Korean Gochujang Glazed Pork Bowl",
+      "score": 0.533,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-21-23-20-5.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-21-23-20-5.sql",
+      "recipe": "Baked Cod with Lemon Herb Breadcrumb Topping",
+      "score": 0.337,
+      "version_group_id": null,
+      "is_new": true
+    }
+  ],
+  "discard": [],
+  "details": {
+    "recipe-2026-03-21-23-20-1.sql": {
+      "recipe": "Seared Lamb Chops with Garlic Herb Butter",
+      "ingredients": [
+        "Lemon",
+        "Butter",
+        "Fresh Thyme",
+        "Salt",
+        "Lamb Chops",
+        "Olive Oil",
+        "Black Pepper",
+        "Fresh Parsley",
+        "Garlic",
+        "Fresh Rosemary"
+      ],
+      "score": 0.456,
+      "name_score": 0.333,
+      "ingredient_score": 0.538,
+      "existing_name": "Herb Crusted Scallops with Lemon Garlic Butter",
+      "existing_id": "bef880fa-3a28-41bb-aec2-8b49470e9d6d",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-23-20-2.sql": {
+      "recipe": "Mediterranean Garlic Shrimp with Crusty Bread",
+      "ingredients": [
+        "Lemon",
+        "Butter",
+        "Shrimp",
+        "Salt",
+        "Olive Oil",
+        "Red Pepper Flake",
+        "Baguette",
+        "Garlic",
+        "Fresh Parsley",
+        "Chicken Stock"
+      ],
+      "score": 0.433,
+      "name_score": 0.333,
+      "ingredient_score": 0.5,
+      "existing_name": "Spanish Garlic Shrimp",
+      "existing_id": "a533fbf1-ba10-48df-87c3-fb6d4871a56d",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-23-20-3.sql": {
+      "recipe": "Red Lentil Coconut Curry Soup",
+      "ingredients": [
+        "Vegetable Stock",
+        "Moong Dal",
+        "Ginger",
+        "Coconut Milk",
+        "Cumin",
+        "Turmeric",
+        "Vegetable Oil",
+        "Garlic",
+        "Lime",
+        "Cilantro",
+        "Onion"
+      ],
+      "score": 0.34,
+      "name_score": 0.25,
+      "ingredient_score": 0.4,
+      "existing_name": "Coconut Curry Shrimp with Jasmine Rice",
+      "existing_id": "f690c158-6eca-478e-a6cb-b6c288b5e87d",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-23-20-4.sql": {
+      "recipe": "Korean Gochujang Glazed Pork Bowl",
+      "ingredients": [
+        "Pork Tenderloin",
+        "Honey",
+        "Gochujang",
+        "Ginger",
+        "Green onions",
+        "Soy Sauce",
+        "Garlic",
+        "Sesame Oil",
+        "Rice",
+        "Sesame Seed"
+      ],
+      "score": 0.533,
+      "name_score": 0.833,
+      "ingredient_score": 0.333,
+      "existing_name": "Korean Gochujang Glazed Pork Belly Bowl",
+      "existing_id": "b1d09414-33ea-405c-bb9d-109d0cf0e5c4",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-21-23-20-5.sql": {
+      "recipe": "Baked Cod with Lemon Herb Breadcrumb Topping",
+      "ingredients": [
+        "Lemon",
+        "Butter",
+        "Cod",
+        "Salt",
+        "Olive Oil",
+        "Black Pepper",
+        "Garlic",
+        "Bread Crumbs",
+        "Fresh Parsley",
+        "Parmesan"
+      ],
+      "score": 0.337,
+      "name_score": 0.2,
+      "ingredient_score": 0.429,
+      "existing_name": "Herb Crusted Scallops with Lemon Garlic Butter",
+      "existing_id": "bef880fa-3a28-41bb-aec2-8b49470e9d6d",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    }
+  }
+}
