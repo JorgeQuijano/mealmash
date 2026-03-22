@@ -98,8 +98,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
             <p>
-              If you have any questions about this Privacy Policy, please contact us at:<br />
-              <a href="mailto:privacy@mealclaw.com" className="text-primary hover:underline">privacy@mealclaw.com</a>
+              If you have any questions about this Privacy Policy, please reach out through our support channels.
             </p>
           </section>
         </div>
