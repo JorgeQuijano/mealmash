@@ -3,6 +3,7 @@ import {notFound} from 'next/navigation';
 import {getPostBySlug, getPostSlugs} from '@/lib/posts';
 import BlogHeader from '@/components/BlogHeader';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -68,7 +69,7 @@ export default async function BlogPostPage({params}: PageProps) {
             </div>
           </header>
           <div className="prose prose-lg dark:prose-invert max-w-none text-stone-700 dark:text-stone-300">
-            <ReactMarkdown>{content}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
           </div>
         </article>
       </main>
