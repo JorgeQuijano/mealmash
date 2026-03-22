@@ -4,6 +4,7 @@ import {getPostBySlug, getPostSlugs} from '@/lib/posts';
 import BlogHeader from '@/components/BlogHeader';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -69,7 +70,7 @@ export default async function BlogPostPage({params}: PageProps) {
             </div>
           </header>
           <div className="prose prose-lg dark:prose-invert max-w-none text-stone-700 dark:text-stone-300">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>
           </div>
         </article>
       </main>
