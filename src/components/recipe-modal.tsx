@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
+import { normalizeQuantity, unitsMatch } from "@/lib/shopping-list"
+
 // Helper to parse category from any format to string array
 function parseCategory(cat: any): string[] {
   if (Array.isArray(cat)) return cat
@@ -296,27 +298,49 @@ export default function RecipeModal({
       setAddedToList(true)
       setTimeout(() => setAddedToList(false), 3000)
     } else if (user) {
-      // Default implementation
+      // Default implementation with proper consolidation
       setAddingToList(true)
       
+      // Get existing shopping list items for this user
+      const { data: existingItems } = await supabase
+        .from("shopping_list")
+        .select("id, item_name, quantity, unit, ingredient_id")
+        .eq("user_id", user.id)
+        .eq("is_checked", false)
+      
+      const existingMap = new Map()
+      for (const item of existingItems || []) {
+        const key = item.ingredient_id 
+          ? `id:${item.ingredient_id}` 
+          : `name:${item.item_name.toLowerCase().trim()}`
+        if (!existingMap.has(key)) {
+          existingMap.set(key, [])
+        }
+        existingMap.get(key).push(item)
+      }
+      
       for (const ing of missingIngredients) {
-        const { data: existing } = await supabase
-          .from("shopping_list")
-          .select("id, quantity")
-          .eq("user_id", user.id)
-          .ilike("item_name", ing.name)
-          .single()
+        const key = ing.id ? `id:${ing.id}` : `name:${ing.name.toLowerCase().trim()}`
+        const candidates = existingMap.get(key) || []
         
-        if (existing) {
+        // Try to find a matching item with the same unit
+        const match = candidates.find((c: any) => unitsMatch(c.unit, 'piece'))
+        
+        if (match) {
+          // Consolidate: add to existing quantity
+          const existingQty = normalizeQuantity(match.quantity)
+          const updatedQty = existingQty + 1
           await supabase
             .from("shopping_list")
-            .update({ quantity: `${existing.quantity} + 1` })
-            .eq("id", existing.id)
+            .update({ quantity: updatedQty.toString() })
+            .eq("id", match.id)
         } else {
+          // Insert new item
           await supabase.from("shopping_list").insert({
             user_id: user.id,
             item_name: ing.name,
             quantity: "1",
+            unit: "piece",
             ingredient_id: ing.id,
             is_checked: false
           })

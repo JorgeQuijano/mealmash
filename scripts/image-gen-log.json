@@ -228,5 +228,38 @@
     ],
     "failed": [],
     "skipped": []
+  },
+  {
+    "timestamp": "2026-03-22T08:05:19.845179+00:00",
+    "total": 5,
+    "succeeded": [
+      {
+        "id": "00d4da5f-57d7-46ae-beed-5b97eb8854e9",
+        "name": "Mediterranean Stuffed Chicken with Sun-Dried Tomato, Feta, and Spinach",
+        "storage_path": "00d4da5f-57d7-46ae-beed-5b97eb8854e9.jpg"
+      },
+      {
+        "id": "51ebca04-81d8-4667-ab21-9e7e9551a813",
+        "name": "Vietnamese B\u00e1nh B\u00f2 (Honeycomb Cake)",
+        "storage_path": "51ebca04-81d8-4667-ab21-9e7e9551a813.jpg"
+      },
+      {
+        "id": "75432b3c-0cec-4126-9e36-53d8ae0bb441",
+        "name": "Honey Ricotta Stuffed French Toast with Caramelized Pears",
+        "storage_path": "75432b3c-0cec-4126-9e36-53d8ae0bb441.jpg"
+      },
+      {
+        "id": "2a8963fd-735b-4892-a09c-e5ee0efeac50",
+        "name": "Herb-Crusted Scallops with Lemon Garlic Butter",
+        "storage_path": "2a8963fd-735b-4892-a09c-e5ee0efeac50.jpg"
+      },
+      {
+        "id": "c432ee42-3857-4ba6-8bc7-e0a6069ae3a9",
+        "name": "Moroccan Lamb Tagine with Preserved Lemon and Olives",
+        "storage_path": "c432ee42-3857-4ba6-8bc7-e0a6069ae3a9.jpg"
+      }
+    ],
+    "failed": [],
+    "skipped": []
   }
 ]

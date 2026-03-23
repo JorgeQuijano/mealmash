@@ -118,6 +118,50 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Meal plan ID required' }, { status: 400 })
     }
 
+    // Get contributions for this meal plan before deleting
+    const { data: contributions } = await supabaseWithAuth
+      .from('meal_plan_shopping_contributions')
+      .select('*')
+      .eq('meal_plan_id', id);
+
+    // Reduce quantities in shopping list for each contribution
+    if (contributions && contributions.length > 0) {
+      for (const contrib of contributions) {
+        // Get current shopping list item
+        const { data: shoppingItem } = await supabaseWithAuth
+          .from('shopping_list')
+          .select('quantity')
+          .eq('id', contrib.shopping_list_id)
+          .single();
+
+        if (shoppingItem) {
+          const currentQty = parseFloat(shoppingItem.quantity) || 0;
+          const newQty = currentQty - (parseFloat(contrib.quantity_contributed) || 0);
+
+          if (newQty <= 0) {
+            // Remove the shopping list item entirely
+            await supabaseWithAuth
+              .from('shopping_list')
+              .delete()
+              .eq('id', contrib.shopping_list_id);
+          } else {
+            // Update with reduced quantity
+            await supabaseWithAuth
+              .from('shopping_list')
+              .update({ quantity: newQty.toString() })
+              .eq('id', contrib.shopping_list_id);
+          }
+        }
+      }
+
+      // Delete contribution records
+      await supabaseWithAuth
+        .from('meal_plan_shopping_contributions')
+        .delete()
+        .eq('meal_plan_id', id);
+    }
+
+    // Delete the meal plan entry
     const { error } = await supabaseWithAuth
       .from('meal_plans')
       .delete()

@@ -1,0 +1,164 @@
+{
+  "total": 5,
+  "keep": [
+    {
+      "file": "recipe-2026-03-22-08-00-1.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-22-08-00-1.sql",
+      "recipe": "Moroccan Lamb Tagine with Preserved Lemon and Olives",
+      "score": 0.49,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-22-08-00-2.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-22-08-00-2.sql",
+      "recipe": "Herb-Crusted Scallops with Lemon Garlic Butter",
+      "score": 0.665,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-22-08-00-3.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-22-08-00-3.sql",
+      "recipe": "Honey Ricotta Stuffed French Toast with Caramelized Pears",
+      "score": 0.414,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-22-08-00-4.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-22-08-00-4.sql",
+      "recipe": "Vietnamese B\u00e1nh B\u00f2 (Honeycomb Cake)",
+      "score": 0.149,
+      "version_group_id": null,
+      "is_new": true
+    },
+    {
+      "file": "recipe-2026-03-22-08-00-5.sql",
+      "filepath": "/home/jquijanoq/.openclaw/workspace/mealmash/generated-recipes/recipe-2026-03-22-08-00-5.sql",
+      "recipe": "Mediterranean Stuffed Chicken with Sun-Dried Tomato, Feta, and Spinach",
+      "score": 0.351,
+      "version_group_id": null,
+      "is_new": true
+    }
+  ],
+  "discard": [],
+  "details": {
+    "recipe-2026-03-22-08-00-1.sql": {
+      "recipe": "Moroccan Lamb Tagine with Preserved Lemon and Olives",
+      "ingredients": [
+        "Saffron Threads",
+        "Onion",
+        "Castelvetrano Olives",
+        "Chicken Stock",
+        "Garlic",
+        "Cumin",
+        "Olive Oil",
+        "Coriander Seed",
+        "Preserved Lemon",
+        "Lamb Shoulder",
+        "Turmeric",
+        "Cilantro"
+      ],
+      "score": 0.49,
+      "name_score": 0.625,
+      "ingredient_score": 0.4,
+      "existing_name": "Middle Eastern Lamb Tagine with Preserved Lemon and Olives",
+      "existing_id": "824e14cf-620c-4b0e-a643-466f80db4f06",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-22-08-00-2.sql": {
+      "recipe": "Herb-Crusted Scallops with Lemon Garlic Butter",
+      "ingredients": [
+        "Fresh Thyme",
+        "Panko",
+        "Lemon",
+        "Black Pepper",
+        "Fresh Parsley",
+        "Sea Scallops",
+        "Garlic",
+        "Olive Oil",
+        "Butter"
+      ],
+      "score": 0.665,
+      "name_score": 0.571,
+      "ingredient_score": 0.727,
+      "existing_name": "Herb Crusted Scallops with Lemon Garlic Butter",
+      "existing_id": "bef880fa-3a28-41bb-aec2-8b49470e9d6d",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-22-08-00-3.sql": {
+      "recipe": "Honey Ricotta Stuffed French Toast with Caramelized Pears",
+      "ingredients": [
+        "Powdered Sugar",
+        "Ricotta",
+        "Egg",
+        "Pear",
+        "Cinnamon",
+        "Milk",
+        "Brown Sugar",
+        "Honey",
+        "Butter",
+        "Maple Syrup",
+        "Vanilla Extract"
+      ],
+      "score": 0.414,
+      "name_score": 0.286,
+      "ingredient_score": 0.5,
+      "existing_name": "French Toast",
+      "existing_id": "c894d910-4927-4763-b408-2b01527e18ff",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-22-08-00-4.sql": {
+      "recipe": "Vietnamese B\u00e1nh B\u00f2 (Honeycomb Cake)",
+      "ingredients": [
+        "Sugar",
+        "Sesame Seed",
+        "Vegetable Oil",
+        "Rice Flour",
+        "Coconut Milk",
+        "Tapioca Flour"
+      ],
+      "score": 0.149,
+      "name_score": 0.143,
+      "ingredient_score": 0.154,
+      "existing_name": "Vietnamese Caramel Pork Ribs",
+      "existing_id": "4c72958a-56d6-49d3-b74e-c49fee13c541",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    },
+    "recipe-2026-03-22-08-00-5.sql": {
+      "recipe": "Mediterranean Stuffed Chicken with Sun-Dried Tomato, Feta, and Spinach",
+      "ingredients": [
+        "Chicken Breast",
+        "Black Pepper",
+        "Sun-Dried Tomatoes",
+        "Italian Seasoning",
+        "Olive Oil",
+        "Feta",
+        "Spinach",
+        "Salt"
+      ],
+      "score": 0.351,
+      "name_score": 0.3,
+      "ingredient_score": 0.385,
+      "existing_name": "Mediterranean Baked Eggs with Spinach, Feta, and Tomatoes",
+      "existing_id": "ff3805bf-b8aa-46f0-a762-3f3d5de0369b",
+      "duplicate": false,
+      "intra_batch_duplicate": false,
+      "version_group_id": null,
+      "is_new_version_group": true
+    }
+  }
+}

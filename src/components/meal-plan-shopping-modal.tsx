@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, ShoppingCart, Calendar, Check } from 'lucide-react';
+import { consolidateIngredients, normalizeQuantity, normalizeUnit, unitsMatch } from '@/lib/shopping-list';
 
 interface MealPlan {
   id: string;
@@ -36,6 +37,7 @@ interface PantryItem {
 }
 
 interface MissingIngredient {
+  ingredient_id: string | null;
   name: string;
   quantity: number;
   unit: string;
@@ -174,7 +176,26 @@ export default function MealPlanShoppingModal({ userId, mealPlans, onClose, onSu
       const pantryNames = new Set(pantryItems.map(p => p.name.toLowerCase()));
       const pantryIngredientIds = new Set(pantryItems.map(p => p.ingredient_id).filter(Boolean));
       
-      // Aggregate ingredients
+      // Prepare ingredients for consolidation
+      const ingredientsToConsolidate = (recipesData.recipeIngredients as any[]).map((ri: any) => ({
+        ingredient_id: ri.ingredients?.id || null,
+        item_name: ri.ingredients?.name || '',
+        quantity: ri.quantity_num || 1,
+        unit: ri.unit || 'piece',
+        _recipe_id: ri.recipe_id, // extra field for tracking
+      }));
+      
+      // Use consolidation utility to combine same ingredients
+      const consolidated = consolidateIngredients(
+        ingredientsToConsolidate.map(i => ({
+          ingredient_id: i.ingredient_id,
+          item_name: i.item_name,
+          quantity: i.quantity.toString(),
+          unit: i.unit,
+        }))
+      );
+      
+      // Build aggregated map with recipe tracking
       const aggregated = new Map<string, MissingIngredient>();
       
       for (const ri of recipesData.recipeIngredients as any[]) {
@@ -193,6 +214,7 @@ export default function MealPlanShoppingModal({ userId, mealPlans, onClose, onSu
           }
         } else {
           aggregated.set(key, {
+            ingredient_id: ri.ingredients?.id || null,
             name: ingName,
             quantity: ri.quantity_num || 1,
             unit: ri.unit || '',
@@ -223,22 +245,121 @@ export default function MealPlanShoppingModal({ userId, mealPlans, onClose, onSu
     try {
       const itemsToAdd = missingIngredients.filter(m => selectedItems.has(m.name));
       
-      for (const item of itemsToAdd) {
-        await supabase.from('shopping_list').insert({
-          user_id: userId,
-          item_name: item.name,
-          quantity: item.quantity.toString(),
-          is_checked: false,
-        });
-      }
-      
-      // Mark all meal plans in this date range as processed
+      // Get date range and find all meal plan IDs in range
       const dateRange = DATE_RANGE_OPTIONS[selectedRange].getDates();
       const plansInRange = mealPlans.filter(mp => 
         mp.planned_date >= dateRange.start && mp.planned_date <= dateRange.end
       );
       const mealPlanIds = plansInRange.map(p => p.id);
       
+      // Fetch existing shopping list items to check for consolidation
+      const { data: existingItems } = await supabase
+        .from('shopping_list')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('is_checked', false);
+      
+      const existingShoppingList = existingItems || [];
+      
+      // Build a lookup map for existing items by ingredient key
+      const existingByKey = new Map();
+      for (const item of existingShoppingList) {
+        const key = item.ingredient_id 
+          ? `id:${item.ingredient_id}` 
+          : `name:${item.item_name.toLowerCase().trim()}`;
+        
+        if (!existingByKey.has(key)) {
+          existingByKey.set(key, []);
+        }
+        existingByKey.get(key).push(item);
+      }
+      
+      // Process each item - consolidate or insert
+      const contributions = []; // Track for meal_plan_shopping_contributions
+      
+      for (const item of itemsToAdd) {
+        const key = item.ingredient_id 
+          ? `id:${item.ingredient_id}` 
+          : `name:${item.name.toLowerCase().trim()}`;
+        
+        // Find matching existing item with same unit
+        const candidates = existingByKey.get(key) || [];
+        const matchingItem = candidates.find((c: any) => 
+          unitsMatch(c.unit, item.unit)
+        );
+        
+        if (matchingItem) {
+          // Combine with existing - update quantity
+          const existingQty = normalizeQuantity(matchingItem.quantity);
+          const newQty = existingQty + item.quantity;
+          
+          await supabase
+            .from('shopping_list')
+            .update({ quantity: newQty.toString() })
+            .eq('id', matchingItem.id);
+          
+          // Track contribution for each meal plan that contributed this ingredient
+          for (const mp of plansInRange) {
+            const { data: recipeIng } = await supabase
+              .from('recipe_ingredients')
+              .select('quantity_num')
+              .eq('recipe_id', mp.recipe_id)
+              .eq('ingredient_id', item.ingredient_id)
+              .maybeSingle();
+            
+            if (recipeIng) {
+              contributions.push({
+                meal_plan_id: mp.id,
+                shopping_list_id: matchingItem.id,
+                ingredient_id: item.ingredient_id,
+                quantity_contributed: recipeIng.quantity_num || 1,
+              });
+            }
+          }
+        } else {
+          // Insert new item
+          const { data: newItem } = await supabase
+            .from('shopping_list')
+            .insert({
+              user_id: userId,
+              item_name: item.name,
+              quantity: item.quantity.toString(),
+              unit: item.unit,
+              is_checked: false,
+              ingredient_id: item.ingredient_id,
+            })
+            .select()
+            .single();
+          
+          if (newItem) {
+            // Track contribution for each meal plan
+            for (const mp of plansInRange) {
+              const { data: recipeIng } = await supabase
+                .from('recipe_ingredients')
+                .select('quantity_num')
+                .eq('recipe_id', mp.recipe_id)
+                .eq('ingredient_id', item.ingredient_id)
+                .maybeSingle();
+              
+              if (recipeIng) {
+                contributions.push({
+                  meal_plan_id: mp.id,
+                  shopping_list_id: newItem.id,
+                  ingredient_id: item.ingredient_id,
+                  quantity_contributed: recipeIng.quantity_num || 1,
+                });
+              }
+            }
+          }
+        }
+      }
+      
+      // Save contributions to track recipe -> shopping_list mappings
+      if (contributions.length > 0) {
+        await supabase.from('meal_plan_shopping_contributions').insert(contributions);
+      }
+      
+      // Mark all meal plans in this date range as processed
       if (mealPlanIds.length > 0) {
         await supabase
           .from('meal_plans')

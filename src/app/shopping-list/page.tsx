@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { normalizeQuantity, unitsMatch } from "@/lib/shopping-list"
 
 import MobileNav from "@/components/mobile-nav"
 
@@ -202,25 +203,60 @@ export default function ShoppingListPage() {
     if (!newItem.item_name.trim() || !user) return
 
     setAdding(true)
-    const { data, error } = await supabase
-      .from("shopping_list")
-      .insert({
-        user_id: user.id,
-        item_name: newItem.item_name.trim(),
-        quantity: newItem.quantity.trim() || "1",
-        unit: newItem.unit,
-        is_checked: false,
-        ingredient_id: newItem.ingredientId || null
-      })
-      .select()
 
-    if (!error && data) {
-      setItems([...data, ...items])
-      setNewItem({ item_name: "", quantity: "", unit: "pieces", ingredientId: undefined })
-      setIngredientQuery("")
-      setIngredientSuggestions([])
-      setShowSuggestions(false)
+    // Check for existing item with same ingredient_id (or name) and same unit
+    const existingMatch = items.find(item => {
+      // Match by ingredient_id if both have it
+      if (item.ingredient_id && newItem.ingredientId && item.ingredient_id === newItem.ingredientId) {
+        return unitsMatch(item.unit, newItem.unit)
+      }
+      // Fall back to name matching
+      if (!item.ingredient_id && !newItem.ingredientId) {
+        return item.item_name.toLowerCase().trim() === newItem.item_name.toLowerCase().trim() 
+          && unitsMatch(item.unit, newItem.unit)
+      }
+      return false
+    })
+
+    if (existingMatch) {
+      // Consolidate: add to existing item's quantity
+      const existingQty = normalizeQuantity(existingMatch.quantity)
+      const newQty = normalizeQuantity(newItem.quantity || "1")
+      const updatedQty = existingQty + newQty
+
+      const { error } = await supabase
+        .from("shopping_list")
+        .update({ quantity: updatedQty.toString() })
+        .eq("id", existingMatch.id)
+
+      if (!error) {
+        setItems(items.map(i => 
+          i.id === existingMatch.id ? { ...i, quantity: updatedQty.toString() } : i
+        ))
+      }
+    } else {
+      // Insert new item
+      const { data, error } = await supabase
+        .from("shopping_list")
+        .insert({
+          user_id: user.id,
+          item_name: newItem.item_name.trim(),
+          quantity: newItem.quantity.trim() || "1",
+          unit: newItem.unit,
+          is_checked: false,
+          ingredient_id: newItem.ingredientId || null
+        })
+        .select()
+
+      if (!error && data) {
+        setItems([data[0], ...items])
+      }
     }
+
+    setNewItem({ item_name: "", quantity: "", unit: "pieces", ingredientId: undefined })
+    setIngredientQuery("")
+    setIngredientSuggestions([])
+    setShowSuggestions(false)
     setAdding(false)
   }
 
